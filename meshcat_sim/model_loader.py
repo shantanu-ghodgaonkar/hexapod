@@ -1,14 +1,14 @@
 import pinocchio
 from sys import argv
 import sys
-from os.path import dirname, join, abspath
+from pathlib import Path
 from pinocchio.visualize import MeshcatVisualizer
  
  
 class model_loader :
     def __init__(self) -> None:
         # This path refers to Pinocchio source code but you can define your own directory here.
-        self.pinocchio_model_dir = str(abspath('/media/shantanu/Shantanu/hexapod/meshcat_sim/hexy_urdf_v2_dae'))
+        self.pinocchio_model_dir = str(Path('hexy_urdf_v2_dae').absolute())
     
         # You should change here to set up your own URDF file or just pass it as an argument of this example.
         self.urdf_filename = (

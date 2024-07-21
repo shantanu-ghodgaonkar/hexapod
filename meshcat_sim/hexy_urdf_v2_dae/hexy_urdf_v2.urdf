@@ -8,7 +8,7 @@
                 <mesh filename="file://hexy_urdf_v2_dae/hexy_urdf_v2_robot_base_vis_1.dae" />
             </geometry>
             <material name="robot_base_material">
-                <color rgba="1.000000 1.000000 1.000000 1.0" />
+                <color rgba="0.600000 0.600000 0.600000 1.0" />
             </material>
         </visual>
     </link>
@@ -25,7 +25,7 @@
                 <mesh filename="file://hexy_urdf_v2_dae/hexy_urdf_v2_Coxa_1_vis_1.dae" />
             </geometry>
             <material name="Coxa_1_material">
-                <color rgba="1.000000 1.000000 1.000000 1.0" />
+                <color rgba="0.500000 0.750000 0.000000 1.0" />
             </material>
         </visual>
     </link>
@@ -42,7 +42,7 @@
                 <mesh filename="file://hexy_urdf_v2_dae/hexy_urdf_v2_Femur_1_vis_1.dae" />
             </geometry>
             <material name="Femur_1_material">
-                <color rgba="1.000000 1.000000 1.000000 1.0" />
+                <color rgba="0.000000 0.500000 0.7500000 1.0" />
             </material>
         </visual>
     </link>
@@ -59,7 +59,7 @@
                 <mesh filename="file://hexy_urdf_v2_dae/hexy_urdf_v2_Tibia_1_vis_1.dae" />
             </geometry>
             <material name="Tibia_1_material">
-                <color rgba="1.000000 1.000000 1.000000 1.0" />
+                <color rgba="0.500000 0.000000 0.500000 1.0" />
             </material>
         </visual>
     </link>
@@ -76,7 +76,7 @@
                 <mesh filename="file://hexy_urdf_v2_dae/hexy_urdf_v2_Coxa_6_vis_1.dae" />
             </geometry>
             <material name="Coxa_6_material">
-                <color rgba="1.000000 1.000000 1.000000 1.0" />
+                <color rgba="0.500000 0.750000 0.000000 1.0" />
             </material>
         </visual>
     </link>
@@ -93,7 +93,7 @@
                 <mesh filename="file://hexy_urdf_v2_dae/hexy_urdf_v2_Femur_6_vis_1.dae" />
             </geometry>
             <material name="Femur_6_material">
-                <color rgba="1.000000 1.000000 1.000000 1.0" />
+                <color rgba="0.000000 0.500000 0.7500000 1.0" />
             </material>
         </visual>
     </link>
@@ -110,7 +110,7 @@
                 <mesh filename="file://hexy_urdf_v2_dae/hexy_urdf_v2_Tibia_6_vis_1.dae" />
             </geometry>
             <material name="Tibia_6_material">
-                <color rgba="1.000000 1.000000 1.000000 1.0" />
+                <color rgba="0.500000 0.000000 0.500000 1.0" />
             </material>
         </visual>
     </link>
@@ -127,7 +127,7 @@
                 <mesh filename="file://hexy_urdf_v2_dae/hexy_urdf_v2_Coxa_5_vis_1.dae" />
             </geometry>
             <material name="Coxa_5_material">
-                <color rgba="1.000000 1.000000 1.000000 1.0" />
+                <color rgba="0.500000 0.750000 0.000000 1.0" />
             </material>
         </visual>
     </link>
@@ -144,7 +144,7 @@
                 <mesh filename="file://hexy_urdf_v2_dae/hexy_urdf_v2_Femur_5_vis_1.dae" />
             </geometry>
             <material name="Femur_5_material">
-                <color rgba="1.000000 1.000000 1.000000 1.0" />
+                <color rgba="0.000000 0.500000 0.7500000 1.0" />
             </material>
         </visual>
     </link>
@@ -161,7 +161,7 @@
                 <mesh filename="file://hexy_urdf_v2_dae/hexy_urdf_v2_Tibia_5_vis_1.dae" />
             </geometry>
             <material name="Tibia_5_material">
-                <color rgba="1.000000 1.000000 1.000000 1.0" />
+                <color rgba="0.500000 0.000000 0.500000 1.0" />
             </material>
         </visual>
     </link>
@@ -178,7 +178,7 @@
                 <mesh filename="file://hexy_urdf_v2_dae/hexy_urdf_v2_Coxa_4_vis_1.dae" />
             </geometry>
             <material name="Coxa_4_material">
-                <color rgba="1.000000 1.000000 1.000000 1.0" />
+                <color rgba="0.500000 0.750000 0.000000 1.0" />
             </material>
         </visual>
     </link>
@@ -195,7 +195,7 @@
                 <mesh filename="file://hexy_urdf_v2_dae/hexy_urdf_v2_Femur_4_vis_1.dae" />
             </geometry>
             <material name="Femur_4_material">
-                <color rgba="1.000000 1.000000 1.000000 1.0" />
+                <color rgba="0.000000 0.500000 0.7500000 1.0" />
             </material>
         </visual>
     </link>
@@ -212,7 +212,7 @@
                 <mesh filename="file://hexy_urdf_v2_dae/hexy_urdf_v2_Tibia_4_vis_1.dae" />
             </geometry>
             <material name="Tibia_4_material">
-                <color rgba="1.000000 1.000000 1.000000 1.0" />
+                <color rgba="0.500000 0.000000 0.500000 1.0" />
             </material>
         </visual>
     </link>
@@ -229,7 +229,7 @@
                 <mesh filename="file://hexy_urdf_v2_dae/hexy_urdf_v2_Coxa_3_vis_1.dae" />
             </geometry>
             <material name="Coxa_3_material">
-                <color rgba="1.000000 1.000000 1.000000 1.0" />
+                <color rgba="0.500000 0.750000 0.000000 1.0" />
             </material>
         </visual>
     </link>
@@ -246,7 +246,7 @@
                 <mesh filename="file://hexy_urdf_v2_dae/hexy_urdf_v2_Femur_3_vis_1.dae" />
             </geometry>
             <material name="Femur_3_material">
-                <color rgba="1.000000 1.000000 1.000000 1.0" />
+                <color rgba="0.000000 0.500000 0.7500000 1.0" />
             </material>
         </visual>
     </link>
@@ -263,7 +263,7 @@
                 <mesh filename="file://hexy_urdf_v2_dae/hexy_urdf_v2_Tibia_3_vis_1.dae" />
             </geometry>
             <material name="Tibia_3_material">
-                <color rgba="1.000000 1.000000 1.000000 1.0" />
+                <color rgba="0.500000 0.000000 0.500000 1.0" />
             </material>
         </visual>
     </link>
@@ -280,7 +280,7 @@
                 <mesh filename="file://hexy_urdf_v2_dae/hexy_urdf_v2_Coxa_2_vis_1.dae" />
             </geometry>
             <material name="Coxa_2_material">
-                <color rgba="1.000000 1.000000 1.000000 1.0" />
+                <color rgba="0.500000 0.750000 0.000000 1.0" />
             </material>
         </visual>
     </link>
@@ -297,7 +297,7 @@
                 <mesh filename="file://hexy_urdf_v2_dae/hexy_urdf_v2_Femur_2_vis_1.dae" />
             </geometry>
             <material name="Femur_2_material">
-                <color rgba="1.000000 1.000000 1.000000 1.0" />
+                <color rgba="0.000000 0.500000 0.7500000 1.0" />
             </material>
         </visual>
     </link>
@@ -314,7 +314,7 @@
                 <mesh filename="file://hexy_urdf_v2_dae/hexy_urdf_v2_Tibia_2_vis_1.dae" />
             </geometry>
             <material name="Tibia_2_material">
-                <color rgba="1.000000 1.000000 1.000000 1.0" />
+                <color rgba="0.500000 0.000000 0.500000 1.0" />
             </material>
         </visual>
     </link>

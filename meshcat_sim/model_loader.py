@@ -85,8 +85,7 @@ if __name__ == '__main__':
     # Load the robot in the viewer.
     viz.loadViewerModel()
     
-    # Display a robot configuration.
-    # q0 = pinocchio.neutral(model)
+    # Display a robot random configuration.
     q0 = model.random_config()
     viz.display(q0)
     viz.displayVisuals(True)

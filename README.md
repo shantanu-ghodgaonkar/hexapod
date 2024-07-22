@@ -1,3 +1,1 @@
 # Hexapod
-
-jithin

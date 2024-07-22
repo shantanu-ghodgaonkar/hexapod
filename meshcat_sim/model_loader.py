@@ -8,12 +8,17 @@ from pinocchio.visualize import MeshcatVisualizer
 class model_loader :
     def __init__(self) -> None:
         # This path refers to Pinocchio source code but you can define your own directory here.
-        self.pinocchio_model_dir = str(Path('hexy_urdf_v2_dae').absolute())
+        # self.pinocchio_model_dir = str(Path('hexy_urdf_v2_dae').absolute())
+        self.pinocchio_model_dir = str(Path('hexy_urdf_v2_3_dae').absolute())
     
         # You should change here to set up your own URDF file or just pass it as an argument of this example.
+        # self.urdf_filename = (
+        #     self.pinocchio_model_dir
+        #     + '/hexy_urdf_v2.urdf'
+        # )
         self.urdf_filename = (
             self.pinocchio_model_dir
-            + '/hexy_urdf_v2.urdf'
+            + '/hexy_urdf_v2_3.urdf'
         )
         
         # Load the urdf model

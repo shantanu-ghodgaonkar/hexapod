@@ -22,8 +22,12 @@ class model_loader :
         )
         
         # Load the urdf model
-        self.model, self.collision_model, self.visual_model  = pin.buildModelsFromUrdf(self.urdf_filename)
+        self.model, self.collision_model, self.visual_model  = pin.buildModelsFromUrdf(self.urdf_filename, geometry_types=[pin.GeometryType.COLLISION,pin.GeometryType.VISUAL])
         print("model name: " + self.model.name)
+        
+        # Add collisition pairs
+        self.collision_model.addAllCollisionPairs()
+        print("num collision pairs - initial:", len(self.collision_model.collisionPairs))
         
         # Print some information about the model
         # for name, function in self.model.__class__.__dict__.items():
@@ -32,12 +36,7 @@ class model_loader :
         # Create data required by the algorithms
         self.data, self.collision_data, self.visual_data = pin.createDatas(self.model, self.collision_model, self.visual_model)
         
-    def get_model_dir(self):
-        return self.pin_model_dir
-    
-    def get_urdf_path(self):
-        return self.model
-    
+           
     def random_config(self):
         # Sample a random configuration
         q = pin.randomConfiguration(self.model)
@@ -48,9 +47,16 @@ class model_loader :
         # Perform the forward kinematics over the kinematic tree
         pin.forwardKinematics(self.model, self.data, q)
 
+
+        # Compute all the collisions
+        self.compute_collisions(self, q)
+
+
         # Update Geometry models
         pin.updateGeometryPlacements(self.model, self.data, self.collision_model, self.collision_data)
         pin.updateGeometryPlacements(self.model, self.data, self.visual_model, self.visual_data)
+        
+        pin.updateFramePlacements(self.model, self.data)
         
         # Print out the placement of each joint of the kinematic tree
         print("\nJoint placements:")
@@ -67,7 +73,25 @@ class model_loader :
         for k, oMg in enumerate(self.visual_data.oMg):
             print(("{:d} : {: .2f} {: .2f} {: .2f}".format(k, *oMg.translation.T.flat)))
             
-        return pin.computeCollisions(self.model.collision_model, self.model.collision_data, False)
+        return q
+    
+    def compute_collisions(self, q):
+        # Compute all the collisions
+        pin.computeCollisions(self.model, self.data, self.collision_model, self.collision_data, q, False)
+ 
+        # Print the status of collision for all collision pairs
+        for k in range(len(self.collision_model.collisionPairs)):
+            cr = self.collision_data.collisionResults[k]
+            cp = self.collision_model.collisionPairs[k]
+            print(
+                "collision pair:",
+                cp.first,
+                ",",
+                cp.second,
+                "- collision:",
+                "Yes" if cr.isCollision() else "No",
+            )
+
 
             
             
@@ -100,4 +124,26 @@ if __name__ == '__main__':
     # Display a robot random configuration.
     q0 = model.random_config()
     viz.display(q0)
+    model.compute_collisions(q0)
     viz.displayVisuals(True)
+    
+    # from time import sleep
+    
+    
+    # for i in range(0,30):
+    #     sleep(1)
+    #     viz.display(model.random_config())  
+    
+    # import numpy as np
+    
+    # viz.display(model.forward_kinematics(np.zeros(18)))
+    # viz.displayVisuals(True)
+    
+    # from time import sleep
+    
+    
+    # for i in range(0,30):
+    #     sleep(1)
+    #     viz.display(model.forward_kinematics(np.zeros(18)))
+    #     sleep(1)
+    #     viz.display(model.forward_kinematics(np.ones(18)))  

@@ -3,21 +3,15 @@ from sys import argv
 import sys
 from pathlib import Path
 from pinocchio.visualize import MeshcatVisualizer
-import meshcat.geometry as g
 import numpy as np
  
  
 class model_loader :
     def __init__(self) -> None:
         # This path refers to pin source code but you can define your own directory here.
-        # self.pin_model_dir = str(Path('hexy_urdf_v2_dae').absolute())
         self.pin_model_dir = str(Path('hexy_urdf_v2_4_1_dae').absolute())
     
         # You should change here to set up your own URDF file or just pass it as an argument of this example.
-        # self.urdf_filename = (
-        #     self.pin_model_dir
-        #     + '/hexy_urdf_v2.urdf'
-        # )
         self.urdf_filename = (
             self.pin_model_dir
             + '/hexy_urdf_v2_4.urdf'
@@ -75,7 +69,7 @@ class model_loader :
         pin.updateGeometryPlacements(self.model, self.data, self.collision_model, self.collision_data)
         pin.updateGeometryPlacements(self.model, self.data, self.visual_model, self.visual_data)
         
-        # pin.updateFramePlacements(self.model, self.data)
+        pin.updateFramePlacements(self.model, self.data)
         
         # Print out the placement of each joint of the kinematic tree
         print("\nJoint placements:")
@@ -131,24 +125,11 @@ if __name__ == '__main__':
     
     viz.displayFrames(visibility=True)
     viz.displayCollisions(visibility=True)
-    # viz.displayVisuals(visibility=True)
-    
-    # Display a robot random configuration.
-    # q0 = model.random_config()
-    # viz.display(q0)
-    # model.compute_collisions(q0)
-    # viz.displayVisuals(True)
     
     import numpy as np
     import math
     from time import sleep
-    
-    # for i in range(0,30):
-    #     sleep(1)
-    #     viz.display(np.zeros(18))
-    #     sleep(1)
-    #     viz.display(np.ones(18))  
-    
+   
     
     # HOME CONFIG
     q0 = np.zeros(18)
@@ -251,26 +232,3 @@ if __name__ == '__main__':
         q_fin_9 =np.concatenate((q1_9, q2_9, q3_9, q4_9, q5_9, q6_9)) 
         viz.display(q_fin_9)
         sleep(1.5)
-        
-        
-        # # L135 : DN + BACK
-        # # L246 : UP + FORW
-        # q1_10 = np.array([0, 0, 0])
-        # q2_10 = np.array([-math.pi/6, -math.pi/9, 0])
-        # q3_10 = np.array([math.pi/6, 0, 0])
-        # q4_10 = np.array([-math.pi/6, math.pi/9, 0])
-        # q5_10 = np.array([-math.pi/6, 0, 0])
-        # q6_10 = np.array([math.pi/6, math.pi/9, 0])
-        # q_fin_10 =np.concatenate((q1_10, q2_10, q3_10, q4_10, q5_10, q6_10)) 
-        # viz.display(q_fin_10)
-        # sleep(1.5)
-    
-    # q1_11 = np.array([math.pi/6, 0, 0])
-    # q2_11 = np.array([0, -math.pi/9, 0])
-    # q3_11 = np.array([-math.pi/6, 0, 0])
-    # q4_11 = np.array([math.pi/6, math.pi/9, 0])
-    # q5_11 = np.array([math.pi/6, 0, 0])
-    # q6_11 = np.array([-math.pi/6, math.pi/9, 0])
-    # q_fin_11 =np.concatenate((q1_11, q2_11, q3_11, q4_11, q5_11, q6_11)) 
-    # # viz.display(q_fin_11)
-    # # sleep(1.5)

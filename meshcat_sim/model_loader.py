@@ -4,6 +4,7 @@ import sys
 from pathlib import Path
 from pinocchio.visualize import MeshcatVisualizer
 import meshcat.geometry as g
+import numpy as np
  
  
 class model_loader :
@@ -99,9 +100,6 @@ class model_loader :
         p = np.array(xyzrpy[:3])
         return pin.SE3(R, p)
     
-    
-
-
             
             
             
@@ -151,15 +149,128 @@ if __name__ == '__main__':
     #     sleep(1)
     #     viz.display(np.ones(18))  
     
+    
+    # HOME CONFIG
     q0 = np.zeros(18)
-    q1_1 = np.array([-math.pi/3, -math.pi/8, 0])
-    # q2_0 = np.append(np.zeros(3), np.append([0, -math.pi/4, 0], np.zeros(12)))
-    # q2_1 = np.append(np.zeros(3), np.append([0, -math.pi/4, math.pi/2], np.zeros(12)))
-    q3_1 = np.array([math.pi/3, -math.pi/8, 0])
-    q5_1 = np.array([0, math.pi/6, 0])
-    q5_2 = np.array([0, math.pi/6, -math.pi/2])
-    q_fin =np.concatenate((q1_1, np.zeros(3), q3_1, np.zeros(3), q5_2, np.zeros(3))) 
-    viz.display(q_fin)
+    viz.display(q0)
+    sleep(1.5)
     
+    # L135 : UP
+    # L246 : DN
+    q1_1 = np.array([0, 0, 0])
+    q2_1 = np.array([0, 0, 0])
+    q3_1 = np.array([0, -math.pi/9, 0])
+    q4_1 = np.array([0, 0, 0])
+    q5_1 = np.array([0, math.pi/9, 0])
+    q6_1 = np.array([0, 0, 0])
+    q_fin_1 =np.concatenate((q1_1, q2_1, q3_1, q4_1, q5_1, q6_1)) 
+    viz.display(q_fin_1)
+    sleep(1.5)
     
+    # L135 : UP + FORW
+    # L246 : DN
+    q1_2 = np.array([0, 0, 0])
+    q2_2 = np.array([0, 0, 0])
+    q3_2 = np.array([math.pi/6, -math.pi/9, 0])
+    q4_2 = np.array([0, 0, 0])
+    q5_2 = np.array([-math.pi/6, math.pi/9, 0])
+    q6_2 = np.array([0, 0, 0])
+    q_fin_2 =np.concatenate((q1_2, q2_2, q3_2, q4_2, q5_2, q6_2)) 
+    viz.display(q_fin_2)
+    sleep(1.5)    
     
+    # L135 : DN + FORW
+    # L246 : DN
+    q1_3 = np.array([0, 0, 0])
+    q2_3 = np.array([0, 0, 0])
+    q3_3 = np.array([math.pi/6, 0, 0])
+    q4_3 = np.array([0, 0, 0])
+    q5_3 = np.array([-math.pi/6, 0, 0])
+    q6_3 = np.array([0, 0, 0])
+    q_fin_3 =np.concatenate((q1_3, q2_3, q3_3, q4_3, q5_3, q6_3)) 
+    viz.display(q_fin_3)
+    sleep(1.5)
+    
+    # L135 : DN + FORW
+    # L246 : UP
+    q1_4 = np.array([0, 0, 0])
+    q2_4 = np.array([0, -math.pi/9, 0])
+    q3_4 = np.array([math.pi/6, 0, 0])
+    q4_4 = np.array([0, math.pi/9, 0])
+    q5_4 = np.array([-math.pi/6, 0, 0])
+    q6_4 = np.array([0, math.pi/9, 0])
+    q_fin_4 =np.concatenate((q1_4, q2_4, q3_4, q4_4, q5_4, q6_4)) 
+    viz.display(q_fin_4)
+    sleep(1.5)
+    
+    while(1):
+        # L135 : DN + BACK
+        # L246 : UP + FORW
+        q1_7 = np.array([math.pi/6, 0, 0])
+        q2_7 = np.array([0, -math.pi/9, 0])
+        q3_7 = np.array([-math.pi/6, 0, 0])
+        q4_7 = np.array([math.pi/6, math.pi/9, 0])
+        q5_7 = np.array([math.pi/6, 0, 0])
+        q6_7 = np.array([-math.pi/6, math.pi/9, 0])
+        q_fin_7 =np.concatenate((q1_7, q2_7, q3_7, q4_7, q5_7, q6_7)) 
+        viz.display(q_fin_7)
+        sleep(1.5)
+        
+        # L135 : DN + BACK
+        # L246 : DN + FORW
+        q1_8 = np.array([math.pi/6, 0, 0])
+        q2_8 = np.array([0, 0, 0])
+        q3_8 = np.array([-math.pi/6, 0, 0])
+        q4_8 = np.array([math.pi/6, 0, 0])
+        q5_8 = np.array([math.pi/6, 0, 0])
+        q6_8 = np.array([-math.pi/6, 0, 0])
+        q_fin_8 =np.concatenate((q1_8, q2_8, q3_8, q4_8, q5_8, q6_8)) 
+        viz.display(q_fin_8)
+        sleep(1.5)
+        
+        # L135 : UP + FORW
+        # L246 : DN + BACK
+        q1_8 = np.array([0, -math.pi/9, 0])
+        q2_8 = np.array([-math.pi/6, 0, 0])
+        q3_8 = np.array([math.pi/6, -math.pi/9, 0])
+        q4_8 = np.array([-math.pi/6, 0, 0])
+        q5_8 = np.array([-math.pi/6, math.pi/9, 0])
+        q6_8 = np.array([math.pi/6, 0, 0])
+        q_fin_8 =np.concatenate((q1_8, q2_8, q3_8, q4_8, q5_8, q6_8)) 
+        viz.display(q_fin_8)
+        sleep(1.5)
+        
+        # L135 : DN + FORW
+        # L246 : DN + BACK
+        q1_9 = np.array([0, 0, 0])
+        q2_9 = np.array([-math.pi/6, 0, 0])
+        q3_9 = np.array([math.pi/6, 0, 0])
+        q4_9 = np.array([-math.pi/6, 0, 0])
+        q5_9 = np.array([-math.pi/6, 0, 0])
+        q6_9 = np.array([math.pi/6, 0, 0])
+        q_fin_9 =np.concatenate((q1_9, q2_9, q3_9, q4_9, q5_9, q6_9)) 
+        viz.display(q_fin_9)
+        sleep(1.5)
+        
+        
+        # # L135 : DN + BACK
+        # # L246 : UP + FORW
+        # q1_10 = np.array([0, 0, 0])
+        # q2_10 = np.array([-math.pi/6, -math.pi/9, 0])
+        # q3_10 = np.array([math.pi/6, 0, 0])
+        # q4_10 = np.array([-math.pi/6, math.pi/9, 0])
+        # q5_10 = np.array([-math.pi/6, 0, 0])
+        # q6_10 = np.array([math.pi/6, math.pi/9, 0])
+        # q_fin_10 =np.concatenate((q1_10, q2_10, q3_10, q4_10, q5_10, q6_10)) 
+        # viz.display(q_fin_10)
+        # sleep(1.5)
+    
+    # q1_11 = np.array([math.pi/6, 0, 0])
+    # q2_11 = np.array([0, -math.pi/9, 0])
+    # q3_11 = np.array([-math.pi/6, 0, 0])
+    # q4_11 = np.array([math.pi/6, math.pi/9, 0])
+    # q5_11 = np.array([math.pi/6, 0, 0])
+    # q6_11 = np.array([-math.pi/6, math.pi/9, 0])
+    # q_fin_11 =np.concatenate((q1_11, q2_11, q3_11, q4_11, q5_11, q6_11)) 
+    # # viz.display(q_fin_11)
+    # # sleep(1.5)

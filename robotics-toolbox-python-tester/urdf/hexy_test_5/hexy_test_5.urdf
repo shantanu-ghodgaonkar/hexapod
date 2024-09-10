@@ -1,0 +1,392 @@
+<?xml version="1.0"?>
+<robot name="base_link">
+    <link name="robot_base">
+        <visual name="base_link">
+            <origin xyz="0.000000 0.000000 0.390000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/shantanu/Documents/hexy_test_5/hexy_test_5_robot_base_vis_1.dae" />
+            </geometry>
+            <material name="robot_base_material">
+                <color rgba="0.600000 0.600000 0.600000 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint type="revolute" name="Revolute_joint_01">
+        <axis xyz="0 0 1" />
+        <limit upper="1.0471975511967" velocity="10.786134777326" lower="-1.0471975511967" effort="0.52" />
+        <parent link="robot_base" />
+        <child link="Coxa_1" />
+        <origin xyz="0.000000 -0.797000 0.397500" rpy="-3.141593 3.141593 -3.141593" />
+    </joint>
+    <link name="Coxa_1">
+        <visual name="Coxa_1">
+            <origin xyz="0.000000 -0.116542 -0.007500" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/shantanu/Documents/hexy_test_5/hexy_test_5_Coxa_1_vis_1.dae" />
+            </geometry>
+            <material name="Coxa_1_material">
+                <color rgba="0.500000 0.750000 0.000000 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint type="revolute" name="Revolute_joint_11">
+        <axis xyz="0 0 1" />
+        <limit upper="1.0471975511967" velocity="10.786134777326" lower="-1.0471975511967" effort="0.52" />
+        <parent link="Coxa_1" />
+        <child link="Femur_1" />
+        <origin xyz="0.000000 -0.234000 -0.007500" rpy="-1.570796 2.373648 -1.570796" />
+    </joint>
+    <link name="Femur_1">
+        <visual name="Femur_1">
+            <origin xyz="-0.099914 -0.029706 -0.000000" rpy="-0.872665 -1.570796 0.000000" />
+            <geometry>
+                <mesh filename="file:///home/shantanu/Documents/hexy_test_5/hexy_test_5_Femur_1_vis_1.dae" />
+            </geometry>
+            <material name="Femur_1_material">
+                <color rgba="0.000000 0.500000 0.750000 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint type="revolute" name="Revolute_joint_21">
+        <axis xyz="0 0 1" />
+        <limit upper="1.0471975511967" velocity="10.786134777326" lower="-1.0471975511967" effort="0.52" />
+        <parent link="Femur_1" />
+        <child link="Tibia_1" />
+        <origin xyz="-0.218000 -0.067500 -0.000000" rpy="3.141593 3.141593 -1.884956" />
+    </joint>
+    <link name="Tibia_1">
+        <visual name="Tibia_1">
+            <origin xyz="-0.150134 -0.159678 0.000000" rpy="-1.919862 -1.570796 0.000000" />
+            <geometry>
+                <mesh filename="file:///home/shantanu/Documents/hexy_test_5/hexy_test_5_Tibia_1_vis_1.dae" />
+            </geometry>
+            <material name="Tibia_1_material">
+                <color rgba="0.500000 0.000000 0.500000 1.0" />
+            </material>
+        </visual>
+        <visual name="Foot_1">
+            <origin xyz="-0.352919 -0.364908 -0.020000" rpy="-2.059489 -1.570796 0.000000" />
+            <geometry>
+                <sphere radius="0.005" />
+            </geometry>
+            <material name="Foot_1_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint type="revolute" name="Revolute_joint_06">
+        <axis xyz="0 0 1" />
+        <limit upper="1.0471975511967" velocity="10.786134777326" lower="-1.0471975511967" effort="0.52" />
+        <parent link="robot_base" />
+        <child link="Coxa_6" />
+        <origin xyz="-0.690000 -0.398000 0.397500" rpy="-3.141593 3.141593 -3.141593" />
+    </joint>
+    <link name="Coxa_6">
+        <visual name="Coxa_6">
+            <origin xyz="-0.120285 -0.085228 -0.007500" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/shantanu/Documents/hexy_test_5/hexy_test_5_Coxa_6_vis_1.dae" />
+            </geometry>
+            <material name="Coxa_6_material">
+                <color rgba="0.500000 0.750000 0.000000 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint type="revolute" name="Revolute_joint_16">
+        <axis xyz="0 0 1" />
+        <limit upper="1.0471975511967" velocity="10.786134777326" lower="-1.0471975511967" effort="0.52" />
+        <parent link="Coxa_6" />
+        <child link="Femur_6" />
+        <origin xyz="-0.199000 -0.125000 -0.007500" rpy="-1.570796 2.373648 -2.617994" />
+    </joint>
+    <link name="Femur_6">
+        <visual name="Femur_6">
+            <origin xyz="-0.111148 -0.039449 0.000319" rpy="1.570796 3.665191 -2.443461" />
+            <geometry>
+                <mesh filename="file:///home/shantanu/Documents/hexy_test_5/hexy_test_5_Femur_6_vis_1.dae" />
+            </geometry>
+            <material name="Femur_6_material">
+                <color rgba="0.000000 0.500000 0.750000 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint type="revolute" name="Revolute_joint_26">
+        <axis xyz="0 0 1" />
+        <limit upper="1.0471975511967" velocity="10.786134777326" lower="-1.0471975511967" effort="0.52" />
+        <parent link="Femur_6" />
+        <child link="Tibia_6" />
+        <origin xyz="-0.217086 -0.067500 -0.005997" rpy="3.141593 3.141593 -1.866979" />
+    </joint>
+    <link name="Tibia_6">
+        <visual name="Tibia_6">
+            <origin xyz="-0.158421 -0.156884 0.003144" rpy="1.570796 3.665191 2.792527" />
+            <geometry>
+                <mesh filename="file:///home/shantanu/Documents/hexy_test_5/hexy_test_5_Tibia_6_vis_1.dae" />
+            </geometry>
+            <material name="Tibia_6_material">
+                <color rgba="0.500000 0.000000 0.500000 1.0" />
+            </material>
+        </visual>
+        <visual name="Foot_6">
+            <origin xyz="-0.355585 -0.359908 -0.006305" rpy="1.570796 3.665191 2.634924" />
+            <geometry>
+                <sphere radius="0.005" />
+            </geometry>
+            <material name="Foot_6_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint type="revolute" name="Revolute_joint_05">
+        <axis xyz="0 0 1" />
+        <limit upper="1.0471975511967" velocity="10.786134777326" lower="-1.0471975511967" effort="0.52" />
+        <parent link="robot_base" />
+        <child link="Coxa_5" />
+        <origin xyz="-0.690000 0.398000 0.397500" rpy="-3.141593 3.141593 2.705260" />
+    </joint>
+    <link name="Coxa_5">
+        <visual name="Coxa_5">
+            <origin xyz="-0.143118 0.016863 -0.007500" rpy="-3.141593 3.141593 -2.705260" />
+            <geometry>
+                <mesh filename="file:///home/shantanu/Documents/hexy_test_5/hexy_test_5_Coxa_5_vis_1.dae" />
+            </geometry>
+            <material name="Coxa_5_material">
+                <color rgba="0.500000 0.750000 0.000000 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint type="revolute" name="Revolute_joint_15">
+        <axis xyz="0 0 1" />
+        <limit upper="1.0471975511967" velocity="10.786134777326" lower="-1.0471975511967" effort="0.52" />
+        <parent link="Coxa_5" />
+        <child link="Femur_5" />
+        <origin xyz="-0.234000 0.005000 -0.007500" rpy="-1.570796 2.373648 -3.141593" />
+    </joint>
+    <link name="Femur_5">
+        <visual name="Femur_5">
+            <origin xyz="-0.110534 -0.038323 -0.006270" rpy="1.570796 2.705260 -2.443461" />
+            <geometry>
+                <mesh filename="file:///home/shantanu/Documents/hexy_test_5/hexy_test_5_Femur_5_vis_1.dae" />
+            </geometry>
+            <material name="Femur_5_material">
+                <color rgba="0.000000 0.500000 0.750000 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint type="revolute" name="Revolute_joint_25">
+        <axis xyz="0 0 1" />
+        <limit upper="1.0471975511967" velocity="10.786134777326" lower="-1.0471975511967" effort="0.52" />
+        <parent link="Femur_5" />
+        <child link="Tibia_5" />
+        <origin xyz="-0.218500 -0.067500 0.003000" rpy="3.141593 3.141593 -1.884956" />
+    </joint>
+    <link name="Tibia_5">
+        <visual name="Tibia_5">
+            <origin xyz="-0.157019 -0.157117 -0.005324" rpy="1.570796 2.705260 2.792527" />
+            <geometry>
+                <mesh filename="file:///home/shantanu/Documents/hexy_test_5/hexy_test_5_Tibia_5_vis_1.dae" />
+            </geometry>
+            <material name="Tibia_5_material">
+                <color rgba="0.500000 0.000000 0.500000 1.0" />
+            </material>
+        </visual>
+        <visual name="Foot_5">
+            <origin xyz="-0.365688 -0.358512 -0.019561" rpy="1.570796 2.705260 2.652900" />
+            <geometry>
+                <sphere radius="0.005" />
+            </geometry>
+            <material name="Foot_5_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint type="revolute" name="Revolute_joint_04">
+        <axis xyz="0 0 1" />
+        <limit upper="1.0471975511967" velocity="10.786134777326" lower="-1.0471975511967" effort="0.52" />
+        <parent link="robot_base" />
+        <child link="Coxa_4" />
+        <origin xyz="0.000000 0.800000 0.397500" rpy="-3.141593 3.141593 -3.141593" />
+    </joint>
+    <link name="Coxa_4">
+        <visual name="Coxa_4">
+            <origin xyz="0.000000 0.113542 -0.007500" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/shantanu/Documents/hexy_test_5/hexy_test_5_Coxa_4_vis_1.dae" />
+            </geometry>
+            <material name="Coxa_4_material">
+                <color rgba="0.500000 0.750000 0.000000 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint type="revolute" name="Revolute_joint_14">
+        <axis xyz="0 0 1" />
+        <limit upper="1.0471975511967" velocity="10.786134777326" lower="-1.0471975511967" effort="0.52" />
+        <parent link="Coxa_4" />
+        <child link="Femur_4" />
+        <origin xyz="0.001000 0.231500 -0.007500" rpy="-1.570796 3.909538 -1.570796" />
+    </joint>
+    <link name="Femur_4">
+        <visual name="Femur_4">
+            <origin xyz="0.099414 -0.029706 -0.001000" rpy="-2.268928 -1.570796 0.000000" />
+            <geometry>
+                <mesh filename="file:///home/shantanu/Documents/hexy_test_5/hexy_test_5_Femur_4_vis_1.dae" />
+            </geometry>
+            <material name="Femur_4_material">
+                <color rgba="0.000000 0.500000 0.750000 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint type="revolute" name="Revolute_joint_24">
+        <axis xyz="0 0 1" />
+        <limit upper="1.0471975511967" velocity="10.786134777326" lower="-1.0471975511967" effort="0.52" />
+        <parent link="Femur_4" />
+        <child link="Tibia_4" />
+        <origin xyz="0.216000 -0.067500 -0.001000" rpy="-3.141593 3.141593 1.884956" />
+    </joint>
+    <link name="Tibia_4">
+        <visual name="Tibia_4">
+            <origin xyz="0.151634 -0.159678 -0.000000" rpy="-1.221730 -1.570796 0.000000" />
+            <geometry>
+                <mesh filename="file:///home/shantanu/Documents/hexy_test_5/hexy_test_5_Tibia_4_vis_1.dae" />
+            </geometry>
+            <material name="Tibia_4_material">
+                <color rgba="0.500000 0.000000 0.500000 1.0" />
+            </material>
+        </visual>
+        <visual name="Foot_4">
+            <origin xyz="0.335436 -0.372630 -0.007000" rpy="-1.082104 -1.570796 0.000000" />
+            <geometry>
+                <sphere radius="0.005" />
+            </geometry>
+            <material name="Foot_4_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint type="revolute" name="Revolute_joint_03">
+        <axis xyz="0 0 1" />
+        <limit upper="1.0471975511967" velocity="10.786134777326" lower="-1.0471975511967" effort="0.52" />
+        <parent link="robot_base" />
+        <child link="Coxa_3" />
+        <origin xyz="0.690000 0.400000 0.397500" rpy="-3.141593 3.141593 -3.141593" />
+    </joint>
+    <link name="Coxa_3">
+        <visual name="Coxa_3">
+            <origin xyz="0.120285 0.083228 -0.007500" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/shantanu/Documents/hexy_test_5/hexy_test_5_Coxa_3_vis_1.dae" />
+            </geometry>
+            <material name="Coxa_3_material">
+                <color rgba="0.500000 0.750000 0.000000 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint type="revolute" name="Revolute_joint_13">
+        <axis xyz="0 0 1" />
+        <limit upper="1.0471975511967" velocity="10.786134777326" lower="-1.0471975511967" effort="0.52" />
+        <parent link="Coxa_3" />
+        <child link="Femur_3" />
+        <origin xyz="0.203531 0.115088 -0.007000" rpy="-1.570796 3.909538 -2.617994" />
+    </joint>
+    <link name="Femur_3">
+        <visual name="Femur_3">
+            <origin xyz="0.111179 -0.039949 -0.009436" rpy="1.570796 3.665191 2.443461" />
+            <geometry>
+                <mesh filename="file:///home/shantanu/Documents/hexy_test_5/hexy_test_5_Femur_3_vis_1.dae" />
+            </geometry>
+            <material name="Femur_3_material">
+                <color rgba="0.000000 0.500000 0.750000 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint type="revolute" name="Revolute_joint_23">
+        <axis xyz="0 0 1" />
+        <limit upper="1.0471975511967" velocity="10.786134777326" lower="-1.0471975511967" effort="0.52" />
+        <parent link="Femur_3" />
+        <child link="Tibia_3" />
+        <origin xyz="0.217205 -0.067000 -0.005253" rpy="3.141593 3.141593 1.884956" />
+    </joint>
+    <link name="Tibia_3">
+        <visual name="Tibia_3">
+            <origin xyz="0.158333 -0.157884 -0.001011" rpy="1.570796 3.665191 -2.792527" />
+            <geometry>
+                <mesh filename="file:///home/shantanu/Documents/hexy_test_5/hexy_test_5_Tibia_3_vis_1.dae" />
+            </geometry>
+            <material name="Tibia_3_material">
+                <color rgba="0.500000 0.000000 0.500000 1.0" />
+            </material>
+        </visual>
+        <visual name="Foot_3">
+            <origin xyz="0.345581 -0.369158 0.012634" rpy="1.570796 3.665191 -2.652900" />
+            <geometry>
+                <sphere radius="0.005" />
+            </geometry>
+            <material name="Foot_3_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint type="revolute" name="Revolute_joint_02">
+        <axis xyz="0 0 1" />
+        <limit upper="1.0471975511967" velocity="10.786134777326" lower="-1.0471975511967" effort="0.52" />
+        <parent link="robot_base" />
+        <child link="Coxa_2" />
+        <origin xyz="0.690000 -0.400000 0.397500" rpy="-3.141593 3.141593 2.705260" />
+    </joint>
+    <link name="Coxa_2">
+        <visual name="Coxa_2">
+            <origin xyz="0.143118 -0.014863 -0.007500" rpy="-3.141593 3.141593 -2.705260" />
+            <geometry>
+                <mesh filename="file:///home/shantanu/Documents/hexy_test_5/hexy_test_5_Coxa_2_vis_1.dae" />
+            </geometry>
+            <material name="Coxa_2_material">
+                <color rgba="0.500000 0.750000 0.000000 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint type="revolute" name="Revolute_joint_12">
+        <axis xyz="0 0 1" />
+        <limit upper="1.0471975511967" velocity="10.786134777326" lower="-1.0471975511967" effort="0.52" />
+        <parent link="Coxa_2" />
+        <child link="Femur_2" />
+        <origin xyz="0.234500 -0.000500 -0.007500" rpy="-1.570796 3.909538 3.141593" />
+    </joint>
+    <link name="Femur_2">
+        <visual name="Femur_2">
+            <origin xyz="0.110034 -0.038323 0.008770" rpy="1.570796 2.705260 2.443461" />
+            <geometry>
+                <mesh filename="file:///home/shantanu/Documents/hexy_test_5/hexy_test_5_Femur_2_vis_1.dae" />
+            </geometry>
+            <material name="Femur_2_material">
+                <color rgba="0.000000 0.500000 0.750000 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint type="revolute" name="Revolute_joint_22">
+        <axis xyz="0 0 1" />
+        <limit upper="1.0471975511967" velocity="10.786134777326" lower="-1.0471975511967" effort="0.52" />
+        <parent link="Femur_2" />
+        <child link="Tibia_2" />
+        <origin xyz="0.217000 -0.068500 -0.004000" rpy="-3.141593 3.141593 1.884956" />
+    </joint>
+    <link name="Tibia_2">
+        <visual name="Tibia_2">
+            <origin xyz="0.158019 -0.156117 0.008824" rpy="1.570796 2.705260 -2.792527" />
+            <geometry>
+                <mesh filename="file:///home/shantanu/Documents/hexy_test_5/hexy_test_5_Tibia_2_vis_1.dae" />
+            </geometry>
+            <material name="Tibia_2_material">
+                <color rgba="0.500000 0.000000 0.500000 1.0" />
+            </material>
+        </visual>
+        <visual name="Foot_2">
+            <origin xyz="0.337983 -0.371248 0.021548" rpy="1.570796 2.705260 -2.652900" />
+            <geometry>
+                <sphere radius="0.005" />
+            </geometry>
+            <material name="Foot_2_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+    </link>
+</robot>

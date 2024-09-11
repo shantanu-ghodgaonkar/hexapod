@@ -1,4 +1,4 @@
-import pinocchio
+import pinocchio as pin
 from sys import argv
 import sys
 from pathlib import Path
@@ -7,41 +7,50 @@ from pinocchio.visualize import MeshcatVisualizer
  
 class model_loader :
     def __init__(self) -> None:
-        # This path refers to Pinocchio source code but you can define your own directory here.
-        self.pinocchio_model_dir = str(Path('hexy_urdf_v2_dae').absolute())
+        # This path refers to pin source code but you can define your own directory here.
+        # self.pin_model_dir = str(Path('hexy_urdf_v2_dae').absolute())
+        self.pin_model_dir = str(Path('hexy_urdf_v2_4_dae').absolute())
     
         # You should change here to set up your own URDF file or just pass it as an argument of this example.
+        # self.urdf_filename = (
+        #     self.pin_model_dir
+        #     + '/hexy_urdf_v2.urdf'
+        # )
         self.urdf_filename = (
-            self.pinocchio_model_dir
-            + '/hexy_urdf_v2.urdf'
+            self.pin_model_dir
+            + '/hexy_urdf_v2_4.urdf'
         )
         
         # Load the urdf model
-        self.model, self.collision_model, self.visual_model  = pinocchio.buildModelsFromUrdf(self.urdf_filename)
+        self.model, self.collision_model, self.visual_model  = pin.buildModelsFromUrdf(self.urdf_filename)
         print("model name: " + self.model.name)
         
+        # Print some information about the model
+        # for name, function in self.model.__class__.__dict__.items():
+        #     print(' **** %s: %s' % (name, function.__doc__))
+        
         # Create data required by the algorithms
-        self.data, self.collision_data, self.visual_data = pinocchio.createDatas(self.model, self.collision_model, self.visual_model)
+        self.data, self.collision_data, self.visual_data = pin.createDatas(self.model, self.collision_model, self.visual_model)
         
     def get_model_dir(self):
-        return self.pinocchio_model_dir
+        return self.pin_model_dir
     
     def get_urdf_path(self):
         return self.model
     
     def random_config(self):
         # Sample a random configuration
-        q = pinocchio.randomConfiguration(self.model)
+        q = pin.randomConfiguration(self.model)
         print("q: %s" % q.T)
         return q
     
     def forward_kinematics(self, q):
         # Perform the forward kinematics over the kinematic tree
-        pinocchio.forwardKinematics(self.model, self.data, q)
+        pin.forwardKinematics(self.model, self.data, q)
 
         # Update Geometry models
-        pinocchio.updateGeometryPlacements(self.model, self.data, self.collision_model, self.collision_data)
-        pinocchio.updateGeometryPlacements(self.model, self.data, self.visual_model, self.visual_data)
+        pin.updateGeometryPlacements(self.model, self.data, self.collision_model, self.collision_data)
+        pin.updateGeometryPlacements(self.model, self.data, self.visual_model, self.visual_data)
         
         # Print out the placement of each joint of the kinematic tree
         print("\nJoint placements:")
@@ -57,6 +66,9 @@ class model_loader :
         print("\nVisual object placements:")
         for k, oMg in enumerate(self.visual_data.oMg):
             print(("{:d} : {: .2f} {: .2f} {: .2f}".format(k, *oMg.translation.T.flat)))
+            
+        return pin.computeCollisions(self.model.collision_model, self.model.collision_data, False)
+
             
             
             

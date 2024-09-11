@@ -23,8 +23,11 @@ class model_loader:
     def __init__(self) -> None:
         # This path refers to pin source code but you can define your own directory here.
         # self.pin_model_dir = str(Path('hexy_urdf_v2_4_1_dae').absolute())
-        self.pin_model_dir = str(
-            Path('/home/shantanu/Documents/hexy_test_5').absolute())
+
+        # self.pin_model_dir = str(
+        #     Path('/home/shantanu/Documents/hexy_test_5').absolute())
+
+        self.pin_model_dir = str(Path('re').absolute())
 
         # You should change here to set up your own URDF file or just pass it as an argument of this example.
         # self.urdf_filename = (
@@ -34,7 +37,7 @@ class model_loader:
 
         self.urdf_filename = (
             self.pin_model_dir
-            + '/hexy_test_5.urdf'
+            + '/IKTRials_redone naming convention.urdf'
         )
 
         # Load the urdf model

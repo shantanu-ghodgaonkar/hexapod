@@ -106,6 +106,12 @@
                 <color rgba="0.500000 0.750000 0.000000 1.0" />
             </material>
         </visual>
+        <collision>
+            <origin xyz="0.690000 0.398000 -0.100000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file://hexy_urdf_v2_4_dae/hexy_urdf_v2_4_Coxa_6_vis_1.dae" />
+            </geometry>
+        </collision>
     </link>
     <joint name="Revolute_joint_9" type="revolute">
         <axis xyz="0 0 1" />
@@ -124,6 +130,12 @@
                 <color rgba="0.000000 0.500000 0.7500000 1.0" />
             </material>
         </visual>
+        <collision>
+            <origin xyz="1.031397 -0.092500 -0.008431" rpy="1.570796 3.665191 -3.141593" />
+            <geometry>
+                <mesh filename="file://hexy_urdf_v2_4_dae/hexy_urdf_v2_4_Femur_6_vis_1.dae" />
+            </geometry>
+        </collision>
     </link>
     <joint name="Revolute_joint_10" type="revolute">
         <axis xyz="0 0 1" />
@@ -142,6 +154,12 @@
                 <color rgba="0.500000 0.000000 0.500000 1.0" />
             </material>
         </visual>
+        <collision>
+            <origin xyz="1.248482 -0.025000 -0.002434" rpy="1.570796 3.665191 -3.141593" />
+            <geometry>
+                <mesh filename="file://hexy_urdf_v2_4_dae/hexy_urdf_v2_4_Tibia_6_vis_1.dae" />
+            </geometry>
+        </collision>
     </link>
     <joint name="Revolute_joint_3" type="revolute">
         <axis xyz="0 0 1" />
@@ -160,6 +178,12 @@
                 <color rgba="0.500000 0.750000 0.000000 1.0" />
             </material>
         </visual>
+        <collision>
+            <origin xyz="0.457150 -0.652317 -0.100000" rpy="-3.141593 3.141593 2.705260" />
+            <geometry>
+                <mesh filename="file://hexy_urdf_v2_4_dae/hexy_urdf_v2_4_Coxa_5_vis_1.dae" />
+            </geometry>
+        </collision>
     </link>
     <joint name="Revolute_joint_11" type="revolute">
         <axis xyz="0 0 1" />
@@ -178,6 +202,12 @@
                 <color rgba="0.000000 0.500000 0.7500000 1.0" />
             </material>
         </visual>
+        <collision>
+            <origin xyz="0.924000 -0.092500 0.403000" rpy="1.570796 3.141593 3.141593" />
+            <geometry>
+                <mesh filename="file://hexy_urdf_v2_4_dae/hexy_urdf_v2_4_Femur_5_vis_1.dae" />
+            </geometry>
+        </collision>
     </link>
     <joint name="Revolute_joint_12" type="revolute">
         <axis xyz="0 0 1" />
@@ -196,6 +226,12 @@
                 <color rgba="0.500000 0.000000 0.500000 1.0" />
             </material>
         </visual>
+        <collision>
+            <origin xyz="1.142500 -0.025000 0.400000" rpy="1.570796 3.141593 3.141593" />
+            <geometry>
+                <mesh filename="file://hexy_urdf_v2_4_dae/hexy_urdf_v2_4_Tibia_5_vis_1.dae" />
+            </geometry>
+        </collision>
     </link>
     <joint name="Revolute_joint_4" type="revolute">
         <axis xyz="0 0 1" />
@@ -214,6 +250,12 @@
                 <color rgba="0.500000 0.750000 0.000000 1.0" />
             </material>
         </visual>
+        <collision>
+            <origin xyz="0.000000 -0.800000 -0.100000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file://hexy_urdf_v2_4_dae/hexy_urdf_v2_4_Coxa_4_vis_1.dae" />
+            </geometry>
+        </collision>
     </link>
     <joint name="Revolute_joint_13" type="revolute">
         <axis xyz="0 0 1" />
@@ -232,6 +274,12 @@
                 <color rgba="0.000000 0.500000 0.7500000 1.0" />
             </material>
         </visual>
+        <collision>
+            <origin xyz="-1.031500 -0.092500 -0.001000" rpy="-1.570796 -1.570796 0.000000" />
+            <geometry>
+                <mesh filename="file://hexy_urdf_v2_4_dae/hexy_urdf_v2_4_Femur_4_vis_1.dae" />
+            </geometry>
+        </collision>
     </link>
     <joint name="Revolute_joint_14" type="revolute">
         <axis xyz="0 0 1" />
@@ -250,6 +298,12 @@
                 <color rgba="0.500000 0.000000 0.500000 1.0" />
             </material>
         </visual>
+        <collision>
+            <origin xyz="-1.247500 -0.025000 -0.000000" rpy="-1.570796 -1.570796 0.000000" />
+            <geometry>
+                <mesh filename="file://hexy_urdf_v2_4_dae/hexy_urdf_v2_4_Tibia_4_vis_1.dae" />
+            </geometry>
+        </collision>
     </link>
     <joint name="Revolute_joint_5" type="revolute">
         <axis xyz="0 0 1" />
@@ -268,6 +322,12 @@
                 <color rgba="0.500000 0.750000 0.000000 1.0" />
             </material>
         </visual>
+        <collision>
+            <origin xyz="-0.690000 -0.400000 -0.100000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file://hexy_urdf_v2_4_dae/hexy_urdf_v2_4_Coxa_3_vis_1.dae" />
+            </geometry>
+        </collision>
     </link>
     <joint name="Revolute_joint_15" type="revolute">
         <axis xyz="0 0 1" />
@@ -286,6 +346,12 @@
                 <color rgba="0.000000 0.500000 0.7500000 1.0" />
             </material>
         </visual>
+        <collision>
+            <origin xyz="-1.031365 -0.093000 -0.000686" rpy="1.570796 3.665191 -3.141593" />
+            <geometry>
+                <mesh filename="file://hexy_urdf_v2_4_dae/hexy_urdf_v2_4_Femur_3_vis_1.dae" />
+            </geometry>
+        </collision>
     </link>
     <joint name="Revolute_joint_16" type="revolute">
         <axis xyz="0 0 1" />
@@ -304,6 +370,12 @@
                 <color rgba="0.500000 0.000000 0.500000 1.0" />
             </material>
         </visual>
+        <collision>
+            <origin xyz="-1.248570 -0.026000 0.004567" rpy="1.570796 3.665191 -3.141593" />
+            <geometry>
+                <mesh filename="file://hexy_urdf_v2_4_dae/hexy_urdf_v2_4_Tibia_3_vis_1.dae" />
+            </geometry>
+        </collision>
     </link>
     <joint name="Revolute_joint_6" type="revolute">
         <axis xyz="0 0 1" />
@@ -322,6 +394,12 @@
                 <color rgba="0.500000 0.750000 0.000000 1.0" />
             </material>
         </visual>
+        <collision>
+            <origin xyz="-0.456305 0.654130 -0.100000" rpy="-3.141593 3.141593 2.705260" />
+            <geometry>
+                <mesh filename="file://hexy_urdf_v2_4_dae/hexy_urdf_v2_4_Coxa_2_vis_1.dae" />
+            </geometry>
+        </collision>
     </link>
     <joint name="Revolute_joint_17" type="revolute">
         <axis xyz="0 0 1" />
@@ -340,6 +418,12 @@
                 <color rgba="0.000000 0.500000 0.7500000 1.0" />
             </material>
         </visual>
+        <collision>
+            <origin xyz="-0.924500 -0.092500 -0.400500" rpy="1.570796 3.141593 3.141593" />
+            <geometry>
+                <mesh filename="file://hexy_urdf_v2_4_dae/hexy_urdf_v2_4_Femur_2_vis_1.dae" />
+            </geometry>
+        </collision>
     </link>
     <joint name="Revolute_joint_18" type="revolute">
         <axis xyz="0 0 1" />
@@ -358,5 +442,11 @@
                 <color rgba="0.500000 0.000000 0.500000 1.0" />
             </material>
         </visual>
+        <collision>
+            <origin xyz="-1.141500 -0.024000 -0.396500" rpy="1.570796 3.141593 3.141593" />
+            <geometry>
+                <mesh filename="file://hexy_urdf_v2_4_dae/hexy_urdf_v2_4_Tibia_2_vis_1.dae" />
+            </geometry>
+        </collision>
     </link>
 </robot>

@@ -22,6 +22,7 @@ LOF = 0  # mm
 D = 15  # mm : Step size
 
 
+@DeprecationWarning
 class model_loader:
     def __init__(self) -> None:
         # This path refers to pin source code but you can define your own directory here.

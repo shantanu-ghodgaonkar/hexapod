@@ -88,6 +88,11 @@ class hexapod:
         bounds[6] = (1, 1)
         for i in range(7, self.robot.nq):
             bounds[i] = ((-np.pi/3), (np.pi/3))
+        # for i in range(7, self.robot.nq):
+        #     if i % 2 == 0:
+        #         bounds[i] = ((-np.pi/3), (np.pi/3))
+        #     else:
+        #         bounds[i] = (1, 1)
         res = scipy.optimize.minimize(
             self.foot_pos_err, q, args=(FRAME_ID, desired_pos), bounds=bounds)
         return res.x
@@ -154,56 +159,33 @@ class hexapod:
         print("DEBUG POINT")
 
     def compute_trajectory(self, position_init, position_goal, t_init, t_goal, t):
-        self.desired_position = 0
-        desired_velocity = 0
-        desired_acceleration = 0
+        t_tot = t_goal - t_init
+        self.desired_position = position_init + (
+            ((10 / (t_tot**3)) * ((t - t_init)**3))
+            + (((-15) / (t_tot**4)) * ((t - t_init)**4))
+            + ((6 / (t_tot**5)) * ((t - t_init)**5))) * (position_goal - position_init)
+        self.desired_velocity = (
+            ((30 / (t_tot**3)) * ((t - t_init)**2))
+            + (((-60) / (t_tot**4)) * ((t - t_init)**3))
+            + ((30 / (t_tot**5)) * ((t - t_init)**4))) * (position_goal - position_init)
+        self.desired_acceleration = (
+            ((60 / (t_tot**3)) * (t - t_init))
+            + (((-180) / (t_tot**4)) * ((t - t_init)**2))
+            + ((120 / (t_tot**5)) * ((t - t_init)**3))) * (position_goal - position_init)
 
-    def move_leg(self):
-        # t_vals = np.linspace(0, 1, 400)
-        # waypoints = [[round(self.x_t(t), 5), round(
-        #     self.y_t(t), 5), round(self.z_t(t), 5)] for t in t_vals]
-        # q = self.robot.q0
-        # for wp in waypoints:
-        #     q = self.inverse_geometery(q, 10, wp)
-        pass
-
-        # path = np.array( [] )
-
-        # # Generate t values
-        # t_values = np.linspace(0, 1, 400)
-
-        # # Calculate x, y, and z values
-        # x_values = self.x_t(t_values)
-        # y_values = self.y_t(t_values)
-        # z_values = self.z_t(t_values)
-
-        # # Create the 3D plot
-        # fig = plt.figure(figsize=(10, 8))
-        # ax = fig.add_subplot(111, projection='3d')
-
-        # # Plot the parabola in 3D space
-        # ax.plot(x_values, y_values, z_values,
-        #         label='3D Parabola', color='teal')
-
-        # # Add labels and title
-        # ax.set_xlabel('X-axis')
-        # ax.set_ylabel('Y-axis')
-        # ax.set_zlabel('Z-axis')
-        # ax.set_title('3D Plot of the Parabola')
-        # ax.legend()
-
-        # # Show the plot
-        # plt.show()
-        # pass
+        return self.desired_position, self.desired_acceleration, self.desired_acceleration
 
 
 if __name__ == "__main__":
     hexy = hexapod()
 
     try:
+        # zmq_url = "tcp://127.0.0.1:7001"
+        # meshcat_vis = meshcat.Visualizer(zmq_url=zmq_url)
         viz = pin.visualize.MeshcatVisualizer(
             hexy.robot.model, hexy.robot.collision_model, hexy.robot.visual_model)
         viz.initViewer(open=True)
+        # viz.initViewer(viewer=meshcat_vis, open=True)
         # model.apply_colors(viz)
     except ImportError as err:
         print(
@@ -230,15 +212,25 @@ if __name__ == "__main__":
     # viz.display(result)
 
     hexy.generate_path_function()
-    sleep(3)
-    t_vals = np.linspace(0, 1, 200)
-    waypoints = [[round(hexy.x_t(t), 5), round(
-        hexy.y_t(t), 5), round(hexy.z_t(t), 5)] for t in t_vals]
-    q = hexy.robot.q0
-    for wp in waypoints:
-        q = hexy.inverse_geometery(q, 10, wp)
-        viz.display(q)
-        print(f"Current Pos = {hexy.robot.framePlacement(q, 10).translation}")
-        # sleep(0.5)
+    t_vals = np.linspace(0, 1, 5)
+    # waypoints = [[round(hexy.x_t(t), 5), round(
+    #     hexy.y_t(t), 5), round(hexy.z_t(t), 5)] for t in t_vals]
+    waypoints = [[hexy.x_t(t), hexy.y_t(t), hexy.z_t(t)] for t in t_vals]
+    # q = hexy.robot.q0
+    # for wp in waypoints:
+    #     q = hexy.inverse_geometery(q, 10, wp)
+    #     viz.display(q)
+    #     print(f"Current Pos = {hexy.robot.framePlacement(q, 10).translation}")
+    # sleep(0.5)
+    q_wps = [hexy.inverse_geometery(hexy.robot.q0, 10, wp) for wp in waypoints]
+    t_init = 0
+    t_goal = 1/10
+    dt = 0.01
 
+    for i in range(0, q_wps.__len__()-1):
+        t = t_init
+        while t < t_goal:
+            viz.display(hexy.compute_trajectory(
+                q_wps[i], q_wps[i+1], t_init, t_goal, t)[0])
+            t = round((t + dt), 2)
     print("DEBUG POINT")

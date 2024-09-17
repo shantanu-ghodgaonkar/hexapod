@@ -6,9 +6,12 @@ from pinocchio.visualize import MeshcatVisualizer
 import numpy as np
 from numpy.linalg import norm, solve
 from time import sleep
+import meshcat
 import meshcat.geometry as g
 import meshcat.transformations as tf
 import math
+import scipy
+import scipy.optimize
 
 PI = 3.141592
 L1 = 47  # mm
@@ -19,26 +22,27 @@ LOF = 0  # mm
 D = 15  # mm : Step size
 
 
+@DeprecationWarning
 class model_loader:
     def __init__(self) -> None:
         # This path refers to pin source code but you can define your own directory here.
         # self.pin_model_dir = str(Path('hexy_urdf_v2_4_1_dae').absolute())
 
-        # self.pin_model_dir = str(
-        #     Path('/home/shantanu/Documents/hexy_test_5').absolute())
+        self.pin_model_dir = str(
+            Path('/home/shantanu/Documents/hexapod_files/hexy_test_5').absolute())
 
-        self.pin_model_dir = str(Path('re').absolute())
+        # self.pin_model_dir = str(Path('re').absolute())
 
         # You should change here to set up your own URDF file or just pass it as an argument of this example.
-        # self.urdf_filename = (
-        #     self.pin_model_dir
-        #     + '/hexy_urdf_v2_4.urdf'
-        # )
-
         self.urdf_filename = (
             self.pin_model_dir
-            + '/IKTRials_redone naming convention.urdf'
+            + '/hexy_test_5.urdf'
         )
+
+        # self.urdf_filename = (
+        #     self.pin_model_dir
+        #     + '/IKTRials_redone naming convention.urdf'
+        # )
 
         # Load the urdf model
         self.model, self.collision_model, self.visual_model = pin.buildModelsFromUrdf(
@@ -76,16 +80,18 @@ class model_loader:
                 self.feetTs[int(self.visual_object_names[k]
                                 [-3])-1] = oMg.translation
 
+        self.q = np.zeros(18)
+
     def random_config(self):
         # Sample a random configuration
-        q = pin.randomConfiguration(self.model)
-        print("q: %s" % q.T)
-        return q
+        self.q = pin.randomConfiguration(self.model)
+        print("q: %s" % self.q.T)
+        return self.q
 
-    def compute_collisions(self, q):
+    def compute_collisions(self):
         # Compute all the collisions
         pin.computeCollisions(
-            self.model, self.data, self.collision_model, self.collision_data, q, False)
+            self.model, self.data, self.collision_model, self.collision_data, self.q, False)
 
         # Print the status of collision for all collision pairs
         for k in range(len(self.collision_model.collisionPairs)):
@@ -102,10 +108,11 @@ class model_loader:
 
     def forward_kinematics(self, q):
         # Perform the forward kinematics over the kinematic tree
-        pin.forwardKinematics(self.model, self.data, q)
+        self.q = q
+        pin.forwardKinematics(self.model, self.data, self.q)
 
         # Compute all the collisions
-        self.compute_collisions(q)
+        self.compute_collisions()
 
         # Update Geometry models
         pin.updateGeometryPlacements(
@@ -120,6 +127,8 @@ class model_loader:
         for name, oMi in zip(self.model.names, self.data.oMi):
             print(("{:<24} : {: .2f} {: .2f} {: .2f}".format(
                 name, *oMi.translation.T.flat)))
+            if name != 'universe':
+                self.jointTs[int(name[-1])-1][int(name[-2])] = oMi.translation
 
         # Print out the placement of each collision geometry object
         print("\nCollision object placements:")
@@ -132,8 +141,11 @@ class model_loader:
         for k, oMg in enumerate(self.visual_data.oMg):
             print(("{:s}\t: {:d}\t: {: .2f} {: .2f} {: .2f}".format(self.visual_object_names[k],
                                                                     k, *oMg.translation.T.flat)))
+            if ((self.visual_object_names[k][0] == 'T') & (self.visual_object_names[k][-1] == '1')):
+                self.feetTs[int(self.visual_object_names[k]
+                                [-3])-1] = oMg.translation
 
-        return q
+        return self.q
 
     def XYZRPYtoSE3(xyzrpy):
         rotate = pin.utils.rotate
@@ -203,6 +215,7 @@ class model_loader:
 
         return self.generate_config(LEG, theta1, theta2, theta3)
 
+    @DeprecationWarning
     def inverse_kinematics_iterative(self, JOINT_ID=6, oMdes=pin.SE3(np.eye(3), np.array([1.0, 0.0, 1.0]))):
         q = pin.neutral(self.model)
         eps = 1e-4
@@ -241,6 +254,7 @@ class model_loader:
         print("\nfinal error: %s" % err.T)
         return np.array(q.flatten().tolist())
 
+    @DeprecationWarning
     def create_axis_marker(self, viewer, direction, color):
         length = np.linalg.norm(direction)
         orientation = tf.rotation_matrix(
@@ -275,6 +289,7 @@ class model_loader:
             # Add the axis marker to the visualizer
             viz.viewer[frame_name].set_transform(T)
 
+    @DeprecationWarning
     def move_forward_inf(self, viz):
         # # HOME CONFIG
         # q0 = np.zeros(18)
@@ -417,6 +432,11 @@ class model_loader:
     def generate_config(self, leg=0, q1=0, q2=0, q3=0):
         return np.concatenate((np.zeros(leg*3), [q1, q2, q3], np.zeros((5-leg)*3)))
 
+    def foot_position_error(self, FOOT=0, desired_foot_position=np.zeros(3)):
+        self.forward_kinematics(self.q)
+        error = self.feetTs[FOOT] - desired_foot_position
+        return error.dot(error)
+
     def get_direction_slope(self, edgeNum=0):
         match edgeNum:
             case 0:
@@ -519,7 +539,15 @@ if __name__ == '__main__':
     # model.move_forward_inf(viz)
 
     viz.display(pin.neutral(model.__getattribute__('model')))
-    model.forward_kinematics(pin.neutral(model.__getattribute__('model')))
+    # model.forward_kinematics(pin.neutral(model.__getattribute__('model')))
+    q0 = pin.neutral(model.__getattribute__('model'))
+    q1 = model.generate_config(leg=0, q1=(PI/6), q2=0, q3=0)
+    # model.foot_position_error(
+    #     FOOT=0, desired_foot_position=np.array([-0.02, -1.38,  0.1]))
+    desired_position = np.array([-0.02, -1.38,  0.1])
+    res = scipy.optimize.minimize(
+        model.foot_position_error(), q0, args=(0, desired_position))
+    model.forward_kinematics(res)
 
     # f1n, f2n, f3n, f4n, f5n, f6n = model.get_forward_points()
     # q1 = model.inverse_kinematics_iterative(

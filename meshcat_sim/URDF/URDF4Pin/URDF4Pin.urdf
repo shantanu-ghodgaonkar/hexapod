@@ -65,7 +65,7 @@
             </material>
         </visual>
     </link>
-    <joint name="Spherical_joint_31" type="fixed">
+    <joint name="fixed_joint_31" type="fixed">
         <!-- <axis xyz="0 0 1" /> -->
         <parent link="tibia_1" />
         <child link="foot_1" />
@@ -136,8 +136,8 @@
             </material>
         </visual>
     </link>
-    <joint name="Spherical_joint_32" type="fixed">
-        <axis xyz="0 0 1" />
+    <joint name="fixed_joint_32" type="fixed">
+        <!-- <axis xyz="0 0 1" /> -->
         <parent link="tibia_2" />
         <child link="foot_2" />
         <origin rpy="0.000000 -1.570796 0.000000" xyz="0.097960 0.020241 0.000000" />
@@ -207,8 +207,8 @@
             </material>
         </visual>
     </link>
-    <joint name="Spherical_joint_33" type="fixed">
-        <axis xyz="0 0 1" />
+    <joint name="fixed_joint_33" type="fixed">
+        <!-- <axis xyz="0 0 1" /> -->
         <parent link="tibia_3" />
         <child link="foot_3" />
         <origin rpy="0.000000 -1.570796 0.000000" xyz="0.097960 0.020240 0.000000" />
@@ -278,8 +278,8 @@
             </material>
         </visual>
     </link>
-    <joint name="Spherical_joint_34" type="fixed">
-        <axis xyz="0 0 1" />
+    <joint name="fixed_joint_34" type="fixed">
+        <!-- <axis xyz="0 0 1" /> -->
         <parent link="tibia_4" />
         <child link="foot_4" />
         <origin rpy="0.000000 -1.570796 0.000000" xyz="0.097960 0.020240 0.000000" />
@@ -349,8 +349,8 @@
             </material>
         </visual>
     </link>
-    <joint name="Spherical_joint_35" type="fixed">
-        <axis xyz="0 0 1" />
+    <joint name="fixed_joint_35" type="fixed">
+        <!-- <axis xyz="0 0 1" /> -->
         <parent link="tibia_5" />
         <child link="foot_5" />
         <origin rpy="0.000000 -1.570796 0.000000" xyz="0.097960 0.020240 0.000000" />
@@ -420,8 +420,8 @@
             </material>
         </visual>
     </link>
-    <joint name="Spherical_joint_36" type="fixed">
-        <axis xyz="0 0 1" />
+    <joint name="fixed_joint_36" type="fixed">
+        <!-- <axis xyz="0 0 1" /> -->
         <parent link="tibia_6" />
         <child link="foot_6" />
         <origin rpy="0.000000 -1.570796 0.000000" xyz="0.097960 0.020240 0.000000" />

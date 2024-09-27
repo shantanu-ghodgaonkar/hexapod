@@ -3,7 +3,7 @@ from time import sleep, time
 import numpy as np
 import pinocchio as pin
 import meshcat.geometry as g
-import scipy
+# import scipy
 from pathlib import Path
 import sys
 import scipy.optimize
@@ -53,6 +53,7 @@ class hexapod:
         if self.viz_flag == True:
             # if true, initialise the meshcat visualiser
             self.init_viz()
+        print("DEBUG POINT")
 
     def init_viz(self):
         """Function to initialise the visualiser and assign it to a data member
@@ -291,7 +292,7 @@ class hexapod:
             + (((-180) / (t_tot**4)) * ((t - t_init)**2))
             + ((120 / (t_tot**5)) * ((t - t_init)**3))) * (position_goal - position_init)
 
-        return self.desired_position, self.desired_acceleration, self.desired_acceleration
+        return self.desired_position, self.desired_velocity, self.desired_acceleration
 
     def generate_leg_joint_trajectory(self, step_size_xy_mult, DIR='N', LEG=0, STEPS=5, t_init=0, t_goal=0.1, dt=0.01):
         """Fucntion to generate the entire trajectory of a chosen foot, from current position to goal position, in Joint state form

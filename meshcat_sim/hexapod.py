@@ -44,10 +44,14 @@ class hexapod:
         # array to store shoulder IDs of all the feet
         self.SHOULDER_IDS = [self.robot.model.getFrameId(
             frame.name) for frame in self.robot.model.frames if "Revolute_joint_0" in frame.name]
+        self.BASE_FRAME_ID = self.robot.model.getFrameId("robot_base")
         # Flag to store the state of motion
         self.state_flag = 'START'
         # qc stores the current joint state of the robot to neutral
         self.qc = self.robot.q0
+        # NP array to store the current state of the base frame and the feet frames
+        self.current_state = np.concatenate((self.qc[0:7], np.concatenate(
+            [self.robot.framePlacement(self.qc, frame).translation for frame in self.FOOT_IDS])))
         # flag to store if visualiser is needed or not
         self.viz_flag = init_viz
         if self.viz_flag == True:
@@ -75,6 +79,12 @@ class hexapod:
         self.viz.displayFrames(visibility=True)
         self.viz.displayCollisions(visibility=False)
         self.viz.display(self.qc)
+
+    def state_error(self, q, desired_state=np.zeros(25)):
+        current_state = np.concatenate((pin.SE3ToXYZQUAT(self.robot.framePlacement(q, self.BASE_FRAME_ID)), np.concatenate(
+            [self.robot.framePlacement(q, frame).translation for frame in self.FOOT_IDS])))
+        error = current_state - desired_state
+        return error.dot(error)
 
     def foot_pos_err(self, q, FRAME_ID=10, desired_pos=np.zeros(3)):
         """Function to obtain the error in the foot position (i.e. (current - desired)**2)
@@ -111,7 +121,7 @@ class hexapod:
                 print(
                     f"Frame Name: {frame.name}, Frame Type: {frame.type}, Frame ID: {self.robot.model.getFrameId(frame.name)}, XYZ = {self.robot.framePlacement(self.qc, self.robot.model.getFrameId(frame.name))}")
 
-    def inverse_geometery(self, q, FRAME_ID=10, desired_pos=np.zeros(3)):
+    def inverse_geometery(self, q, FRAME_ID, desired_pos, bounds=[(-10., 10.)]*25):
         """Inverse geometry computation
 
         Args:
@@ -122,18 +132,18 @@ class hexapod:
         Returns:
             _type_: Joint state corresponding to desired position
         """
-        bounds = [(0., 0.)]*self.robot.nq
-        bounds[0] = (0, 0)
-        bounds[1] = (0, 0)
-        bounds[2] = (0, 0)
-        bounds[3] = (0, 0)
-        bounds[4] = (0, 0)
-        bounds[5] = (0, 0)
-        bounds[6] = (1, 1)
-        for i in range(7, self.robot.nq):
-            bounds[i] = ((-np.pi/3), (np.pi/3))
+        # res = scipy.optimize.minimize(
+        #     self.foot_pos_err, q, args=(FRAME_ID, desired_pos), bounds=bounds)
+        desired_state = np.concatenate((self.robot.q0[0:7], np.concatenate(
+            [self.robot.framePlacement(self.robot.q0, frame).translation for frame in self.FOOT_IDS])))
+        if FRAME_ID == 2:
+            desired_state[0:7] = desired_pos
+        else:
+            i = ((int(np.ceil(FRAME_ID/10)) - 1) * 3) + 7
+            desired_state[i:(i+3)] = desired_pos
+
         res = scipy.optimize.minimize(
-            self.foot_pos_err, q, args=(FRAME_ID, desired_pos), bounds=bounds)
+            self.state_error, q, args=(desired_state), bounds=bounds)
         return res.x
 
     def north_vector(self):
@@ -237,9 +247,46 @@ class hexapod:
 
         self.z_t = lambda t: (((-self.STEP_SIZE_Z)/0.25) *
                               (t ** 2)) + ((self.STEP_SIZE_Z / 0.25) * t)
-        pass
 
-    def generate_joint_waypoints(self, step_size_xy_mult, STEPS=5, DIR='N', FOOT_ID=10):
+    def init_body_trajectory_functions(self, step_size_xy_mult, DIR='N'):
+        """Function to initialise the parabolic trajectory of a foot
+
+        Args:
+            step_size_xy_mult (_type_): Multiplier to have either half or full step size
+            DIR (str, optional): Chosen direction of motion. Defaults to 'N'
+            FOOT_ID (int, optional): Chosen foot frame ID. Defaults to 10
+        """
+        v = self.generate_direction_vector(DIR=DIR)
+        p1 = self.robot.framePlacement(
+            self.qc, self.BASE_FRAME_ID).translation[0:2]
+        p2 = p1 + (self.HALF_STEP_SIZE_XY * step_size_xy_mult * v)
+        self.x_t = lambda t: ((1 - t) * p1[0]) + (t * p2[0])
+        self.y_t = lambda t:  ((1 - t) * p1[1]) + (t * p2[1])
+        # TODO: Implement function for straight line interpolation of quaternion as well. For now, it shall be assumed that the body will not rotate
+        # self.z_t = lambda t: (((-self.STEP_SIZE_Z)/0.25) *
+        #                       (t ** 2)) + ((self.STEP_SIZE_Z / 0.25) * t)
+
+    def generate_joint_waypoints_push(self, step_size_xy_mult, STEPS=5, DIR='N', FEET_GRP='135'):
+        self.init_body_trajectory_functions(
+            step_size_xy_mult=step_size_xy_mult, DIR=DIR)
+        s = np.linspace(0, 1, STEPS)
+        waypoints = [[round(self.x_t(t), 5), round(
+            self.y_t(t), 5), round(self.qc[2], 5), 0, 0, 0, 1] for t in s]
+        # points = np.array([waypoints[0], waypoints[4]]).T
+        bounds = [(-10., 10.)]*25
+        if FEET_GRP == '135':
+            bounds[7:10] = [(0., 0.)]*3
+            bounds[13:16] = [(0., 0.)]*3
+            bounds[19:22] = [(0., 0.)]*3
+        else:
+            bounds[10:13] = [(0., 0.)]*3
+            bounds[16:19] = [(0., 0.)]*3
+            bounds[22:25] = [(0., 0.)]*3
+
+        return [self.inverse_geometery(self.qc, self.BASE_FRAME_ID, wp, bounds)
+                for wp in waypoints]
+
+    def generate_joint_waypoints_swing(self, step_size_xy_mult, STEPS=5, DIR='N', FOOT_ID=10):
         """Function to generate waypoints along the generated parabolic trajectory of the foot
 
         Args:
@@ -261,8 +308,17 @@ class hexapod:
         if self.viz_flag:
             self.viz.viewer[('Foot_ID_' + str(FOOT_ID) + '_trajectory')].set_object(
                 g.Line(g.PointsGeometry(points), g.MeshBasicMaterial(color=0xffff00)))
-
-        return [self.inverse_geometery(self.qc, FOOT_ID, wp)
+        bounds = [(0., 0.)]*self.robot.nq
+        bounds[0] = (0, 0)
+        bounds[1] = (0, 0)
+        bounds[2] = (0, 0)
+        bounds[3] = (0, 0)
+        bounds[4] = (0, 0)
+        bounds[5] = (0, 0)
+        bounds[6] = (1, 1)
+        for i in range(7, self.robot.nq):
+            bounds[i] = ((-np.pi/3), (np.pi/3))
+        return [self.inverse_geometery(self.qc, FOOT_ID, wp, bounds)
                 for wp in waypoints]
 
     def compute_trajectory(self, position_init, position_goal, t_init, t_goal, t):
@@ -309,10 +365,10 @@ class hexapod:
         Returns:
             _type_: A 2D array, where each row forms a Joint state for the leg in its motion along the chosen path
         """
-        q_wps = self.generate_joint_waypoints(step_size_xy_mult,
-                                              DIR=DIR, FOOT_ID=self.FOOT_IDS[LEG], STEPS=STEPS)
+        q_wps = self.generate_joint_waypoints_swing(step_size_xy_mult,
+                                                    DIR=DIR, FOOT_ID=self.FOOT_IDS[LEG], STEPS=STEPS)
         q_traj = self.qc
-        mask = np.concatenate((np.zeros(6), [1], np.zeros(
+        mask = np.concatenate((np.zeros(7), np.zeros(
             LEG*3), [1, 1, 1], np.zeros((5-LEG)*3)))
         for i in range(0, q_wps.__len__()-1):
             t = t_init
@@ -323,25 +379,51 @@ class hexapod:
                 t = (t + dt)
         return np.delete(q_traj, 0, axis=0)
 
+    def generate_body_trajectory(self, step_size_xy_mult, DIR='N', FEET_GRP='135', STEPS=5, t_init=0, t_goal=0.1, dt=0.01):
+        if ((FEET_GRP != '135') & (FEET_GRP != '024')):
+            raise ValueError(
+                "FEET_GRP has been given an incorrect value. Accepted Values = {'024', '135'}")
+        q_wps = self.generate_joint_waypoints_push(
+            step_size_xy_mult=step_size_xy_mult, STEPS=STEPS, DIR=DIR, FEET_GRP=FEET_GRP)
+        q_traj = self.qc
+        mask = np.concatenate((np.ones(7), np.zeros(3), np.ones(3), np.zeros(3), np.ones(3), np.zeros(3), np.ones(
+            3))) if FEET_GRP == '135' else np.concatenate((np.ones(10), np.zeros(3), np.ones(3), np.zeros(3), np.ones(3), np.zeros(3)))
+        for i in range(0, q_wps.__len__()-1):
+            t = t_init
+            while t < t_goal:
+                q_t = self.compute_trajectory(
+                    q_wps[i], q_wps[i+1], t_init, t_goal, t)[0]
+                q_traj = np.vstack((q_traj, np.multiply(q_t, mask)))
+                t = (t + dt)
+        return np.delete(q_traj, 0, axis=0)
+
+    def body_velocity_error(self, q, desired_pos=np.zeros(3)):
+        pass
+
 
 if __name__ == "__main__":
     hexy = hexapod(init_viz=True)
     sleep(3)
     step_size_xy_mult = 1
     leg0_traj = hexy.generate_leg_joint_trajectory(
-        step_size_xy_mult=step_size_xy_mult, DIR='N', LEG=0)
+        step_size_xy_mult=step_size_xy_mult, DIR='N', LEG=0, t_goal=0.05)
     leg2_traj = hexy.generate_leg_joint_trajectory(
-        step_size_xy_mult=step_size_xy_mult, DIR='N', LEG=2)
+        step_size_xy_mult=step_size_xy_mult, DIR='N', LEG=2, t_goal=0.05)
     leg4_traj = hexy.generate_leg_joint_trajectory(
-        step_size_xy_mult=step_size_xy_mult, DIR='N', LEG=4)
-    leg024_traj = leg0_traj + leg2_traj + leg4_traj
-    leg024_traj[:, 6] = 1
+        step_size_xy_mult=step_size_xy_mult, DIR='N', LEG=4, t_goal=0.05)
+    body_traj = hexy.generate_body_trajectory(
+        step_size_xy_mult=step_size_xy_mult, DIR='N', FEET_GRP='135', t_goal=0.05)
+    leg024_traj = leg0_traj + leg2_traj + leg4_traj + body_traj
+    # leg024_traj[:, 6] = 1
+    start_time = time()
     for q in leg024_traj:
         hexy.viz.display(q)
         hexy.qc = q
+    print(f"Time taken for this step = {time() - start_time}")
     leg0_traj = None
     leg2_traj = None
     leg4_traj = None
+    body_traj = None
     sleep(3)
     step_size_xy_mult = 2
     leg0_traj = hexy.generate_leg_joint_trajectory(
@@ -350,8 +432,12 @@ if __name__ == "__main__":
         step_size_xy_mult=step_size_xy_mult, DIR='S', LEG=2)
     leg4_traj = hexy.generate_leg_joint_trajectory(
         step_size_xy_mult=step_size_xy_mult, DIR='S', LEG=4)
+    body_traj = hexy.generate_body_trajectory(
+        step_size_xy_mult=step_size_xy_mult, DIR='S', FEET_GRP='135')
     leg024_traj = leg0_traj + leg2_traj + leg4_traj
-    leg024_traj[:, 6] = 1
+    # leg024_traj[:, 6] = 1
+    start_time = time()
     for q in leg024_traj:
         hexy.viz.display(q)
         hexy.qc = q
+    print(f"Time taken for this step = {time() - start_time}")

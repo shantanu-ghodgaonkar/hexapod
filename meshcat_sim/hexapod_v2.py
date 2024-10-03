@@ -180,7 +180,7 @@ class hexapod:
         """
         res = scipy.optimize.minimize(
             self.state_error, q, args=(desired_state), bounds=bounds)
-        return res.x
+        return np.round(res.x, 3)
 
     def init_foot_trajectory_functions(self, step_size_xy_mult, theta=0, FOOT_ID=10):
         """Function to initialize the parabolic trajectory of a foot
@@ -244,6 +244,7 @@ class hexapod:
         # Generate waypoints for the body movement
         waypoints = np.round([list(chain([self.x_t(t), self.y_t(t), self.qc[2]], [
                              0, 0, 0, 1], self.current_state[7:])) for t in s], 5)
+
         # Define bounds for optimization based on which feet are moving
         bounds = list(chain([(-10., 10.)]*7, [(0., 0.)]*3, [(-10., 10.)]*3, [(0., 0.)]*3, [(-10., 10.)]*3, [
                       (0., 0.)]*3, [(-10., 10.)]*3)) if FEET_GRP == '135' else list(chain([(-10., 10.)]*7, [(-10., 10.)]*3, [(0., 0.)]*3, [(-10., 10.)]*3, [(0., 0.)]*3, [(-10., 10.)]*3, [(0., 0.)]*3))
@@ -278,6 +279,8 @@ class hexapod:
             # Generate waypoints for the foot movement
             waypoints = np.round([list(chain(self.neutral_state[0:idx], [self.x_t(t),
                                                                          self.y_t(t), self.z_t(t)], self.neutral_state[idx+3:]))for t in s], 7)
+            self.plot_robot_trajectory(
+                name=f'generate_joint_waypoints_swing leg{LEG}', space_flag='ss', states=waypoints)
             # Define bounds for optimization
             bounds = list(chain([(0., 0.)]*6, [(1., 1.)], [((-np.pi/2), (np.pi/2))]*(
                 self.robot.nq-7)))  # Fix the base and set joint limits
@@ -292,10 +295,9 @@ class hexapod:
 
         q = np.sum(q, axis=0)
         q[:, 6] = 1  # Ensure the quaternion component is set correctly
-
         return q
 
-    def compute_trajectory(self, position_init, position_goal, t_init, t_goal, t):
+    def compute_trajectory_pva(self, position_init, position_goal, t_init, t_goal, t):
         """Time parameterization of the trajectory with acceleration and velocity constraints
 
         Args:
@@ -324,6 +326,82 @@ class hexapod:
 
         return self.desired_position, self.desired_velocity, self.desired_acceleration
 
+    def compute_trajectory_pv(self, position_init, position_goal, t_init, t_goal, t):
+        """
+        Compute the desired trajectory, velocity, and acceleration at time t
+        using third-degree (cubic) polynomial equations.
+
+        Args:
+            position_init (numpy.ndarray): Initial position in Joint state form
+            position_goal (numpy.ndarray): Goal position in Joint state form
+            t_init (float): Initial time
+            t_goal (float): Goal time
+            t (float): Current time
+
+        Returns:
+            tuple: Desired position, velocity, and acceleration at time t
+        """
+        T = t_goal - t_init
+        if T <= 0:
+            raise ValueError("t_goal must be greater than t_init.")
+
+        tau = (t - t_init) / T
+        # Clamp tau to the range [0, 1] to handle times outside the trajectory duration
+        tau = np.clip(tau, 0.0, 1.0)
+
+        theta_diff = position_goal - position_init
+
+        # Compute desired position using cubic polynomial
+        self.desired_position = position_init + \
+            (3 * tau**2 - 2 * tau**3) * theta_diff
+
+        # Compute desired velocity
+        self.desired_velocity = (6 * tau - 6 * tau**2) * theta_diff / T
+
+        # Compute desired acceleration
+        self.desired_acceleration = (6 - 12 * tau) * theta_diff / (T**2)
+
+        return self.desired_position, self.desired_velocity, self.desired_acceleration
+
+    def compute_trajectory_p(self, position_init, position_goal, t_init, t_goal, t):
+        """
+        Compute the desired position, velocity, and acceleration at time t
+        using linear time parametrization without using a normalized time variable τ.
+
+        Args:
+            position_init (numpy.ndarray): Initial position in joint state form.
+            position_goal (numpy.ndarray): Goal position in joint state form.
+            t_init (float): Initial time.
+            t_goal (float): Goal time.
+            t (float): Current time.
+
+        Returns:
+            tuple: Desired position, velocity, and acceleration at time t.
+        """
+        T = t_goal - t_init
+        if T <= 0:
+            raise ValueError("t_goal must be greater than t_init.")
+
+        delta_t = t - t_init
+        theta_diff = position_goal - position_init
+
+        # Clamp delta_t to the range [0, T] to handle times outside the trajectory duration
+        delta_t_clamped = np.clip(delta_t, 0.0, T)
+
+        # Compute the fraction of time elapsed
+        fraction = delta_t_clamped / T
+
+        # Compute desired position using linear interpolation
+        self.desired_position = position_init + fraction * theta_diff
+
+        # Compute desired velocity (constant)
+        self.desired_velocity = theta_diff / T
+
+        # Compute desired acceleration (zero)
+        self.desired_acceleration = np.zeros_like(position_init)
+
+        return self.desired_position, self.desired_velocity, self.desired_acceleration
+
     def generate_leg_joint_trajectory(self, step_size_xy_mult, theta=0, FEET_GRP='024', STEPS=5, t_init=0, t_goal=0.1, dt=0.01):
         """Function to generate the entire trajectory of a chosen foot, from current position to goal position, in Joint state form
 
@@ -346,16 +424,19 @@ class hexapod:
                                                     theta=theta, FEET_GRP=FEET_GRP, STEPS=STEPS)
         q_traj = self.qc
         # Create a mask to select which parts of the state vector to update
-        mask = np.concatenate((np.zeros(7), np.zeros(3), np.ones(3), np.zeros(3), np.ones(3), np.zeros(3), np.ones(
-            3))) if FEET_GRP == '135' else np.concatenate((np.zeros(7), np.ones(3), np.zeros(3), np.ones(3), np.zeros(3), np.ones(3), np.zeros(3)))
+        mask = np.concatenate((np.zeros(6), [1], np.zeros(3), np.ones(3), np.zeros(3), np.ones(3), np.zeros(3), np.ones(
+            3))) if FEET_GRP == '135' else np.concatenate((np.zeros(6), [1], np.ones(3), np.zeros(3), np.ones(3), np.zeros(3), np.ones(3), np.zeros(3)))
         # Generate trajectory by interpolating between waypoints
         for i in range(0, q_wps.__len__()-1):
             t = t_init
             while t < t_goal:
-                q_t = self.compute_trajectory(
+                q_t = self.compute_trajectory_p(
                     q_wps[i], q_wps[i+1], t_init, t_goal, t)[0]
                 q_traj = np.vstack((q_traj, np.multiply(q_t, mask)))
                 t = (t + dt)
+
+        self.plot_robot_trajectory(
+            name='generate_joint_leg_trajectory', space_flag='js', q=q_wps)
         return np.delete(q_traj, 0, axis=0)  # Remove the initial state
 
     def generate_body_trajectory(self, step_size_xy_mult, theta=0, FEET_GRP='135', STEPS=5, t_init=0, t_goal=0.1, dt=0.01):
@@ -386,10 +467,12 @@ class hexapod:
         for i in range(0, q_wps.__len__()-1):
             t = t_init
             while t < t_goal:
-                q_t = self.compute_trajectory(
+                q_t = self.compute_trajectory_p(
                     q_wps[i], q_wps[i+1], t_init, t_goal, t)[0]
                 q_traj = np.vstack((q_traj, np.multiply(q_t, mask)))
                 t = (t + dt)
+        self.plot_robot_trajectory(
+            name='generate_body_trajectory', space_flag='js', q=q_wps)
         return np.delete(q_traj, 0, axis=0)  # Remove the initial state
 
     def body_velocity_error(self, q, desired_pos=np.zeros(3)):
@@ -401,7 +484,7 @@ class hexapod:
         """
         pass
 
-    def plot_robot_trajectory_separate(self, q):
+    def plot_robot_trajectory(self, name: str, q=None, states=None, space_flag='js'):
         """
         Plots the robot's body position, orientation, and foot positions in separate 3D subplots for multiple states.
 
@@ -416,9 +499,15 @@ class hexapod:
                 - states[:, 19:22] represents the positions of foot 4.
                 - states[:, 22:25] represents the positions of foot 5.
         """
-        states = np.array([np.concatenate((qi[0:7], np.concatenate(
-            [self.robot.framePlacement(qi, frame).translation for frame in self.FOOT_IDS]))) for qi in q])
-        fig = plt.figure(figsize=(16, 12))
+
+        if ((space_flag != 'js') & (space_flag != 'ss')):
+            raise ValueError(
+                "space_flag has been given an incorrect value. Accepted Values = {'js', 'ss'}")
+
+        if space_flag == 'js':
+            states = np.array([np.concatenate((qi[0:7], np.concatenate(
+                [self.robot.framePlacement(qi, frame).translation for frame in self.FOOT_IDS]))) for qi in q])
+        fig = plt.figure(name, figsize=(16, 12))
 
         # Body position plot
         ax1 = fig.add_subplot(241, projection='3d')
@@ -457,7 +546,7 @@ class hexapod:
             foot_positions = states[:, foot_index:foot_index+3]
             ax.plot(foot_positions[:, 0], foot_positions[:, 1],
                     foot_positions[:, 2], label=f'Foot {i} Position')
-            ax.set_title(f'Foot {i} Position')
+            # ax.set_title(f'Foot {i} Position')
             ax.set_xlabel('X')
             ax.set_ylabel('Y')
             ax.set_zlabel('Z')
@@ -483,7 +572,7 @@ if __name__ == "__main__":
     leg135_traj = hexy.generate_body_trajectory(
         step_size_xy_mult=step_size_xy_mult, theta=theta, FEET_GRP='135', t_goal=t_goal, STEPS=STEPS)
     legs_traj = leg024_traj + leg135_traj  # Combine trajectories
-    hexy.plot_robot_trajectory_separate(legs_traj)
+    # hexy.plot_robot_trajectory(name='legs_traj', q=legs_traj, space_flag='js')
     # start_time = time()
     # for q in legs_traj:
     #     # Display the current joint configuration

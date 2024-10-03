@@ -9,6 +9,9 @@ from pathlib import Path                  # For filesystem path manipulations
 import sys                                # For system-specific parameters and functions
 import scipy.optimize                     # For optimization algorithms
 from itertools import chain               # For chaining iterables
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from scipy.spatial.transform import Rotation as R
 
 # We don't want to print every decimal!
 np.set_printoptions(suppress=True, precision=4)
@@ -398,54 +401,122 @@ class hexapod:
         """
         pass
 
+    def plot_robot_trajectory_separate(self, q):
+        """
+        Plots the robot's body position, orientation, and foot positions in separate 3D subplots for multiple states.
+
+        Parameters:
+            states (np.array): A numpy array of shape (N, 25) where:
+                - states[:, 0:3] represents the positions of the robot body.
+                - states[:, 3:7] represents the quaternions of the robot body.
+                - states[:, 7:10] represents the positions of foot 0.
+                - states[:, 10:13] represents the positions of foot 1.
+                - states[:, 13:16] represents the positions of foot 2.
+                - states[:, 16:19] represents the positions of foot 3.
+                - states[:, 19:22] represents the positions of foot 4.
+                - states[:, 22:25] represents the positions of foot 5.
+        """
+        states = np.array([np.concatenate((qi[0:7], np.concatenate(
+            [self.robot.framePlacement(qi, frame).translation for frame in self.FOOT_IDS]))) for qi in q])
+        fig = plt.figure(figsize=(16, 12))
+
+        # Body position plot
+        ax1 = fig.add_subplot(241, projection='3d')
+        body_positions = states[:, 0:3]
+        ax1.plot(body_positions[:, 0], body_positions[:, 1],
+                 body_positions[:, 2], 'r-', label='Body Position')
+        ax1.set_title('Body Position')
+        ax1.set_xlabel('X')
+        ax1.set_ylabel('Y')
+        ax1.set_zlabel('Z')
+
+        # Body orientation plot (plot each axis separately as a 3D line)
+        ax2 = fig.add_subplot(242, projection='3d')
+        ax2.set_title('Body Orientation (quiver at first and last state)')
+        ax2.set_xlabel('X')
+        ax2.set_ylabel('Y')
+        ax2.set_zlabel('Z')
+
+        body_axes_length = 0.1
+        rotation_first = R.from_quat(states[0, 3:7]).as_matrix()
+        rotation_last = R.from_quat(states[-1, 3:7]).as_matrix()
+        for i, color in enumerate(['r', 'g', 'b']):  # X, Y, Z axes
+            ax2.quiver(body_positions[0, 0], body_positions[0, 1], body_positions[0, 2],
+                       rotation_first[0, i], rotation_first[1,
+                                                            i], rotation_first[2, i],
+                       color=color, length=body_axes_length, label=f'Start' if i == 0 else "")
+            ax2.quiver(body_positions[-1, 0], body_positions[-1, 1], body_positions[-1, 2],
+                       rotation_last[0, i], rotation_last[1,
+                                                          i], rotation_last[2, i],
+                       color=color, length=body_axes_length, linestyle='dotted', label=f'End' if i == 0 else "")
+        ax2.legend()
+
+        # Foot trajectories (one plot per foot)
+        for i, foot_index in enumerate(range(7, 25, 3)):
+            ax = fig.add_subplot(2, 4, i + 3, projection='3d')
+            foot_positions = states[:, foot_index:foot_index+3]
+            ax.plot(foot_positions[:, 0], foot_positions[:, 1],
+                    foot_positions[:, 2], label=f'Foot {i} Position')
+            ax.set_title(f'Foot {i} Position')
+            ax.set_xlabel('X')
+            ax.set_ylabel('Y')
+            ax.set_zlabel('Z')
+            ax.legend()
+
+        plt.tight_layout()
+        plt.show()
+
 
 if __name__ == "__main__":
     # Instantiate the hexapod with visualization enabled
-    hexy = hexapod(init_viz=True)
+    hexy = hexapod(init_viz=False)
     vel = 2  # Velocity
     # Compute goal time based on step size and velocity
     t_goal = (hexy.HALF_STEP_SIZE_XY * 2) / vel
     sleep(3)  # Wait for 3 seconds
     theta = 0  # Direction angle in radians
     step_size_xy_mult = 1  # Step size multiplier
+    STEPS = 10
     # Generate leg and body trajectories
     leg024_traj = hexy.generate_leg_joint_trajectory(
-        step_size_xy_mult=step_size_xy_mult, theta=theta, FEET_GRP='024', t_goal=t_goal)
+        step_size_xy_mult=step_size_xy_mult, theta=theta, FEET_GRP='024', t_goal=t_goal, STEPS=STEPS)
     leg135_traj = hexy.generate_body_trajectory(
-        step_size_xy_mult=step_size_xy_mult, theta=theta, FEET_GRP='135', t_goal=t_goal)
+        step_size_xy_mult=step_size_xy_mult, theta=theta, FEET_GRP='135', t_goal=t_goal, STEPS=STEPS)
     legs_traj = leg024_traj + leg135_traj  # Combine trajectories
-    start_time = time()
-    for q in legs_traj:
-        # Display the current joint configuration
-        hexy.viz.display(q)
-        hexy.update_current_states(q)  # Update the current state
-    print(f"Time taken for this step = {time() - start_time}")
+    hexy.plot_robot_trajectory_separate(legs_traj)
+    # start_time = time()
+    # for q in legs_traj:
+    #     # Display the current joint configuration
+    #     hexy.viz.display(q)
+    #     hexy.update_current_states(q)  # Update the current state
 
-    step_size_xy_mult = 2
-    while True:
-        # Generate body trajectory for feet group '024' and leg trajectory for '135'
-        leg024_traj = hexy.generate_body_trajectory(
-            step_size_xy_mult=step_size_xy_mult, theta=theta, FEET_GRP='024', t_goal=t_goal)
-        leg135_traj = hexy.generate_leg_joint_trajectory(
-            step_size_xy_mult=step_size_xy_mult, theta=theta, FEET_GRP='135', t_goal=t_goal)
-        legs_traj = leg024_traj + leg135_traj
-        start_time = time()
-        for q in legs_traj:
-            hexy.viz.display(q)
-            hexy.update_current_states(q)
-        print(f"Time taken for this step = {time() - start_time}")
+    # print(f"Time taken for this step = {time() - start_time}")
 
-        # Generate leg trajectory for feet group '024' and body trajectory for '135'
-        leg024_traj = hexy.generate_leg_joint_trajectory(
-            step_size_xy_mult=step_size_xy_mult, theta=theta, FEET_GRP='024', t_goal=t_goal)
-        leg135_traj = hexy.generate_body_trajectory(
-            step_size_xy_mult=step_size_xy_mult, theta=theta, FEET_GRP='135', t_goal=t_goal)
-        legs_traj = leg024_traj + leg135_traj
-        start_time = time()
-        for q in legs_traj:
-            hexy.viz.display(q)
-            hexy.update_current_states(q)
-        print(f"Time taken for this step = {time() - start_time}")
+    # step_size_xy_mult = 2
+    # while True:
+    #     # Generate body trajectory for feet group '024' and leg trajectory for '135'
+    #     leg024_traj = hexy.generate_body_trajectory(
+    #         step_size_xy_mult=step_size_xy_mult, theta=theta, FEET_GRP='024', t_goal=t_goal)
+    #     leg135_traj = hexy.generate_leg_joint_trajectory(
+    #         step_size_xy_mult=step_size_xy_mult, theta=theta, FEET_GRP='135', t_goal=t_goal)
+    #     legs_traj = leg024_traj + leg135_traj
+    #     start_time = time()
+    #     for q in legs_traj:
+    #         hexy.viz.display(q)
+    #         hexy.update_current_states(q)
+    #     print(f"Time taken for this step = {time() - start_time}")
+
+    #     # Generate leg trajectory for feet group '024' and body trajectory for '135'
+    #     leg024_traj = hexy.generate_leg_joint_trajectory(
+    #         step_size_xy_mult=step_size_xy_mult, theta=theta, FEET_GRP='024', t_goal=t_goal)
+    #     leg135_traj = hexy.generate_body_trajectory(
+    #         step_size_xy_mult=step_size_xy_mult, theta=theta, FEET_GRP='135', t_goal=t_goal)
+    #     legs_traj = leg024_traj + leg135_traj
+    #     start_time = time()
+    #     for q in legs_traj:
+    #         hexy.viz.display(q)
+    #         hexy.update_current_states(q)
+    #     print(f"Time taken for this step = {time() - start_time}")
 
     # step_size_xy_mult = 2
     # leg0_traj = hexy.generate_leg_joint_trajectory(

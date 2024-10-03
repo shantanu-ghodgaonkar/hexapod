@@ -61,6 +61,13 @@ class hexapod:
         # Numpy array to store the neutral state of the base frame and the feet frames
         self.neutral_state = np.concatenate((self.robot.q0[0:7], np.concatenate(
             [self.robot.framePlacement(self.robot.q0, frame).translation for frame in self.FOOT_IDS])))
+
+        self.BOUNDS_BASE_STAT = list(chain([(0., 0.)]*6, [(1., 1.)]))
+        self.BOUNDS_BASE_MOVE_NOROT = list(
+            chain([(-10., 10.)]*3, [(0., 0.)]*3, [(1., 1.)]))
+        self.BOUNDS_BASE_MOVE_ROT = list(chain([(-10., 10.)]*7))
+        self.BOUNDS_FOOT_STAT = [(0., 0.)]*3
+        self.BOUNDS_FOOT_MOVE = [(-(np.pi/2), (np.pi/2))]*3
         # Flag to store if visualizer is needed or not
         self.viz_flag = init_viz
         if self.viz_flag == True:
@@ -179,8 +186,8 @@ class hexapod:
             numpy.ndarray: Joint state corresponding to desired position
         """
         res = scipy.optimize.minimize(
-            self.state_error, q, args=(desired_state), bounds=bounds)
-        return np.round(res.x, 3)
+            self.state_error, q, args=(desired_state), bounds=bounds, method='SLSQP')
+        return res.x
 
     def init_foot_trajectory_functions(self, step_size_xy_mult, theta=0, FOOT_ID=10):
         """Function to initialize the parabolic trajectory of a foot
@@ -245,9 +252,12 @@ class hexapod:
         waypoints = np.round([list(chain([self.x_t(t), self.y_t(t), self.qc[2]], [
                              0, 0, 0, 1], self.current_state[7:])) for t in s], 5)
 
+        # self.plot_robot_trajectory(
+        #     name=f'generate_joint_waypoints_push legs{FEET_GRP}', space_flag='ss', states=waypoints)
+
         # Define bounds for optimization based on which feet are moving
-        bounds = list(chain([(-10., 10.)]*7, [(0., 0.)]*3, [(-10., 10.)]*3, [(0., 0.)]*3, [(-10., 10.)]*3, [
-                      (0., 0.)]*3, [(-10., 10.)]*3)) if FEET_GRP == '135' else list(chain([(-10., 10.)]*7, [(-10., 10.)]*3, [(0., 0.)]*3, [(-10., 10.)]*3, [(0., 0.)]*3, [(-10., 10.)]*3, [(0., 0.)]*3))
+        bounds = list(chain([(-10., 10.)]*7, [(0., 0.)]*3, [(-(np.pi/2), (np.pi/2))]*3, [(0., 0.)]*3, [(-(np.pi/2), (np.pi/2))]*3, [
+                      (0., 0.)]*3, [(-(np.pi/2), (np.pi/2))]*3)) if FEET_GRP == '135' else list(chain([(-10., 10.)]*7, [(-(np.pi/2), (np.pi/2))]*3, [(0., 0.)]*3, [(-(np.pi/2), (np.pi/2))]*3, [(0., 0.)]*3, [(-(np.pi/2), (np.pi/2))]*3, [(0., 0.)]*3))
 
         # Compute joint configurations for each waypoint
         return [self.inverse_geometery(self.qc, wp, bounds)
@@ -279,11 +289,11 @@ class hexapod:
             # Generate waypoints for the foot movement
             waypoints = np.round([list(chain(self.neutral_state[0:idx], [self.x_t(t),
                                                                          self.y_t(t), self.z_t(t)], self.neutral_state[idx+3:]))for t in s], 7)
-            self.plot_robot_trajectory(
-                name=f'generate_joint_waypoints_swing leg{LEG}', space_flag='ss', states=waypoints)
+            # self.plot_robot_trajectory(
+            #     name=f'generate_joint_waypoints_swing leg{LEG}', space_flag='ss', states=waypoints)
             # Define bounds for optimization
-            bounds = list(chain([(0., 0.)]*6, [(1., 1.)], [((-np.pi/2), (np.pi/2))]*(
-                self.robot.nq-7)))  # Fix the base and set joint limits
+            bounds = list(chain([(0., 0.)]*6, [(1., 1.)], [(0., 0.)]*3, [(-(np.pi/2), (np.pi/2))]*3, [(0., 0.)]*3, [(-(np.pi/2), (np.pi/2))]*3, [
+                (0., 0.)]*3, [(-(np.pi/2), (np.pi/2))]*3)) if FEET_GRP == '135' else list(chain([(0., 0.)]*6, [(1., 1.)], [(-(np.pi/2), (np.pi/2))]*3, [(0., 0.)]*3, [(-(np.pi/2), (np.pi/2))]*3, [(0., 0.)]*3, [(-(np.pi/2), (np.pi/2))]*3, [(0., 0.)]*3))  # Fix the base and set joint limits
             # Compute joint configurations for each waypoint
             q[LEG] = [self.inverse_geometery(self.qc, wp, bounds)
                       for wp in waypoints]
@@ -295,6 +305,9 @@ class hexapod:
 
         q = np.sum(q, axis=0)
         q[:, 6] = 1  # Ensure the quaternion component is set correctly
+
+        # self.plot_robot_trajectory(
+        #     name=f'generate_joint_waypoints_swing legs{FEET_GRP}', space_flag='js', states=q)
         return q
 
     def compute_trajectory_pva(self, position_init, position_goal, t_init, t_goal, t):
@@ -435,8 +448,8 @@ class hexapod:
                 q_traj = np.vstack((q_traj, np.multiply(q_t, mask)))
                 t = (t + dt)
 
-        self.plot_robot_trajectory(
-            name='generate_joint_leg_trajectory', space_flag='js', q=q_wps)
+        # self.plot_robot_trajectory(
+        #     name='generate_joint_leg_trajectory', space_flag='js', q=q_wps)
         return np.delete(q_traj, 0, axis=0)  # Remove the initial state
 
     def generate_body_trajectory(self, step_size_xy_mult, theta=0, FEET_GRP='135', STEPS=5, t_init=0, t_goal=0.1, dt=0.01):
@@ -459,6 +472,8 @@ class hexapod:
                 "FEET_GRP has been given an incorrect value. Accepted Values = {'024', '135'}")
         q_wps = self.generate_joint_waypoints_push(
             step_size_xy_mult=step_size_xy_mult, STEPS=STEPS, theta=theta, FEET_GRP=FEET_GRP)
+        self.plot_robot_trajectory(
+            name='generate_body_trajectory', space_flag='js', states=q_wps)
         q_traj = self.qc
         # Create a mask to select which parts of the state vector to update
         mask = np.concatenate((np.ones(7), np.zeros(3), np.ones(3), np.zeros(3), np.ones(3), np.zeros(3), np.ones(
@@ -471,8 +486,7 @@ class hexapod:
                     q_wps[i], q_wps[i+1], t_init, t_goal, t)[0]
                 q_traj = np.vstack((q_traj, np.multiply(q_t, mask)))
                 t = (t + dt)
-        self.plot_robot_trajectory(
-            name='generate_body_trajectory', space_flag='js', q=q_wps)
+
         return np.delete(q_traj, 0, axis=0)  # Remove the initial state
 
     def body_velocity_error(self, q, desired_pos=np.zeros(3)):
@@ -484,7 +498,7 @@ class hexapod:
         """
         pass
 
-    def plot_robot_trajectory(self, name: str, q=None, states=None, space_flag='js'):
+    def plot_robot_trajectory(self, name: str, states=None, space_flag='js'):
         """
         Plots the robot's body position, orientation, and foot positions in separate 3D subplots for multiple states.
 
@@ -505,6 +519,7 @@ class hexapod:
                 "space_flag has been given an incorrect value. Accepted Values = {'js', 'ss'}")
 
         if space_flag == 'js':
+            q = states
             states = np.array([np.concatenate((qi[0:7], np.concatenate(
                 [self.robot.framePlacement(qi, frame).translation for frame in self.FOOT_IDS]))) for qi in q])
         fig = plt.figure(name, figsize=(16, 12))

@@ -16,7 +16,7 @@ class hexapod:
 
     def __init__(self, init_viz=True) -> None:
         self.pin_model_dir = str(
-            Path('URDF/URDF4Pin').absolute())
+            Path('./meshcat_sim/URDF/URDF4Pin').absolute())
         self.urdf_filename = (self.pin_model_dir + '/URDF4Pin.urdf')
 
         self.robot = pin.RobotWrapper.BuildFromURDF(

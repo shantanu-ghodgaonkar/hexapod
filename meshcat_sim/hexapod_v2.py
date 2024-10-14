@@ -253,15 +253,19 @@ class hexapod:
                              0, 0, 0, 1], self.current_state[7:])) for t in s], 5)
 
         # self.plot_robot_trajectory(
-        #     name=f'generate_joint_waypoints_push legs{FEET_GRP}', space_flag='ss', states=waypoints)
+        #     name=f'generate_joint_waypoints_push before IK legs{FEET_GRP}', space_flag='ss', states=waypoints)
 
         # Define bounds for optimization based on which feet are moving
         bounds = list(chain([(-10., 10.)]*7, [(0., 0.)]*3, [(-(np.pi/2), (np.pi/2))]*3, [(0., 0.)]*3, [(-(np.pi/2), (np.pi/2))]*3, [
                       (0., 0.)]*3, [(-(np.pi/2), (np.pi/2))]*3)) if FEET_GRP == '135' else list(chain([(-10., 10.)]*7, [(-(np.pi/2), (np.pi/2))]*3, [(0., 0.)]*3, [(-(np.pi/2), (np.pi/2))]*3, [(0., 0.)]*3, [(-(np.pi/2), (np.pi/2))]*3, [(0., 0.)]*3))
 
         # Compute joint configurations for each waypoint
-        return [self.inverse_geometery(self.qc, wp, bounds)
-                for wp in waypoints]
+        q = [self.inverse_geometery(self.qc, wp, bounds)
+             for wp in waypoints]
+
+        self.plot_robot_trajectory(
+            "generate_joint_waypoints_push after IK legs{FEET_GRP}", space_flag='js', states=q)
+        return q
 
     def generate_joint_waypoints_swing(self, step_size_xy_mult, STEPS=5, theta=0, FEET_GRP='024'):
         """Function to generate waypoints along the parabolic trajectory of the foot
@@ -289,8 +293,8 @@ class hexapod:
             # Generate waypoints for the foot movement
             waypoints = np.round([list(chain(self.neutral_state[0:idx], [self.x_t(t),
                                                                          self.y_t(t), self.z_t(t)], self.neutral_state[idx+3:]))for t in s], 7)
-            # self.plot_robot_trajectory(
-            #     name=f'generate_joint_waypoints_swing leg{LEG}', space_flag='ss', states=waypoints)
+            self.plot_robot_trajectory(
+                name=f'generate_joint_waypoints_swing before IK leg{LEG}', space_flag='ss', states=waypoints)
             # Define bounds for optimization
             bounds = list(chain([(0., 0.)]*6, [(1., 1.)], [(0., 0.)]*3, [(-(np.pi/2), (np.pi/2))]*3, [(0., 0.)]*3, [(-(np.pi/2), (np.pi/2))]*3, [
                 (0., 0.)]*3, [(-(np.pi/2), (np.pi/2))]*3)) if FEET_GRP == '135' else list(chain([(0., 0.)]*6, [(1., 1.)], [(-(np.pi/2), (np.pi/2))]*3, [(0., 0.)]*3, [(-(np.pi/2), (np.pi/2))]*3, [(0., 0.)]*3, [(-(np.pi/2), (np.pi/2))]*3, [(0., 0.)]*3))  # Fix the base and set joint limits
@@ -306,8 +310,8 @@ class hexapod:
         q = np.sum(q, axis=0)
         q[:, 6] = 1  # Ensure the quaternion component is set correctly
 
-        # self.plot_robot_trajectory(
-        #     name=f'generate_joint_waypoints_swing legs{FEET_GRP}', space_flag='js', states=q)
+        self.plot_robot_trajectory(
+            name=f'generate_joint_waypoints_swing after IK legs{FEET_GRP}', space_flag='js', states=q)
         return q
 
     def compute_trajectory_pva(self, position_init, position_goal, t_init, t_goal, t):
@@ -486,7 +490,6 @@ class hexapod:
                     q_wps[i], q_wps[i+1], t_init, t_goal, t)[0]
                 q_traj = np.vstack((q_traj, np.multiply(q_t, mask)))
                 t = (t + dt)
-
         return np.delete(q_traj, 0, axis=0)  # Remove the initial state
 
     def body_velocity_error(self, q, desired_pos=np.zeros(3)):

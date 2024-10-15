@@ -17,6 +17,15 @@ np.set_printoptions(suppress=True, precision=5)
 class hexapod:
 
     def __init__(self, init_viz=True, show_plots=True, save_plots=True, logging_level=logging.DEBUG) -> None:
+        """
+        Initialize the Hexapod robot model and visualization.
+
+        Args:
+            init_viz (bool): Initialize visualization if True. Defaults to True.
+            show_plots (bool): Show plots if True. Defaults to True.
+            save_plots (bool): Save plots if True. Defaults to True.
+            logging_level (int): Logging level (e.g., logging.DEBUG). Defaults to logging.DEBUG.
+        """
         self.init_logger(logging_level=logging_level)
         self.pin_model_dir = str(
             Path('./URDF/URDF4Pin').absolute())
@@ -54,10 +63,16 @@ class hexapod:
         self.BOUNDS_FOOT_MOVE = [(-(np.pi/2), (np.pi/2))]*3
         if self.viz_flag == True:
             self.init_viz()
-        logging.debug(
-            f"Hexapod Object Initialised Successfully with init_viz = {self.viz_flag}, show_plots={self.show_plots}, save_plots={self.save_plots}")
+        self.logger.info(
+            f"Hexapod Object Initialised Successfully with init_viz = {self.viz_flag}, show_plots={self.show_plots}, save_plots={self.save_plots}, logging_level={logging_level}")
 
     def init_logger(self, logging_level):
+        """
+        Initialize the logger for the Hexapod class.
+
+        Args:
+            logging_level (int): Logging level (e.g., logging.DEBUG).
+        """
         # Define the log directory
         log_dir = Path('logs').absolute()
         log_dir.mkdir(parents=True, exist_ok=True)
@@ -102,6 +117,9 @@ class hexapod:
         self.logger.addHandler(console_handler)
 
     def init_viz(self):
+        """
+        Initialize the Meshcat visualizer for the Hexapod robot.
+        """
         try:
             self.viz = pin.visualize.MeshcatVisualizer(
                 self.robot.model, self.robot.collision_model, self.robot.visual_model)
@@ -152,18 +170,123 @@ class hexapod:
                          [np.sin(theta), np.cos(theta), 0],
                          [0, 0, 1]])
 
-    # Function to calculate the skew-symmetric matrix of a vector
-
     def skew_symmetric(self, v):
+        """
+        Calculate the skew-symmetric matrix of a vector.
+
+        Args:
+            v (numpy.ndarray): 3-element vector.
+
+        Returns:
+            numpy.ndarray: 3x3 skew-symmetric matrix.
+        """
         return np.array([
             [0, -v[2], v[1]],
             [v[2], 0, -v[0]],
             [-v[1], v[0], 0]
         ])
 
-    # Function to compute the orientation error e_O based on Equation (3.87)
+    def generate_state_vector(self, q):
+        """
+        Generate the state vector of the robot, including base frame and feet frames.
+
+        Args:
+            q (numpy.ndarray): Joint configuration vector.
+
+        Returns:
+            numpy.ndarray: Concatenated state vector containing positions and orientations.
+        """
+        return np.concatenate((pin.SE3ToXYZQUAT(self.robot.framePlacement(q, self.BASE_FRAME_ID)), np.concatenate(
+            [pin.SE3ToXYZQUAT(self.robot.framePlacement(q, frame)) for frame in self.FOOT_IDS])))
+
+    def plot_robot_trajectory(self, name: str, states=None, space_flag='js'):
+        """
+        Plots the robot's body position, orientation, and foot positions in separate 3D subplots for multiple states.
+
+        Parameters:
+            name (str): Name of the plot window.
+            states (np.array): A numpy array of shape (N, 25) where:
+                - states[:, 0:3] represents the positions of the robot body.
+                - states[:, 3:7] represents the quaternions of the robot body.
+                - states[:, 7:10] represents the positions of foot 0.
+                - states[:, 10:13] represents the positions of foot 1.
+                - states[:, 13:16] represents the positions of foot 2.
+                - states[:, 16:19] represents the positions of foot 3.
+                - states[:, 19:22] represents the positions of foot 4.
+                - states[:, 22:25] represents the positions of foot 5.
+            space_flag (str): Flag to determine the space ('js' for joint space, 'ss' for state space).
+        """
+        if ((space_flag != 'js') & (space_flag != 'ss')):
+            raise ValueError(
+                "space_flag has been given an incorrect value. Accepted Values = {'js', 'ss'}")
+
+        if space_flag == 'js':
+            q = states
+            states = np.array([self.generate_state_vector(qi) for qi in q])
+
+        fig = plt.figure(name, figsize=(16, 12))
+
+        # Body position plot
+        ax1 = fig.add_subplot(241, projection='3d')
+        body_positions = states[:, 0:3]
+        ax1.plot(body_positions[:, 0], body_positions[:, 1],
+                 body_positions[:, 2], 'r-', label='Body Position')
+        ax1.set_title('Body Position')
+        ax1.set_xlabel('X')
+        ax1.set_ylabel('Y')
+        ax1.set_zlabel('Z')
+
+        # Body orientation plot (plot each axis separately as a 3D line)
+        ax2 = fig.add_subplot(242, projection='3d')
+        ax2.set_title('Body Orientation (quiver at first and last state)')
+        ax2.set_xlabel('X')
+        ax2.set_ylabel('Y')
+        ax2.set_zlabel('Z')
+
+        body_axes_length = 0.1
+        rotation_first = R.from_quat(states[0, 3:7]).as_matrix()
+        rotation_last = R.from_quat(states[-1, 3:7]).as_matrix()
+        for i, color in enumerate(['r', 'g', 'b']):  # X, Y, Z axes
+            ax2.quiver(body_positions[0, 0], body_positions[0, 1], body_positions[0, 2],
+                       rotation_first[0, i], rotation_first[1,
+                                                            i], rotation_first[2, i],
+                       color=color, length=body_axes_length, label=f'Start' if i == 0 else "")
+            ax2.quiver(body_positions[-1, 0], body_positions[-1, 1], body_positions[-1, 2],
+                       rotation_last[0, i], rotation_last[1,
+                                                          i], rotation_last[2, i],
+                       color=color, length=body_axes_length, linestyle='dotted', label=f'End' if i == 0 else "")
+        ax2.legend()
+
+        # Foot trajectories (one plot per foot)
+        for i, foot_index in enumerate(range(7, 49, 7)):
+            ax = fig.add_subplot(2, 4, i + 3, projection='3d')
+            foot_positions = states[:, foot_index:foot_index+3]
+            ax.plot(foot_positions[:, 0], foot_positions[:, 1],
+                    foot_positions[:, 2], label=f'Foot {i} Position')
+            # ax.set_title(f'Foot {i} Position')
+            ax.set_xlabel('X')
+            ax.set_ylabel('Y')
+            ax.set_zlabel('Z')
+            ax.legend()
+
+        plt.tight_layout()
+        if self.save_plots:
+            plt.savefig(
+                f'/media/Shantanu/hexapod/meshcat_sim/plots/{name}_{strftime("%Y%m%d_%H%M%S")}.png', dpi=600)
+        if self.show_plots:
+            plt.show()
 
     def orientation_error(self, Q_d, Q):
+        """
+        Compute the orientation error between desired and current quaternions.
+
+        Args:
+            Q_d (numpy.ndarray): Desired quaternion [x, y, z, w].
+            Q (numpy.ndarray): Current quaternion [x, y, z, w].
+
+        Returns:
+            float: Orientation error norm.
+        """
         Q_d = pin.Quaternion(np.array(Q_d)).normalized().coeffs()
         Q = pin.Quaternion(np.array(Q)).normalized().coeffs()
 
@@ -220,6 +343,17 @@ class hexapod:
         return v
 
     def frame_pose_err(self, q, FRAME_ID=9, desired_pose=np.concatenate((np.zeros((6, 1)), np.ones((1, 1))))):
+        """
+        Compute the pose error between current and desired frame placements.
+
+        Args:
+            q (numpy.ndarray): Joint configuration vector.
+            FRAME_ID (int): Frame ID for which the pose error is computed.
+            desired_pose (numpy.ndarray): Desired pose as [position (3), orientation quaternion (4)].
+
+        Returns:
+            float: Sum of squared position and orientation errors.
+        """
         current_pose = pin.SE3ToXYZQUAT(
             self.robot.framePlacement(q=q, index=FRAME_ID))
         error_pos_norm = np.linalg.norm(current_pose[0:3] - desired_pose[0:3])
@@ -228,9 +362,25 @@ class hexapod:
         return ((error_pos_norm**2) + (error_quat_norm**2))
 
     def inverse_geometry(self, q, bounds, FRAME_ID=2, desired_pose=np.concatenate((np.zeros((6, 1)), np.ones((1, 1))))):
+        """
+        Compute the inverse kinematics solution for a given frame and desired pose.
+
+        Args:
+            q (numpy.ndarray): Initial joint configuration guess.
+            bounds (list): Bounds for the optimization variables.
+            FRAME_ID (int): Frame ID for which IK is computed.
+            desired_pose (numpy.ndarray): Desired pose as [position (3), orientation quaternion (4)].
+
+        Returns:
+            numpy.ndarray: Joint configuration that minimizes the pose error.
+        """
         res = minimize(
-            self.frame_pose_err, q, args=(FRAME_ID, desired_pose), bounds=bounds, method='SLSQP', options={'ftol': 1e-7, 'maxiter': 1000, 'disp': True})
+            self.frame_pose_err, q, args=(FRAME_ID, desired_pose), bounds=bounds)
         return res.x
+
+    def inverse_geometry_jac(self, q, FRAME_ID, desired_pose):
+
+        pass
 
     def init_foot_trajectory_functions(self, step_size_xy_mult, theta=0, FOOT_ID=10):
         """Function to initialize the parabolic trajectory of a foot
@@ -275,9 +425,12 @@ class hexapod:
             self.init_foot_trajectory_functions(
                 step_size_xy_mult=step_size_xy_mult, theta=theta, FOOT_ID=FOOT_ID)
             s = np.linspace(0, 1, STEPS)
-            # Generate waypoints for the foot movement
-            waypoints = [[round(self.x_t(t), 5), round(
-                self.y_t(t), 5), round(self.z_t(t), 5), 0, 0, 0, 1] for t in s]
+            # Generate waypoints for the foot movement TODO: Currently the orientation goal is given to be neutral, add support for that later
+            waypoints = [np.concatenate(([round(self.x_t(t), 5), round(
+                self.y_t(t), 5), round(self.z_t(t), 5)],
+                pin.SE3ToXYZQUAT(self.robot.framePlacement(
+                    self.robot.q0, FOOT_ID))[3:7]
+            ))for t in s]
             if LEG == 0:
                 waypoints_plt = np.array([np.concatenate((self.neutral_state[0:7], [round(self.x_t(t), 5), round(
                     self.y_t(t), 5), round(self.z_t(t), 5), 0, 0, 0, 1], self.neutral_state[14:])) for t in s])
@@ -344,89 +497,52 @@ class hexapod:
 
         return self.desired_position, self.desired_velocity, self.desired_acceleration
 
-    def generate_state_vector(self, q):
-        return np.concatenate((pin.SE3ToXYZQUAT(self.robot.framePlacement(q, self.BASE_FRAME_ID)), np.concatenate(
-            [pin.SE3ToXYZQUAT(self.robot.framePlacement(q, frame)) for frame in self.FOOT_IDS])))
+    def generate_leg_joint_trajectory(self, step_size_xy_mult, theta=0, FEET_GRP='024', STEPS=5, t_init=0, t_goal=0.1, dt=0.01):
+        """Function to generate the entire trajectory of a chosen foot, from current position to goal position, in Joint state form
 
-    def plot_robot_trajectory(self, name: str, states=None, space_flag='js'):
+        Args:
+            step_size_xy_mult (int): Choice between half (1) or full (2) step size
+            theta (float, optional): Direction angle in radians. Defaults to 0.
+            FEET_GRP (str, optional): Feet group to move. Defaults to '024'.
+            STEPS (int, optional): Number of waypoints required between current and goal position. Defaults to 5.
+            t_init (float, optional): Initial time. Defaults to 0.
+            t_goal (float, optional): Goal time. Defaults to 0.1.
+            dt (float, optional): Time divisions between t_init and t_goal. Defaults to 0.01.
+
+        Returns:
+            numpy.ndarray: A 2D array where each row forms a Joint state for the leg in its motion along the chosen path
         """
-        Plots the robot's body position, orientation, and foot positions in separate 3D subplots for multiple states.
-
-        Parameters:
-            states (np.array): A numpy array of shape (N, 25) where:
-                - states[:, 0:3] represents the positions of the robot body.
-                - states[:, 3:7] represents the quaternions of the robot body.
-                - states[:, 7:10] represents the positions of foot 0.
-                - states[:, 10:13] represents the positions of foot 1.
-                - states[:, 13:16] represents the positions of foot 2.
-                - states[:, 16:19] represents the positions of foot 3.
-                - states[:, 19:22] represents the positions of foot 4.
-                - states[:, 22:25] represents the positions of foot 5.
-        """
-
-        if ((space_flag != 'js') & (space_flag != 'ss')):
+        if ((FEET_GRP != '135') & (FEET_GRP != '024')):
             raise ValueError(
-                "space_flag has been given an incorrect value. Accepted Values = {'js', 'ss'}")
+                "FEET_GRP has been given an incorrect value. Accepted Values = {'024', '135'}")
+        q_wps = self.generate_joint_waypoints_swing(step_size_xy_mult,
+                                                    theta=theta, FEET_GRP=FEET_GRP, STEPS=STEPS)
+        q_traj = self.qc
+        # Create a mask to select which parts of the state vector to update
+        mask = np.concatenate((np.zeros(6), [1], np.zeros(3), np.ones(3), np.zeros(3), np.ones(3), np.zeros(3), np.ones(
+            3))) if FEET_GRP == '135' else np.concatenate((np.zeros(6), [1], np.ones(3), np.zeros(3), np.ones(3), np.zeros(3), np.ones(3), np.zeros(3)))
+        # Generate trajectory by interpolating between waypoints
+        for i in range(0, q_wps.__len__()-1):
+            t = t_init
+            while t < t_goal:
+                q_t = self.compute_trajectory_p(
+                    q_wps[i], q_wps[i+1], t_init, t_goal, t)[0]
+                q_traj = np.vstack((q_traj, np.multiply(q_t, mask)))
+                t = (t + dt)
 
-        if space_flag == 'js':
-            q = states
-            states = np.array([self.generate_state_vector(qi) for qi in q])
-
-        fig = plt.figure(name, figsize=(16, 12))
-
-        # Body position plot
-        ax1 = fig.add_subplot(241, projection='3d')
-        body_positions = states[:, 0:3]
-        ax1.plot(body_positions[:, 0], body_positions[:, 1],
-                 body_positions[:, 2], 'r-', label='Body Position')
-        ax1.set_title('Body Position')
-        ax1.set_xlabel('X')
-        ax1.set_ylabel('Y')
-        ax1.set_zlabel('Z')
-
-        # Body orientation plot (plot each axis separately as a 3D line)
-        ax2 = fig.add_subplot(242, projection='3d')
-        ax2.set_title('Body Orientation (quiver at first and last state)')
-        ax2.set_xlabel('X')
-        ax2.set_ylabel('Y')
-        ax2.set_zlabel('Z')
-
-        body_axes_length = 0.1
-        rotation_first = R.from_quat(states[0, 3:7]).as_matrix()
-        rotation_last = R.from_quat(states[-1, 3:7]).as_matrix()
-        for i, color in enumerate(['r', 'g', 'b']):  # X, Y, Z axes
-            ax2.quiver(body_positions[0, 0], body_positions[0, 1], body_positions[0, 2],
-                       rotation_first[0, i], rotation_first[1,
-                                                            i], rotation_first[2, i],
-                       color=color, length=body_axes_length, label=f'Start' if i == 0 else "")
-            ax2.quiver(body_positions[-1, 0], body_positions[-1, 1], body_positions[-1, 2],
-                       rotation_last[0, i], rotation_last[1,
-                                                          i], rotation_last[2, i],
-                       color=color, length=body_axes_length, linestyle='dotted', label=f'End' if i == 0 else "")
-        ax2.legend()
-
-        # Foot trajectories (one plot per foot)
-        for i, foot_index in enumerate(range(7, 49, 7)):
-            ax = fig.add_subplot(2, 4, i + 3, projection='3d')
-            foot_positions = states[:, foot_index:foot_index+3]
-            ax.plot(foot_positions[:, 0], foot_positions[:, 1],
-                    foot_positions[:, 2], label=f'Foot {i} Position')
-            # ax.set_title(f'Foot {i} Position')
-            ax.set_xlabel('X')
-            ax.set_ylabel('Y')
-            ax.set_zlabel('Z')
-            ax.legend()
-
-        plt.tight_layout()
-        if self.save_plots:
-            plt.savefig(
-                f'/media/Shantanu/hexapod/meshcat_sim/plots/{name}_{strftime("%Y%m%d_%H%M%S")}.png', dpi=600)
-        if self.show_plots:
-            plt.show()
+        self.plot_robot_trajectory(
+            name='generate_joint_leg_trajectory', space_flag='js', states=q_wps)
+        return np.delete(q_traj, 0, axis=0)  # Remove the initial state
 
 
 if __name__ == '__main__':
 
-    hexy = hexapod(init_viz=False, save_plots=False,
+    # Create an instance of the hexapod robot with visualization and plotting options disabled
+    hexy = hexapod(init_viz=True, save_plots=False,
                    show_plots=False, logging_level=logging.DEBUG)
-    # hexy.generate_joint_waypoints_swing(step_size_xy_mult=1)
+    # Generate joint waypoints for swinging motion
+    q = hexy.generate_leg_joint_trajectory(step_size_xy_mult=1)
+    sleep(3)
+    while (1):
+        hexy.viz.play(q)
+        sleep(3)

@@ -1,0 +1,2 @@
+2024-10-15 08:20:24,250 - hexapod - INFO - Hexapod Object Initialised Successfully with init_viz = True, logging_level=10
+2024-10-15 08:20:26,787 - hexapod - DEBUG - Time taken for computing 5 steps = 2.5361363887786865

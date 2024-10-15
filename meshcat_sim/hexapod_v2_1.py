@@ -597,7 +597,7 @@ if __name__ == "__main__":
     # Compute goal time based on step size and velocity
     t_goal = (hexy.HALF_STEP_SIZE_XY * 2) / vel
     sleep(3)  # Wait for 3 seconds
-    theta = 0  # Direction angle in radians
+    theta = 45  # Direction angle in radians
     step_size_xy_mult = 1  # Step size multiplier
     STEPS = 5
     # Generate leg and body trajectories

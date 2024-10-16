@@ -1,2 +1,0 @@
-2024-10-15 07:50:50,218 - hexapod - INFO - Hexapod Object Initialised Successfully with init_viz = True, logging_level=10
-2024-10-15 07:50:56,246 - hexapod - INFO - First step taken, below code implements the second step

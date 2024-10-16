@@ -666,7 +666,7 @@ if __name__ == "__main__":
     # Update the current configuration
     hexy.qc = q[-1]
     step_size_xy_mult = 2
-    STEP_CNT = 2
+    STEP_CNT = 10
     for i in range(0, STEP_CNT):
         # Generate trajectories for legs 1, 3, and 5
         leg1_traj = hexy.generate_leg_joint_trajectory(

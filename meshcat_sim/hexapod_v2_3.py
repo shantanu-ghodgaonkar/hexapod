@@ -32,7 +32,7 @@ class hexapod:
         self.init_logger(logging_level)
         # Set up the paths to the URDF model files
         self.pin_model_dir = str(
-            Path('./URDF/URDF4Pin').absolute())
+            Path('./meshcat_sim/URDF/URDF4Pin').absolute())
         self.urdf_filename = (self.pin_model_dir + '/URDF4Pin.urdf')
 
         # Build the robot model using Pinocchio's RobotWrapper

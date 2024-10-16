@@ -1,0 +1,4 @@
+pin
+meshcat
+scipy
+matplotlib

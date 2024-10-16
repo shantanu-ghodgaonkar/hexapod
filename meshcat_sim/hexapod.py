@@ -23,8 +23,7 @@ class hexapod:
             init_viz (bool, optional): Choose whether or not to initialise a meshcat visualiser
         """
         # load URDF directory path
-        self.pin_model_dir = str(
-            Path('URDF/URDF4Pin').absolute())
+        self.pin_model_dir = str(Path('./meshcat_sim/URDF/URDF4Pin').absolute())
         # load URDF file path
         self.urdf_filename = (self.pin_model_dir + '/URDF4Pin.urdf')
         # load robot model

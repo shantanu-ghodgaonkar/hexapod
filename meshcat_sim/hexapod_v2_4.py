@@ -12,7 +12,6 @@ import logging
 np.set_printoptions(suppress=True, precision=4)
 
 
-@DeprecationWarning
 class hexapod:
     """
     A class representing a hexapod robot model using the Pinocchio library.
@@ -38,7 +37,7 @@ class hexapod:
 
         # Build the robot model using Pinocchio's RobotWrapper
         self.robot = pin.RobotWrapper.BuildFromURDF(
-            self.urdf_filename, self.pin_model_dir, root_joint=pin.JointModelFreeFlyer(), verbose=True)
+            self.urdf_filename, self.pin_model_dir, root_joint=pin.JointModelFreeFlyer())
 
         # Initialize the robot's kinematics and update geometry placements
         self.robot.forwardKinematics(pin.neutral(self.robot.model))
@@ -210,9 +209,8 @@ class hexapod:
         bounds[4] = (self.qc[4], self.qc[4])  # Quaternion component
         bounds[5] = (self.qc[5], self.qc[5])  # Quaternion component
         bounds[6] = (self.qc[6], self.qc[6])  # Quaternion component
-        for i in range(7, self.robot.nq, 2):
+        for i in range(7, self.robot.nq):
             # Joint limits for other joints
-            # bounds[i] = (self.qc[i], self.qc[i])
             bounds[i] = ((-np.pi/3), (np.pi/3))
         # Perform minimization to find joint configuration minimizing foot position error
         res = minimize(
@@ -524,7 +522,7 @@ class hexapod:
                 # Compute trajectory using linear interpolation
                 q_t = self.compute_trajectory_p(
                     q_wps[i], q_wps[i+1], t_init, t_goal, t)[0]
-                q_traj = np.vstack((q_traj, q_t))
+                q_traj = np.vstack((q_traj, np.multiply(q_t, mask)))
                 t = (t + dt)
         # Remove the initial configuration
         return np.delete(q_traj, 0, axis=0)
@@ -576,7 +574,7 @@ class hexapod:
         """
         # Joint angle bounds (exclude base joints)
         bounds = [(-np.pi/3, np.pi/3)] * (self.robot.nq - 7)
-        bounds[::2] = list(zip(self.qc[7::2], self.qc[7::2]))
+
         # Initial joint angles
         q_joints_init = q[7:].copy()
 
@@ -668,8 +666,8 @@ if __name__ == "__main__":
     # body_traj = hexy.generate_body_joint_trajectory(
     #     step_size_xy_mult=step_size_xy_mult, DIR='N', t_goal=t_goal)
     # # Combine the trajectories into a single trajectory q
-    # q = np.hstack((body_traj[:, 0:7], leg0_traj[:, 7:13], body_traj[:, 13:19],
-    #                leg2_traj[:, 19:25], body_traj[:, 25:31], leg4_traj[:, 31:37], body_traj[:, 37:]))
+    # q = np.hstack((body_traj[:, 0:7], leg0_traj[:, 7:10], body_traj[:, 10:13],
+    #                leg2_traj[:, 13:16], body_traj[:, 16:19], leg4_traj[:, 19:22], body_traj[:, 22:25]))
     # # Update the current configuration
     # hexy.qc = q[-1]
     # step_size_xy_mult = 2
@@ -687,9 +685,9 @@ if __name__ == "__main__":
     #         step_size_xy_mult=step_size_xy_mult, DIR='N', t_goal=t_goal)
     #     # Append trajectories to q
     #     q = np.vstack((q,
-    #                    np.hstack((body_traj[:, 0:7], body_traj[:, 7:13],
-    #                               leg1_traj[:, 13:19], body_traj[:, 19:25],
-    #                               leg3_traj[:, 25:31], body_traj[:, 31:37], leg5_traj[:, 37:]))
+    #                    np.hstack((body_traj[:, 0:7], body_traj[:, 7:10],
+    #                               leg1_traj[:, 10:13], body_traj[:, 13:16],
+    #                               leg3_traj[:, 16:19], body_traj[:, 19:22], leg5_traj[:, 22:25]))
     #                    ))
     #     # Update the current configuration
     #     hexy.qc = q[-1]
@@ -705,9 +703,9 @@ if __name__ == "__main__":
     #         step_size_xy_mult=step_size_xy_mult, DIR='N', t_goal=t_goal)
     #     # Append trajectories to q
     #     q = np.vstack((q,
-    #                    np.hstack((body_traj[:, 0:7], leg0_traj[:, 7:13],
-    #                               body_traj[:, 13:19], leg2_traj[:, 19:25],
-    #                               body_traj[:, 25:31], leg4_traj[:, 31:37], body_traj[:, 37:]))
+    #                    np.hstack((body_traj[:, 0:7], leg0_traj[:, 7:10],
+    #                               body_traj[:, 10:13], leg2_traj[:, 13:16],
+    #                               body_traj[:, 16:19], leg4_traj[:, 19:22], body_traj[:, 22:25]))
     #                    ))
     #     # Update the current configuration
     #     hexy.qc = q[-1]
@@ -726,17 +724,38 @@ if __name__ == "__main__":
     l4 = hexy.inverse_geometery(q=hexy.robot.q0, FRAME_ID=hexy.FOOT_IDS[4], desired_pos=(
         hexy.robot.framePlacement(hexy.robot.q0, hexy.FOOT_IDS[4]).translation + pick_up_leg))
 
-    q = np.hstack((hexy.robot.q0[0:7], l0[7:13], hexy.robot.q0[13:19],
-                   l2[19:25], hexy.robot.q0[25:31], l4[31:37], hexy.robot.q0[37:]))
+    q = np.hstack((hexy.robot.q0[0:7], l0[7:10], hexy.robot.q0[10:13],
+                   l2[13:16], hexy.robot.q0[16:19], l4[19:22], hexy.robot.q0[22:25]))
 
-    # hexy.viz.display(q=q)
+    if hasattr(hexy, 'viz'):
+        hexy.viz.display(q=q)
 
-    v = np.zeros(hexy.robot.model.nv)  # in rad/s for the UR5
-    a = np.zeros(hexy.robot.model.nv)  # in rad/s² for the UR5
+    v = np.zeros(hexy.robot.model.nv)  # in rad/s
+    a = np.zeros(hexy.robot.model.nv)  # in rad/s²
 
     # Computes the inverse dynamics (RNEA) for all the joints of the robot
     tau = pin.rnea(hexy.robot.model, hexy.robot.data, q, v, a)
 
     # Print out to the vector of joint torques (in N.m)
     print("Joint torques: " + str(np.round(tau, 4)))
-    # hexy.logger.debug("DEBUG POINT")
+
+    # Identify Actuated Joints
+    actuated_joints = []
+    for joint_id in range(hexy.robot.model.njoints):
+        joint = hexy.robot.model.joints[joint_id]
+        if joint.nv > 0:
+            joint_name = hexy.robot.model.names[joint_id]
+            actuated_joints.append((joint_id, joint_name))
+
+    # Verify the number of actuated joints matches the size of tau
+    if len(actuated_joints) != len(tau):
+        print(
+            f"Warning: Number of actuated joints ({len(actuated_joints)}) does not match size of tau ({len(tau)}).")
+    else:
+        print(f"Number of Actuated Joints: {len(actuated_joints)}")
+
+    # Map and Print Joint Torques with Names
+    print("\nJoint Torques (tau):")
+    for i, (joint_id, joint_name) in enumerate(actuated_joints):
+        torque = np.round(tau[i], 4)
+        print(f"Torque for {joint_name} (Joint ID {joint_id}): {torque}")

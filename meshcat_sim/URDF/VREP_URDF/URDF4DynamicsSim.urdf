@@ -217,8 +217,9 @@
             </material>
         </visual>
     </link>
-    <joint name="Revolute_joint_01" type="continuous">
+    <joint name="Revolute_joint_01" type="revolute">
         <axis xyz="0 0 1" />
+        <limit effort="0.52" upper="1.0471975511967" lower="-1.0471975511967" velocity="10.786134777326" />
         <parent link="robot_base" />
         <child link="coxa_1" />
         <origin xyz="0.000000 -0.159210 0.059000" rpy="-3.141593 3.141593 -3.141593" />
@@ -245,8 +246,9 @@
             </material>
         </visual>
     </link>
-    <joint name="Revolute_joint_11" type="continuous">
+    <joint name="Revolute_joint_11" type="revolute">
         <axis xyz="0 0 1" />
+        <limit effort="0.52" upper="1.0471975511967" lower="-1.0471975511967" velocity="10.786134777326" />
         <parent link="coxa_1" />
         <child link="femur_1" />
         <origin xyz="0.000000 -0.047000 0.000000" rpy="0.000000 1.570796 0.000000" />
@@ -318,8 +320,9 @@
             </material>
         </visual>
     </link>
-    <joint name="Revolute_joint_21" type="continuous">
+    <joint name="Revolute_joint_21" type="revolute">
         <axis xyz="0 0 1" />
+        <limit effort="0.52" upper="1.0471975511967" lower="-1.0471975511967" velocity="10.786134777326" />
         <parent link="femur_1" />
         <child link="tibia_1" />
         <origin xyz="-0.039460 -0.023550 -0.000000" rpy="-3.141593 3.141593 -3.141593" />
@@ -406,8 +409,8 @@
             </material>
         </visual>
     </link>
-    <joint name="Spherical_joint_01" type="fixed">
-        <axis xyz="0 0 1" />
+    <joint name="Fixed_joint_01" type="fixed">
+        
         <parent link="tibia_1" />
         <child link="endeff_1" />
         <origin xyz="0.097930 -0.020250 0.000000" rpy="0.000000 -1.570796 0.000000" />
@@ -434,8 +437,9 @@
             </material>
         </visual>
     </link>
-    <joint name="Revolute_joint_02" type="continuous">
+    <joint name="Revolute_joint_02" type="revolute">
         <axis xyz="0 0 1" />
+        <limit effort="0.52" upper="1.0471975511967" lower="-1.0471975511967" velocity="10.786134777326" />
         <parent link="robot_base" />
         <child link="coxa_2" />
         <origin xyz="0.137880 -0.079600 0.059000" rpy="-3.141593 3.141593 1.047198" />
@@ -462,8 +466,9 @@
             </material>
         </visual>
     </link>
-    <joint name="Revolute_joint_12" type="continuous">
+    <joint name="Revolute_joint_12" type="revolute">
         <axis xyz="0 0 1" />
+        <limit effort="0.52" upper="1.0471975511967" lower="-1.0471975511967" velocity="10.786134777326" />
         <parent link="coxa_2" />
         <child link="femur_2" />
         <origin xyz="0.000002 0.046997 0.000000" rpy="-0.000000 1.570796 0.000000" />
@@ -535,8 +540,9 @@
             </material>
         </visual>
     </link>
-    <joint name="Revolute_joint_22" type="continuous">
+    <joint name="Revolute_joint_22" type="revolute">
         <axis xyz="0 0 1" />
+        <limit effort="0.52" upper="1.0471975511967" lower="-1.0471975511967" velocity="10.786134777326" />
         <parent link="femur_2" />
         <child link="tibia_2" />
         <origin xyz="-0.039460 0.023557 0.000002" rpy="3.141593 3.141593 3.141593" />
@@ -623,8 +629,8 @@
             </material>
         </visual>
     </link>
-    <joint name="Spherical_joint_02" type="fixed">
-        <axis xyz="0 0 1" />
+    <joint name="Fixed_joint_02" type="fixed">
+        
         <parent link="tibia_2" />
         <child link="endeff_2" />
         <origin xyz="0.097930 0.020248 0.000001" rpy="0.000000 -1.570796 0.000000" />
@@ -651,8 +657,9 @@
             </material>
         </visual>
     </link>
-    <joint name="Revolute_joint_03" type="continuous">
+    <joint name="Revolute_joint_03" type="revolute">
         <axis xyz="0 0 1" />
+        <limit effort="0.52" upper="1.0471975511967" lower="-1.0471975511967" velocity="10.786134777326" />
         <parent link="robot_base" />
         <child link="coxa_3" />
         <origin xyz="0.137880 0.079600 0.059000" rpy="-3.141593 3.141593 2.094395" />
@@ -679,8 +686,9 @@
             </material>
         </visual>
     </link>
-    <joint name="Revolute_joint_13" type="continuous">
+    <joint name="Revolute_joint_13" type="revolute">
         <axis xyz="0 0 1" />
+        <limit effort="0.52" upper="1.0471975511967" lower="-1.0471975511967" velocity="10.786134777326" />
         <parent link="coxa_3" />
         <child link="femur_3" />
         <origin xyz="-0.000002 0.046997 0.000000" rpy="-0.000000 1.570796 0.000000" />
@@ -752,8 +760,9 @@
             </material>
         </visual>
     </link>
-    <joint name="Revolute_joint_23" type="continuous">
+    <joint name="Revolute_joint_23" type="revolute">
         <axis xyz="0 0 1" />
+        <limit effort="0.52" upper="1.0471975511967" lower="-1.0471975511967" velocity="10.786134777326" />
         <parent link="femur_3" />
         <child link="tibia_B_3" />
         <origin xyz="-0.039460 0.023211 -0.000202" rpy="-3.141593 3.141593 -3.141593" />
@@ -840,8 +849,8 @@
             </material>
         </visual>
     </link>
-    <joint name="Spherical_joint_03" type="fixed">
-        <axis xyz="0 0 1" />
+    <joint name="Fixed_joint_03" type="fixed">
+        
         <parent link="tibia_B_3" />
         <child link="endeff_3" />
         <origin xyz="0.097930 0.020595 0.000199" rpy="0.000000 -1.570796 0.000000" />
@@ -868,8 +877,9 @@
             </material>
         </visual>
     </link>
-    <joint name="Revolute_joint_04" type="continuous">
+    <joint name="Revolute_joint_04" type="revolute">
         <axis xyz="0 0 1" />
+        <limit effort="0.52" upper="1.0471975511967" lower="-1.0471975511967" velocity="10.786134777326" />
         <parent link="robot_base" />
         <child link="coxa_4" />
         <origin xyz="0.000000 0.159210 0.059000" rpy="-3.141593 3.141593 -3.141593" />
@@ -896,8 +906,9 @@
             </material>
         </visual>
     </link>
-    <joint name="Revolute_joint_14" type="continuous">
+    <joint name="Revolute_joint_14" type="revolute">
         <axis xyz="0 0 1" />
+        <limit effort="0.52" upper="1.0471975511967" lower="-1.0471975511967" velocity="10.786134777326" />
         <parent link="coxa_4" />
         <child link="femur_4" />
         <origin xyz="0.000000 0.047000 0.000000" rpy="0.000000 1.570796 0.000000" />
@@ -969,8 +980,9 @@
             </material>
         </visual>
     </link>
-    <joint name="Revolute_joint_24" type="continuous">
+    <joint name="Revolute_joint_24" type="revolute">
         <axis xyz="0 0 1" />
+        <limit effort="0.52" upper="1.0471975511967" lower="-1.0471975511967" velocity="10.786134777326" />
         <parent link="femur_4" />
         <child link="tibia_4" />
         <origin xyz="-0.039460 0.023550 -0.000000" rpy="-3.141593 3.141593 -3.141593" />
@@ -1057,8 +1069,8 @@
             </material>
         </visual>
     </link>
-    <joint name="Spherical_joint_04" type="fixed">
-        <axis xyz="0 0 1" />
+    <joint name="Fixed_joint_04" type="fixed">
+        
         <parent link="tibia_4" />
         <child link="endeff_4" />
         <origin xyz="0.097930 0.020250 0.000000" rpy="0.000000 -1.570796 0.000000" />
@@ -1085,8 +1097,9 @@
             </material>
         </visual>
     </link>
-    <joint name="Revolute_joint_05" type="continuous">
+    <joint name="Revolute_joint_05" type="revolute">
         <axis xyz="0 0 1" />
+        <limit effort="0.52" upper="1.0471975511967" lower="-1.0471975511967" velocity="10.786134777326" />
         <parent link="robot_base" />
         <child link="coxa_5" />
         <origin xyz="-0.137880 0.079600 0.059000" rpy="-3.141593 3.141593 -2.094395" />
@@ -1113,8 +1126,9 @@
             </material>
         </visual>
     </link>
-    <joint name="Revolute_joint_15" type="continuous">
+    <joint name="Revolute_joint_15" type="revolute">
         <axis xyz="0 0 1" />
+        <limit effort="0.52" upper="1.0471975511967" lower="-1.0471975511967" velocity="10.786134777326" />
         <parent link="coxa_5" />
         <child link="femur_5" />
         <origin xyz="0.000002 0.046997 0.000000" rpy="0.000000 1.570796 0.000000" />
@@ -1186,8 +1200,9 @@
             </material>
         </visual>
     </link>
-    <joint name="Revolute_joint_25" type="continuous">
+    <joint name="Revolute_joint_25" type="revolute">
         <axis xyz="0 0 1" />
+        <limit effort="0.52" upper="1.0471975511967" lower="-1.0471975511967" velocity="10.786134777326" />
         <parent link="femur_5" />
         <child link="tibia_5" />
         <origin xyz="-0.039460 0.023557 0.000002" rpy="-3.141593 3.141593 3.141593" />
@@ -1274,8 +1289,8 @@
             </material>
         </visual>
     </link>
-    <joint name="Spherical_joint_05" type="fixed">
-        <axis xyz="0 0 1" />
+    <joint name="Fixed_joint_05" type="fixed">
+        
         <parent link="tibia_5" />
         <child link="endeff_5" />
         <origin xyz="0.097930 0.020248 0.000001" rpy="-0.000000 -1.570796 0.000000" />
@@ -1302,8 +1317,9 @@
             </material>
         </visual>
     </link>
-    <joint name="Revolute_joint_06" type="continuous">
+    <joint name="Revolute_joint_06" type="revolute">
         <axis xyz="0 0 1" />
+        <limit effort="0.52" upper="1.0471975511967" lower="-1.0471975511967" velocity="10.786134777326" />
         <parent link="robot_base" />
         <child link="coxa_6" />
         <origin xyz="-0.137880 -0.079600 0.059000" rpy="-3.141593 3.141593 -1.047198" />
@@ -1330,8 +1346,9 @@
             </material>
         </visual>
     </link>
-    <joint name="Revolute_joint_16" type="continuous">
+    <joint name="Revolute_joint_16" type="revolute">
         <axis xyz="0 0 1" />
+        <limit effort="0.52" upper="1.0471975511967" lower="-1.0471975511967" velocity="10.786134777326" />
         <parent link="coxa_6" />
         <child link="femur_6" />
         <origin xyz="-0.000002 0.046997 0.000000" rpy="0.000000 1.570796 0.000000" />
@@ -1403,8 +1420,9 @@
             </material>
         </visual>
     </link>
-    <joint name="Revolute_joint_26" type="continuous">
+    <joint name="Revolute_joint_26" type="revolute">
         <axis xyz="0 0 1" />
+        <limit effort="0.52" upper="1.0471975511967" lower="-1.0471975511967" velocity="10.786134777326" />
         <parent link="femur_6" />
         <child link="tibia_6" />
         <origin xyz="-0.039460 0.023557 -0.000002" rpy="-3.141593 3.141593 -3.141593" />
@@ -1491,8 +1509,8 @@
             </material>
         </visual>
     </link>
-    <joint name="Spherical_joint_06" type="fixed">
-        <axis xyz="0 0 1" />
+    <joint name="Fixed_joint_06" type="fixed">
+        
         <parent link="tibia_6" />
         <child link="endeff_6" />
         <origin xyz="0.097930 0.020248 -0.000001" rpy="-0.000000 -1.570796 0.000000" />

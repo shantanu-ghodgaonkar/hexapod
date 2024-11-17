@@ -1,0 +1,1540 @@
+<?xml version="1.0"?>
+<robot name="HexY">
+    <link name="robot_base">
+        <inertial>
+            <origin rpy="-3.141593 3.141593 -3.141593" xyz="0.000000 -0.000000 0.100500" />
+            <inertia izz="0.0164026279" iyy="0.00861935312" ixx="0.00861935312" ixy="-4.48902167e-15" ixz="-9.97e-19" iyz="-1.166e-18" />
+            <mass value="1.588718" />
+        </inertial>
+        <collision name="HexY">
+            <origin xyz="0.000000 0.000000 0.041000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_robot_base_coll_1.dae" />
+            </geometry>
+        </collision>
+        <collision name="HexY">
+            <origin xyz="0.000000 0.000000 0.041000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_robot_base_coll_2.dae" />
+            </geometry>
+        </collision>
+        <collision name="HexY">
+            <origin xyz="0.000000 0.000000 0.041000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_robot_base_coll_3.dae" />
+            </geometry>
+        </collision>
+        <collision name="HexY">
+            <origin xyz="0.000000 0.000000 0.041000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_robot_base_coll_4.dae" />
+            </geometry>
+        </collision>
+        <collision name="HexY">
+            <origin xyz="0.000000 0.000000 0.041000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_robot_base_coll_5.dae" />
+            </geometry>
+        </collision>
+        <collision name="HexY">
+            <origin xyz="0.000000 0.000000 0.041000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_robot_base_coll_6.dae" />
+            </geometry>
+        </collision>
+        <collision name="HexY">
+            <origin xyz="0.000000 0.000000 0.041000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_robot_base_coll_7.dae" />
+            </geometry>
+        </collision>
+        <collision name="HexY">
+            <origin xyz="0.000000 0.000000 0.041000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_robot_base_coll_8.dae" />
+            </geometry>
+        </collision>
+        <collision name="HexY">
+            <origin xyz="0.000000 0.000000 0.041000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_robot_base_coll_9.dae" />
+            </geometry>
+        </collision>
+        <collision name="HexY">
+            <origin xyz="0.000000 0.000000 0.041000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_robot_base_coll_10.dae" />
+            </geometry>
+        </collision>
+        <collision name="HexY">
+            <origin xyz="0.000000 0.000000 0.041000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_robot_base_coll_11.dae" />
+            </geometry>
+        </collision>
+        <collision name="HexY">
+            <origin xyz="0.000000 0.000000 0.041000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_robot_base_coll_12.dae" />
+            </geometry>
+        </collision>
+        <collision name="HexY">
+            <origin xyz="0.000000 0.000000 0.041000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_robot_base_coll_13.dae" />
+            </geometry>
+        </collision>
+        <collision name="HexY">
+            <origin xyz="0.000000 0.000000 0.041000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_robot_base_coll_14.dae" />
+            </geometry>
+        </collision>
+        <visual name="HexY">
+            <origin xyz="0.000000 0.000000 0.041000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_robot_base_vis_1.dae" />
+            </geometry>
+            <material name="robot_base_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="HexY">
+            <origin xyz="0.000000 0.000000 0.041000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_robot_base_vis_2.dae" />
+            </geometry>
+            <material name="robot_base_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="HexY">
+            <origin xyz="0.000000 0.000000 0.041000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_robot_base_vis_3.dae" />
+            </geometry>
+            <material name="robot_base_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="HexY">
+            <origin xyz="0.000000 0.000000 0.041000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_robot_base_vis_4.dae" />
+            </geometry>
+            <material name="robot_base_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="HexY">
+            <origin xyz="0.000000 0.000000 0.041000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_robot_base_vis_5.dae" />
+            </geometry>
+            <material name="robot_base_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="HexY">
+            <origin xyz="0.000000 0.000000 0.041000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_robot_base_vis_6.dae" />
+            </geometry>
+            <material name="robot_base_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="HexY">
+            <origin xyz="0.000000 0.000000 0.041000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_robot_base_vis_7.dae" />
+            </geometry>
+            <material name="robot_base_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="HexY">
+            <origin xyz="0.000000 0.000000 0.041000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_robot_base_vis_8.dae" />
+            </geometry>
+            <material name="robot_base_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="HexY">
+            <origin xyz="0.000000 0.000000 0.041000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_robot_base_vis_9.dae" />
+            </geometry>
+            <material name="robot_base_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="HexY">
+            <origin xyz="0.000000 0.000000 0.041000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_robot_base_vis_10.dae" />
+            </geometry>
+            <material name="robot_base_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="HexY">
+            <origin xyz="0.000000 0.000000 0.041000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_robot_base_vis_11.dae" />
+            </geometry>
+            <material name="robot_base_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="HexY">
+            <origin xyz="0.000000 0.000000 0.041000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_robot_base_vis_12.dae" />
+            </geometry>
+            <material name="robot_base_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="HexY">
+            <origin xyz="0.000000 0.000000 0.041000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_robot_base_vis_13.dae" />
+            </geometry>
+            <material name="robot_base_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="HexY">
+            <origin xyz="0.000000 0.000000 0.041000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_robot_base_vis_14.dae" />
+            </geometry>
+            <material name="robot_base_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint name="Revolute_joint_01" type="revolute">
+        <axis xyz="0 0 1" />
+        <limit upper="1.570796326795" effort="0.52" velocity="10.786134777326" lower="-1.570796326795" />
+        <parent link="robot_base" />
+        <child link="coxa_1" />
+        <origin xyz="0.000000 -0.159210 0.059000" rpy="-3.141593 3.141593 -3.141593" />
+    </joint>
+    <link name="coxa_1">
+        <inertial>
+            <origin rpy="-3.141593 3.141593 -3.141593" xyz="0.000000 -0.023498 0.041500" />
+            <inertia izz="5.597302e-06" iyy="3.966114e-06" ixx="5.597302e-06" ixy="-8.917e-16" ixz="0.0" iyz="0.0" />
+            <mass value="0.017291" />
+        </inertial>
+        <collision name="coxa_1">
+            <origin xyz="0.000000 0.159210 -0.018000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_coxa_1_coll_1.dae" />
+            </geometry>
+        </collision>
+        <visual name="coxa_1">
+            <origin xyz="0.000000 0.159210 -0.018000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_coxa_1_vis_1.dae" />
+            </geometry>
+            <material name="coxa_1_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint name="Revolute_joint_11" type="revolute">
+        <axis xyz="0 0 1" />
+        <limit upper="1.570796326795" effort="0.52" velocity="10.786134777326" lower="-1.570796326795" />
+        <parent link="coxa_1" />
+        <child link="femur_1" />
+        <origin xyz="0.000000 -0.047000 0.000000" rpy="-3.141593 1.570796 0.000000" />
+    </joint>
+    <link name="femur_1">
+        <inertial>
+            <origin rpy="-3.141593 1.570796 0.000000" xyz="-0.057658 0.005504 0.000000" />
+            <inertia izz="5.3070122730996e-06" iyy="8.7883406124464e-06" ixx="7.856846885546e-06" ixy="1.3696581651265e-16" ixz="5.5970489537505e-17" iyz="2.1251618190664e-06" />
+            <mass value="0.028626" />
+        </inertial>
+        <collision name="femur_1">
+            <origin xyz="0.018000 -0.206210 0.000000" rpy="-3.141593 1.570796 0.000000" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_1_coll_1.dae" />
+            </geometry>
+        </collision>
+        <collision name="femur_1">
+            <origin xyz="0.018000 -0.206210 0.000000" rpy="-3.141593 1.570796 0.000000" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_1_coll_2.dae" />
+            </geometry>
+        </collision>
+        <collision name="femur_1">
+            <origin xyz="0.018000 -0.206210 0.000000" rpy="-3.141593 1.570796 0.000000" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_1_coll_3.dae" />
+            </geometry>
+        </collision>
+        <collision name="femur_1">
+            <origin xyz="0.018000 -0.206210 0.000000" rpy="-3.141593 1.570796 0.000000" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_1_coll_4.dae" />
+            </geometry>
+        </collision>
+        <visual name="femur_1">
+            <origin xyz="0.018000 -0.206210 0.000000" rpy="-3.141593 1.570796 0.000000" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_1_vis_1.dae" />
+            </geometry>
+            <material name="femur_1_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="femur_1">
+            <origin xyz="0.018000 -0.206210 0.000000" rpy="-3.141593 1.570796 0.000000" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_1_vis_2.dae" />
+            </geometry>
+            <material name="femur_1_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="femur_1">
+            <origin xyz="0.018000 -0.206210 0.000000" rpy="-3.141593 1.570796 0.000000" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_1_vis_3.dae" />
+            </geometry>
+            <material name="femur_1_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="femur_1">
+            <origin xyz="0.018000 -0.206210 0.000000" rpy="-3.141593 1.570796 0.000000" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_1_vis_4.dae" />
+            </geometry>
+            <material name="femur_1_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint name="Revolute_joint_21" type="revolute">
+        <axis xyz="0 0 1" />
+        <limit upper="1.570796326795" effort="0.52" velocity="10.786134777326" lower="-1.570796326795" />
+        <parent link="femur_1" />
+        <child link="tibia_1" />
+        <origin xyz="-0.039460 0.023550 -0.000000" rpy="-3.141593 3.141593 3.141593" />
+    </joint>
+    <link name="tibia_1">
+        <inertial>
+            <origin rpy="3.141593 1.570796 0.000000" xyz="-0.017161 0.015560 -0.000017" />
+            <inertia izz="8.4957528413497e-06" iyy="3.2712193869055e-05" ixx="3.2760963041406e-05" ixy="-8.8684542270298e-09" ixz="-1.3671275694871e-08" iyz="-5.1424398794731e-06" />
+            <mass value="0.034569" />
+        </inertial>
+        <collision name="tibia_1">
+            <origin xyz="0.057460 -0.229760 -0.000000" rpy="3.141593 1.570796 0.000000" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_1_coll_1.dae" />
+            </geometry>
+        </collision>
+        <collision name="tibia_1">
+            <origin xyz="0.057460 -0.229760 -0.000000" rpy="3.141593 1.570796 0.000000" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_1_coll_2.dae" />
+            </geometry>
+        </collision>
+        <collision name="tibia_1">
+            <origin xyz="0.057460 -0.229760 -0.000000" rpy="3.141593 1.570796 0.000000" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_1_coll_3.dae" />
+            </geometry>
+        </collision>
+        <collision name="tibia_1">
+            <origin xyz="0.057460 -0.229760 -0.000000" rpy="3.141593 1.570796 0.000000" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_1_coll_4.dae" />
+            </geometry>
+        </collision>
+        <collision name="tibia_1">
+            <origin xyz="0.057460 -0.229760 -0.000000" rpy="3.141593 1.570796 0.000000" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_1_coll_5.dae" />
+            </geometry>
+        </collision>
+        <visual name="tibia_1">
+            <origin xyz="0.057460 -0.229760 -0.000000" rpy="3.141593 1.570796 0.000000" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_1_vis_1.dae" />
+            </geometry>
+            <material name="tibia_1_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="tibia_1">
+            <origin xyz="0.057460 -0.229760 -0.000000" rpy="3.141593 1.570796 0.000000" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_1_vis_2.dae" />
+            </geometry>
+            <material name="tibia_1_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="tibia_1">
+            <origin xyz="0.057460 -0.229760 -0.000000" rpy="3.141593 1.570796 0.000000" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_1_vis_3.dae" />
+            </geometry>
+            <material name="tibia_1_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="tibia_1">
+            <origin xyz="0.057460 -0.229760 -0.000000" rpy="3.141593 1.570796 0.000000" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_1_vis_4.dae" />
+            </geometry>
+            <material name="tibia_1_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="tibia_1">
+            <origin xyz="0.057460 -0.229760 -0.000000" rpy="3.141593 1.570796 0.000000" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_1_vis_5.dae" />
+            </geometry>
+            <material name="tibia_1_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint name="Spherical_joint_01" type="fixed">
+        <axis xyz="0 0 1" />
+        <parent link="tibia_1" />
+        <child link="foot_1" />
+        <origin xyz="0.097930 0.020250 -0.000000" rpy="3.141593 1.570796 0.000000" />
+    </joint>
+    <link name="foot_1">
+        <inertial>
+            <origin rpy="-3.141593 3.141593 -3.141593" xyz="0.000000 -0.250013 0.041527" />
+            <inertia izz="5.55e-14" iyy="5.55e-14" ixx="5.55e-14" ixy="0.0" ixz="0.0" iyz="0.0" />
+            <mass value="1e-06" />
+        </inertial>
+        <collision name="foot_1">
+            <origin xyz="0.000000 0.000000 0.041000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_foot_1_coll_1.dae" />
+            </geometry>
+        </collision>
+        <visual name="foot_1">
+            <origin xyz="0.000000 0.000000 0.041000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_foot_1_vis_1.dae" />
+            </geometry>
+            <material name="foot_1_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint name="Revolute_joint_02" type="revolute">
+        <axis xyz="0 0 1" />
+        <limit upper="1.570796326795" effort="0.52" velocity="10.786134777326" lower="-1.570796326795" />
+        <parent link="robot_base" />
+        <child link="coxa_2" />
+        <origin xyz="0.137880 -0.079600 0.059000" rpy="-3.141593 3.141593 1.047198" />
+    </joint>
+    <link name="coxa_2">
+        <inertial>
+            <origin rpy="-3.141593 3.141593 -1.047198" xyz="0.000004 0.023501 0.041500" />
+            <inertia izz="5.597302e-06" iyy="5.189505e-06" ixx="4.373911e-06" ixy="7.06325e-07" ixz="0.0" iyz="0.0" />
+            <mass value="0.017291" />
+        </inertial>
+        <collision name="coxa_2">
+            <origin xyz="0.000004 -0.159208 -0.018000" rpy="-3.141593 3.141593 -1.047198" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_coxa_2_coll_1.dae" />
+            </geometry>
+        </collision>
+        <visual name="coxa_2">
+            <origin xyz="0.000004 -0.159208 -0.018000" rpy="-3.141593 3.141593 -1.047198" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_coxa_2_vis_1.dae" />
+            </geometry>
+            <material name="coxa_2_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint name="Revolute_joint_12" type="revolute">
+        <axis xyz="0 0 1" />
+        <limit upper="1.570796326795" effort="0.52" velocity="10.786134777326" lower="-1.570796326795" />
+        <parent link="coxa_2" />
+        <child link="femur_2" />
+        <origin xyz="0.000002 0.046997 -0.000000" rpy="-0.000000 1.570796 0.000000" />
+    </joint>
+    <link name="femur_2">
+        <inertial>
+            <origin rpy="1.570796 2.617994 -1.570796" xyz="-0.057658 0.005510 0.000002" />
+            <inertia izz="5.3069567822612e-06" iyy="8.089696711126e-06" ixx="8.5554342960281e-06" ixy="-4.0338362671977e-07" ixz="-1.84041239393e-06" iyz="1.0625033593326e-06" />
+            <mass value="0.028626" />
+        </inertial>
+        <collision name="femur_2">
+            <origin xyz="0.018000 -0.206205 0.000003" rpy="1.570796 2.617994 -1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_2_coll_1.dae" />
+            </geometry>
+        </collision>
+        <collision name="femur_2">
+            <origin xyz="0.018000 -0.206205 0.000003" rpy="1.570796 2.617994 -1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_2_coll_2.dae" />
+            </geometry>
+        </collision>
+        <collision name="femur_2">
+            <origin xyz="0.018000 -0.206205 0.000003" rpy="1.570796 2.617994 -1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_2_coll_3.dae" />
+            </geometry>
+        </collision>
+        <collision name="femur_2">
+            <origin xyz="0.018000 -0.206205 0.000003" rpy="1.570796 2.617994 -1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_2_coll_4.dae" />
+            </geometry>
+        </collision>
+        <visual name="femur_2">
+            <origin xyz="0.018000 -0.206205 0.000003" rpy="1.570796 2.617994 -1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_2_vis_1.dae" />
+            </geometry>
+            <material name="femur_2_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="femur_2">
+            <origin xyz="0.018000 -0.206205 0.000003" rpy="1.570796 2.617994 -1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_2_vis_2.dae" />
+            </geometry>
+            <material name="femur_2_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="femur_2">
+            <origin xyz="0.018000 -0.206205 0.000003" rpy="1.570796 2.617994 -1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_2_vis_3.dae" />
+            </geometry>
+            <material name="femur_2_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="femur_2">
+            <origin xyz="0.018000 -0.206205 0.000003" rpy="1.570796 2.617994 -1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_2_vis_4.dae" />
+            </geometry>
+            <material name="femur_2_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint name="Revolute_joint_22" type="revolute">
+        <axis xyz="0 0 1" />
+        <limit upper="1.570796326795" effort="0.52" velocity="10.786134777326" lower="-1.570796326795" />
+        <parent link="femur_2" />
+        <child link="tibia_2" />
+        <origin xyz="-0.039460 0.023557 0.000002" rpy="-3.141593 3.141593 3.141593" />
+    </joint>
+    <link name="tibia_2">
+        <inertial>
+            <origin rpy="1.570796 2.617994 -1.570796" xyz="-0.017161 0.015559 -0.000016" />
+            <inertia izz="8.4960085328117e-06" iyy="3.2741163335833e-05" ixx="3.273225026609e-05" ixy="2.5730584827903e-08" ixz="4.4467487359104e-06" iyz="-2.583498689585e-06" />
+            <mass value="0.034569" />
+        </inertial>
+        <collision name="tibia_2">
+            <origin xyz="0.057460 -0.229762 0.000001" rpy="1.570796 2.617994 -1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_2_coll_1.dae" />
+            </geometry>
+        </collision>
+        <collision name="tibia_2">
+            <origin xyz="0.057460 -0.229762 0.000001" rpy="1.570796 2.617994 -1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_2_coll_2.dae" />
+            </geometry>
+        </collision>
+        <collision name="tibia_2">
+            <origin xyz="0.057460 -0.229762 0.000001" rpy="1.570796 2.617994 -1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_2_coll_3.dae" />
+            </geometry>
+        </collision>
+        <collision name="tibia_2">
+            <origin xyz="0.057460 -0.229762 0.000001" rpy="1.570796 2.617994 -1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_2_coll_4.dae" />
+            </geometry>
+        </collision>
+        <collision name="tibia_2">
+            <origin xyz="0.057460 -0.229762 0.000001" rpy="1.570796 2.617994 -1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_2_coll_5.dae" />
+            </geometry>
+        </collision>
+        <visual name="tibia_2">
+            <origin xyz="0.057460 -0.229762 0.000001" rpy="1.570796 2.617994 -1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_2_vis_1.dae" />
+            </geometry>
+            <material name="tibia_2_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="tibia_2">
+            <origin xyz="0.057460 -0.229762 0.000001" rpy="1.570796 2.617994 -1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_2_vis_2.dae" />
+            </geometry>
+            <material name="tibia_2_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="tibia_2">
+            <origin xyz="0.057460 -0.229762 0.000001" rpy="1.570796 2.617994 -1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_2_vis_3.dae" />
+            </geometry>
+            <material name="tibia_2_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="tibia_2">
+            <origin xyz="0.057460 -0.229762 0.000001" rpy="1.570796 2.617994 -1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_2_vis_4.dae" />
+            </geometry>
+            <material name="tibia_2_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="tibia_2">
+            <origin xyz="0.057460 -0.229762 0.000001" rpy="1.570796 2.617994 -1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_2_vis_5.dae" />
+            </geometry>
+            <material name="tibia_2_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint name="Spherical_joint_02" type="fixed">
+        <axis xyz="0 0 1" />
+        <parent link="tibia_2" />
+        <child link="foot_2" />
+        <origin xyz="0.097930 0.020248 0.000001" rpy="0.000000 -1.570796 0.000000" />
+    </joint>
+    <link name="foot_2">
+        <inertial>
+            <origin rpy="-3.141593 3.141593 -3.141593" xyz="0.216517 -0.125006 0.041527" />
+            <inertia izz="5.55e-14" iyy="5.55e-14" ixx="5.55e-14" ixy="0.0" ixz="0.0" iyz="0.0" />
+            <mass value="1e-06" />
+        </inertial>
+        <collision name="foot_2">
+            <origin xyz="-0.000000 0.000000 0.041000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_foot_2_coll_1.dae" />
+            </geometry>
+        </collision>
+        <visual name="foot_2">
+            <origin xyz="-0.000000 0.000000 0.041000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_foot_2_vis_1.dae" />
+            </geometry>
+            <material name="foot_2_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint name="Revolute_joint_03" type="revolute">
+        <axis xyz="0 0 1" />
+        <limit upper="1.570796326795" effort="0.52" velocity="10.786134777326" lower="-1.570796326795" />
+        <parent link="robot_base" />
+        <child link="coxa_3" />
+        <origin xyz="0.137880 0.079600 0.059000" rpy="-3.141593 3.141593 2.094395" />
+    </joint>
+    <link name="coxa_3">
+        <inertial>
+            <origin rpy="-3.141593 3.141593 -2.094395" xyz="-0.000004 0.023501 0.041500" />
+            <inertia izz="5.597302e-06" iyy="5.189505e-06" ixx="4.373911e-06" ixy="-7.06325e-07" ixz="0.0" iyz="0.0" />
+            <mass value="0.017291" />
+        </inertial>
+        <collision name="coxa_3">
+            <origin xyz="-0.000004 -0.159208 -0.018000" rpy="-3.141593 3.141593 -2.094395" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_coxa_3_coll_1.dae" />
+            </geometry>
+        </collision>
+        <visual name="coxa_3">
+            <origin xyz="-0.000004 -0.159208 -0.018000" rpy="-3.141593 3.141593 -2.094395" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_coxa_3_vis_1.dae" />
+            </geometry>
+            <material name="coxa_3_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint name="Revolute_joint_13" type="revolute">
+        <axis xyz="0 0 1" />
+        <limit upper="1.570796326795" effort="0.52" velocity="10.786134777326" lower="-1.570796326795" />
+        <parent link="coxa_3" />
+        <child link="femur_3" />
+        <origin xyz="-0.000002 0.046997 0.000000" rpy="-0.000000 1.570796 0.000000" />
+    </joint>
+    <link name="femur_3">
+        <inertial>
+            <origin rpy="1.570796 3.665191 -1.570796" xyz="-0.057658 0.005510 -0.000002" />
+            <inertia izz="5.3069567822612e-06" iyy="8.089696711126e-06" ixx="8.5554342960281e-06" ixy="4.0338362671977e-07" ixz="-1.84041239393e-06" iyz="-1.0625033593326e-06" />
+            <mass value="0.028626" />
+        </inertial>
+        <collision name="femur_3">
+            <origin xyz="0.018000 -0.206205 -0.000003" rpy="1.570796 3.665191 -1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_3_coll_1.dae" />
+            </geometry>
+        </collision>
+        <collision name="femur_3">
+            <origin xyz="0.018000 -0.206205 -0.000003" rpy="1.570796 3.665191 -1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_3_coll_2.dae" />
+            </geometry>
+        </collision>
+        <collision name="femur_3">
+            <origin xyz="0.018000 -0.206205 -0.000003" rpy="1.570796 3.665191 -1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_3_coll_3.dae" />
+            </geometry>
+        </collision>
+        <collision name="femur_3">
+            <origin xyz="0.018000 -0.206205 -0.000003" rpy="1.570796 3.665191 -1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_3_coll_4.dae" />
+            </geometry>
+        </collision>
+        <visual name="femur_3">
+            <origin xyz="0.018000 -0.206205 -0.000003" rpy="1.570796 3.665191 -1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_3_vis_1.dae" />
+            </geometry>
+            <material name="femur_3_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="femur_3">
+            <origin xyz="0.018000 -0.206205 -0.000003" rpy="1.570796 3.665191 -1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_3_vis_2.dae" />
+            </geometry>
+            <material name="femur_3_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="femur_3">
+            <origin xyz="0.018000 -0.206205 -0.000003" rpy="1.570796 3.665191 -1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_3_vis_3.dae" />
+            </geometry>
+            <material name="femur_3_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="femur_3">
+            <origin xyz="0.018000 -0.206205 -0.000003" rpy="1.570796 3.665191 -1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_3_vis_4.dae" />
+            </geometry>
+            <material name="femur_3_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint name="Revolute_joint_23" type="revolute">
+        <axis xyz="0 0 1" />
+        <limit upper="1.570796326795" effort="0.52" velocity="10.786134777326" lower="-1.570796326795" />
+        <parent link="femur_3" />
+        <child link="tibia_B_3" />
+        <origin xyz="-0.039460 0.023211 -0.000202" rpy="-3.141593 3.141593 -3.141593" />
+    </joint>
+    <link name="tibia_B_3">
+        <inertial>
+            <origin rpy="1.570796 3.665191 -1.570796" xyz="-0.017161 0.015905 0.000182" />
+            <inertia izz="8.4961724973236e-06" iyy="3.2756769561517e-05" ixx="3.2716807004918e-05" ixy="-1.6863398051043e-08" ixz="4.4607615202207e-06" iyz="2.559624207119e-06" />
+            <mass value="0.034569" />
+        </inertial>
+        <collision name="tibia_B_3">
+            <origin xyz="0.057460 -0.229415 0.000199" rpy="1.570796 3.665191 -1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_B_3_coll_1.dae" />
+            </geometry>
+        </collision>
+        <collision name="tibia_B_3">
+            <origin xyz="0.057460 -0.229415 0.000199" rpy="1.570796 3.665191 -1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_B_3_coll_2.dae" />
+            </geometry>
+        </collision>
+        <collision name="tibia_B_3">
+            <origin xyz="0.057460 -0.229415 0.000199" rpy="1.570796 3.665191 -1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_B_3_coll_3.dae" />
+            </geometry>
+        </collision>
+        <collision name="tibia_B_3">
+            <origin xyz="0.057460 -0.229415 0.000199" rpy="1.570796 3.665191 -1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_B_3_coll_4.dae" />
+            </geometry>
+        </collision>
+        <collision name="tibia_B_3">
+            <origin xyz="0.057460 -0.229415 0.000199" rpy="1.570796 3.665191 -1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_B_3_coll_5.dae" />
+            </geometry>
+        </collision>
+        <visual name="tibia_B_3">
+            <origin xyz="0.057460 -0.229415 0.000199" rpy="1.570796 3.665191 -1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_B_3_vis_1.dae" />
+            </geometry>
+            <material name="tibia_B_3_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="tibia_B_3">
+            <origin xyz="0.057460 -0.229415 0.000199" rpy="1.570796 3.665191 -1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_B_3_vis_2.dae" />
+            </geometry>
+            <material name="tibia_B_3_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="tibia_B_3">
+            <origin xyz="0.057460 -0.229415 0.000199" rpy="1.570796 3.665191 -1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_B_3_vis_3.dae" />
+            </geometry>
+            <material name="tibia_B_3_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="tibia_B_3">
+            <origin xyz="0.057460 -0.229415 0.000199" rpy="1.570796 3.665191 -1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_B_3_vis_4.dae" />
+            </geometry>
+            <material name="tibia_B_3_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="tibia_B_3">
+            <origin xyz="0.057460 -0.229415 0.000199" rpy="1.570796 3.665191 -1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_B_3_vis_5.dae" />
+            </geometry>
+            <material name="tibia_B_3_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint name="Spherical_joint_03" type="fixed">
+        <axis xyz="0 0 1" />
+        <parent link="tibia_B_3" />
+        <child link="foot_3" />
+        <origin xyz="0.097930 0.020595 0.000199" rpy="0.000000 -1.570796 0.000000" />
+    </joint>
+    <link name="foot_3">
+        <inertial>
+            <origin rpy="-3.141593 3.141593 -3.141593" xyz="0.216517 0.125006 0.041527" />
+            <inertia izz="5.55e-14" iyy="5.55e-14" ixx="5.55e-14" ixy="0.0" ixz="0.0" iyz="0.0" />
+            <mass value="1e-06" />
+        </inertial>
+        <collision name="foot_3">
+            <origin xyz="0.000000 0.000000 0.041000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_foot_3_coll_1.dae" />
+            </geometry>
+        </collision>
+        <visual name="foot_3">
+            <origin xyz="0.000000 0.000000 0.041000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_foot_3_vis_1.dae" />
+            </geometry>
+            <material name="foot_3_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint name="Revolute_joint_04" type="revolute">
+        <axis xyz="0 0 1" />
+        <limit upper="1.570796326795" effort="0.52" velocity="10.786134777326" lower="-1.570796326795" />
+        <parent link="robot_base" />
+        <child link="coxa_4" />
+        <origin xyz="0.000000 0.159210 0.059000" rpy="-3.141593 3.141593 -3.141593" />
+    </joint>
+    <link name="coxa_4">
+        <inertial>
+            <origin rpy="-3.141593 3.141593 -3.141593" xyz="-0.000000 0.023498 0.041500" />
+            <inertia izz="5.597302e-06" iyy="3.966114e-06" ixx="5.597302e-06" ixy="-8.917e-16" ixz="0.0" iyz="0.0" />
+            <mass value="0.017291" />
+        </inertial>
+        <collision name="coxa_4">
+            <origin xyz="0.000000 -0.159210 -0.018000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_coxa_4_coll_1.dae" />
+            </geometry>
+        </collision>
+        <visual name="coxa_4">
+            <origin xyz="0.000000 -0.159210 -0.018000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_coxa_4_vis_1.dae" />
+            </geometry>
+            <material name="coxa_4_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint name="Revolute_joint_14" type="revolute">
+        <axis xyz="0 0 1" />
+        <limit upper="1.570796326795" effort="0.52" velocity="10.786134777326" lower="-1.570796326795" />
+        <parent link="coxa_4" />
+        <child link="femur_4" />
+        <origin xyz="0.000000 0.047000 0.000000" rpy="0.000000 1.570796 0.000000" />
+    </joint>
+    <link name="femur_4">
+        <inertial>
+            <origin rpy="-0.000000 -1.570796 0.000000" xyz="-0.057658 0.005504 -0.000000" />
+            <inertia izz="5.3070122730996e-06" iyy="8.7883406124464e-06" ixx="7.856846885546e-06" ixy="2.1274654707947e-16" ixz="1.2409892377477e-16" iyz="-2.1251618190664e-06" />
+            <mass value="0.028626" />
+        </inertial>
+        <collision name="femur_4">
+            <origin xyz="0.018000 -0.206210 0.000000" rpy="0.000000 -1.570796 0.000000" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_4_coll_1.dae" />
+            </geometry>
+        </collision>
+        <collision name="femur_4">
+            <origin xyz="0.018000 -0.206210 0.000000" rpy="0.000000 -1.570796 0.000000" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_4_coll_2.dae" />
+            </geometry>
+        </collision>
+        <collision name="femur_4">
+            <origin xyz="0.018000 -0.206210 0.000000" rpy="0.000000 -1.570796 0.000000" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_4_coll_3.dae" />
+            </geometry>
+        </collision>
+        <collision name="femur_4">
+            <origin xyz="0.018000 -0.206210 0.000000" rpy="0.000000 -1.570796 0.000000" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_4_coll_4.dae" />
+            </geometry>
+        </collision>
+        <visual name="femur_4">
+            <origin xyz="0.018000 -0.206210 0.000000" rpy="0.000000 -1.570796 0.000000" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_4_vis_1.dae" />
+            </geometry>
+            <material name="femur_4_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="femur_4">
+            <origin xyz="0.018000 -0.206210 0.000000" rpy="0.000000 -1.570796 0.000000" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_4_vis_2.dae" />
+            </geometry>
+            <material name="femur_4_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="femur_4">
+            <origin xyz="0.018000 -0.206210 0.000000" rpy="0.000000 -1.570796 0.000000" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_4_vis_3.dae" />
+            </geometry>
+            <material name="femur_4_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="femur_4">
+            <origin xyz="0.018000 -0.206210 0.000000" rpy="0.000000 -1.570796 0.000000" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_4_vis_4.dae" />
+            </geometry>
+            <material name="femur_4_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint name="Revolute_joint_24" type="revolute">
+        <axis xyz="0 0 1" />
+        <limit upper="1.570796326795" effort="0.52" velocity="10.786134777326" lower="-1.570796326795" />
+        <parent link="femur_4" />
+        <child link="tibia_4" />
+        <origin xyz="-0.039460 0.023550 -0.000000" rpy="-3.141593 3.141593 -3.141593" />
+    </joint>
+    <link name="tibia_4">
+        <inertial>
+            <origin rpy="-0.000000 -1.570796 0.000000" xyz="-0.017161 0.015560 -0.000017" />
+            <inertia izz="8.4957528413496e-06" iyy="3.2712193869055e-05" ixx="3.2760963041406e-05" ixy="-8.8684542270294e-09" ixz="1.3671275694871e-08" iyz="5.142439879473e-06" />
+            <mass value="0.034569" />
+        </inertial>
+        <collision name="tibia_4">
+            <origin xyz="0.057460 -0.229760 0.000000" rpy="0.000000 -1.570796 0.000000" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_4_coll_1.dae" />
+            </geometry>
+        </collision>
+        <collision name="tibia_4">
+            <origin xyz="0.057460 -0.229760 0.000000" rpy="0.000000 -1.570796 0.000000" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_4_coll_2.dae" />
+            </geometry>
+        </collision>
+        <collision name="tibia_4">
+            <origin xyz="0.057460 -0.229760 0.000000" rpy="0.000000 -1.570796 0.000000" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_4_coll_3.dae" />
+            </geometry>
+        </collision>
+        <collision name="tibia_4">
+            <origin xyz="0.057460 -0.229760 0.000000" rpy="0.000000 -1.570796 0.000000" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_4_coll_4.dae" />
+            </geometry>
+        </collision>
+        <collision name="tibia_4">
+            <origin xyz="0.057460 -0.229760 0.000000" rpy="0.000000 -1.570796 0.000000" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_4_coll_5.dae" />
+            </geometry>
+        </collision>
+        <visual name="tibia_4">
+            <origin xyz="0.057460 -0.229760 0.000000" rpy="0.000000 -1.570796 0.000000" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_4_vis_1.dae" />
+            </geometry>
+            <material name="tibia_4_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="tibia_4">
+            <origin xyz="0.057460 -0.229760 0.000000" rpy="0.000000 -1.570796 0.000000" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_4_vis_2.dae" />
+            </geometry>
+            <material name="tibia_4_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="tibia_4">
+            <origin xyz="0.057460 -0.229760 0.000000" rpy="0.000000 -1.570796 0.000000" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_4_vis_3.dae" />
+            </geometry>
+            <material name="tibia_4_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="tibia_4">
+            <origin xyz="0.057460 -0.229760 0.000000" rpy="0.000000 -1.570796 0.000000" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_4_vis_4.dae" />
+            </geometry>
+            <material name="tibia_4_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="tibia_4">
+            <origin xyz="0.057460 -0.229760 0.000000" rpy="0.000000 -1.570796 0.000000" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_4_vis_5.dae" />
+            </geometry>
+            <material name="tibia_4_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint name="Spherical_joint_04" type="fixed">
+        <axis xyz="0 0 1" />
+        <parent link="tibia_4" />
+        <child link="foot_4" />
+        <origin xyz="0.097930 0.020250 0.000000" rpy="0.000000 -1.570796 0.000000" />
+    </joint>
+    <link name="foot_4">
+        <inertial>
+            <origin rpy="-3.141593 3.141593 -3.141593" xyz="0.000000 0.250013 0.041527" />
+            <inertia izz="5.55e-14" iyy="5.55e-14" ixx="5.55e-14" ixy="0.0" ixz="0.0" iyz="0.0" />
+            <mass value="1e-06" />
+        </inertial>
+        <collision name="foot_4">
+            <origin xyz="0.000000 0.000000 0.041000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_foot_4_coll_1.dae" />
+            </geometry>
+        </collision>
+        <visual name="foot_4">
+            <origin xyz="0.000000 0.000000 0.041000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_foot_4_vis_1.dae" />
+            </geometry>
+            <material name="foot_4_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint name="Revolute_joint_05" type="revolute">
+        <axis xyz="0 0 1" />
+        <limit upper="1.570796326795" effort="0.52" velocity="10.786134777326" lower="-1.570796326795" />
+        <parent link="robot_base" />
+        <child link="coxa_5" />
+        <origin xyz="-0.137880 0.079600 0.059000" rpy="-3.141593 3.141593 -2.094395" />
+    </joint>
+    <link name="coxa_5">
+        <inertial>
+            <origin rpy="-3.141593 3.141593 2.094395" xyz="0.000004 0.023501 0.041500" />
+            <inertia izz="5.597302e-06" iyy="5.189505e-06" ixx="4.373911e-06" ixy="7.06325e-07" ixz="0.0" iyz="0.0" />
+            <mass value="0.017291" />
+        </inertial>
+        <collision name="coxa_5">
+            <origin xyz="0.000004 -0.159208 -0.018000" rpy="-3.141593 3.141593 2.094395" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_coxa_5_coll_1.dae" />
+            </geometry>
+        </collision>
+        <visual name="coxa_5">
+            <origin xyz="0.000004 -0.159208 -0.018000" rpy="-3.141593 3.141593 2.094395" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_coxa_5_vis_1.dae" />
+            </geometry>
+            <material name="coxa_5_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint name="Revolute_joint_15" type="revolute">
+        <axis xyz="0 0 1" />
+        <limit upper="1.570796326795" effort="0.52" velocity="10.786134777326" lower="-1.570796326795" />
+        <parent link="coxa_5" />
+        <child link="femur_5" />
+        <origin xyz="0.000002 0.046997 0.000000" rpy="0.000000 1.570796 0.000000" />
+    </joint>
+    <link name="femur_5">
+        <inertial>
+            <origin rpy="-1.570796 3.665191 1.570796" xyz="-0.057658 0.005510 0.000002" />
+            <inertia izz="5.3069567822612e-06" iyy="8.0896967111259e-06" ixx="8.5554342960281e-06" ixy="-4.0338362671977e-07" ixz="1.84041239393e-06" iyz="-1.0625033593326e-06" />
+            <mass value="0.028626" />
+        </inertial>
+        <collision name="femur_5">
+            <origin xyz="0.018000 -0.206205 0.000003" rpy="-1.570796 3.665191 1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_5_coll_1.dae" />
+            </geometry>
+        </collision>
+        <collision name="femur_5">
+            <origin xyz="0.018000 -0.206205 0.000003" rpy="-1.570796 3.665191 1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_5_coll_2.dae" />
+            </geometry>
+        </collision>
+        <collision name="femur_5">
+            <origin xyz="0.018000 -0.206205 0.000003" rpy="-1.570796 3.665191 1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_5_coll_3.dae" />
+            </geometry>
+        </collision>
+        <collision name="femur_5">
+            <origin xyz="0.018000 -0.206205 0.000003" rpy="-1.570796 3.665191 1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_5_coll_4.dae" />
+            </geometry>
+        </collision>
+        <visual name="femur_5">
+            <origin xyz="0.018000 -0.206205 0.000003" rpy="-1.570796 3.665191 1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_5_vis_1.dae" />
+            </geometry>
+            <material name="femur_5_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="femur_5">
+            <origin xyz="0.018000 -0.206205 0.000003" rpy="-1.570796 3.665191 1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_5_vis_2.dae" />
+            </geometry>
+            <material name="femur_5_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="femur_5">
+            <origin xyz="0.018000 -0.206205 0.000003" rpy="-1.570796 3.665191 1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_5_vis_3.dae" />
+            </geometry>
+            <material name="femur_5_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="femur_5">
+            <origin xyz="0.018000 -0.206205 0.000003" rpy="-1.570796 3.665191 1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_5_vis_4.dae" />
+            </geometry>
+            <material name="femur_5_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint name="Revolute_joint_25" type="revolute">
+        <axis xyz="0 0 1" />
+        <limit upper="1.570796326795" effort="0.52" velocity="10.786134777326" lower="-1.570796326795" />
+        <parent link="femur_5" />
+        <child link="tibia_5" />
+        <origin xyz="-0.039460 0.023557 0.000002" rpy="-3.141593 3.141593 3.141593" />
+    </joint>
+    <link name="tibia_5">
+        <inertial>
+            <origin rpy="-1.570796 3.665191 1.570796" xyz="-0.017161 0.015559 -0.000016" />
+            <inertia izz="8.4960085328117e-06" iyy="3.2741163335833e-05" ixx="3.273225026609e-05" ixy="2.5730584827894e-08" ixz="-4.4467487359104e-06" iyz="2.583498689585e-06" />
+            <mass value="0.034569" />
+        </inertial>
+        <collision name="tibia_5">
+            <origin xyz="0.057460 -0.229762 0.000001" rpy="-1.570796 3.665191 1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_5_coll_1.dae" />
+            </geometry>
+        </collision>
+        <collision name="tibia_5">
+            <origin xyz="0.057460 -0.229762 0.000001" rpy="-1.570796 3.665191 1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_5_coll_2.dae" />
+            </geometry>
+        </collision>
+        <collision name="tibia_5">
+            <origin xyz="0.057460 -0.229762 0.000001" rpy="-1.570796 3.665191 1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_5_coll_3.dae" />
+            </geometry>
+        </collision>
+        <collision name="tibia_5">
+            <origin xyz="0.057460 -0.229762 0.000001" rpy="-1.570796 3.665191 1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_5_coll_4.dae" />
+            </geometry>
+        </collision>
+        <collision name="tibia_5">
+            <origin xyz="0.057460 -0.229762 0.000001" rpy="-1.570796 3.665191 1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_5_coll_5.dae" />
+            </geometry>
+        </collision>
+        <visual name="tibia_5">
+            <origin xyz="0.057460 -0.229762 0.000001" rpy="-1.570796 3.665191 1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_5_vis_1.dae" />
+            </geometry>
+            <material name="tibia_5_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="tibia_5">
+            <origin xyz="0.057460 -0.229762 0.000001" rpy="-1.570796 3.665191 1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_5_vis_2.dae" />
+            </geometry>
+            <material name="tibia_5_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="tibia_5">
+            <origin xyz="0.057460 -0.229762 0.000001" rpy="-1.570796 3.665191 1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_5_vis_3.dae" />
+            </geometry>
+            <material name="tibia_5_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="tibia_5">
+            <origin xyz="0.057460 -0.229762 0.000001" rpy="-1.570796 3.665191 1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_5_vis_4.dae" />
+            </geometry>
+            <material name="tibia_5_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="tibia_5">
+            <origin xyz="0.057460 -0.229762 0.000001" rpy="-1.570796 3.665191 1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_5_vis_5.dae" />
+            </geometry>
+            <material name="tibia_5_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint name="Spherical_joint_05" type="fixed">
+        <axis xyz="0 0 1" />
+        <parent link="tibia_5" />
+        <child link="foot_5" />
+        <origin xyz="0.097930 0.020248 0.000001" rpy="-0.000000 -1.570796 0.000000" />
+    </joint>
+    <link name="foot_5">
+        <inertial>
+            <origin rpy="-3.141593 3.141593 -3.141593" xyz="-0.216517 0.125006 0.041527" />
+            <inertia izz="5.55e-14" iyy="5.55e-14" ixx="5.55e-14" ixy="0.0" ixz="0.0" iyz="0.0" />
+            <mass value="1e-06" />
+        </inertial>
+        <collision name="foot_5">
+            <origin xyz="0.000000 0.000000 0.041000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_foot_5_coll_1.dae" />
+            </geometry>
+        </collision>
+        <visual name="foot_5">
+            <origin xyz="0.000000 0.000000 0.041000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_foot_5_vis_1.dae" />
+            </geometry>
+            <material name="foot_5_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint name="Revolute_joint_06" type="revolute">
+        <axis xyz="0 0 1" />
+        <limit upper="1.570796326795" effort="0.52" velocity="10.786134777326" lower="-1.570796326795" />
+        <parent link="robot_base" />
+        <child link="coxa_6" />
+        <origin xyz="-0.137880 -0.079600 0.059000" rpy="-3.141593 3.141593 -1.047198" />
+    </joint>
+    <link name="coxa_6">
+        <inertial>
+            <origin rpy="-3.141593 3.141593 1.047198" xyz="-0.000004 0.023501 0.041500" />
+            <inertia izz="5.597302e-06" iyy="5.189505e-06" ixx="4.373911e-06" ixy="-7.06325e-07" ixz="0.0" iyz="0.0" />
+            <mass value="0.017291" />
+        </inertial>
+        <collision name="coxa_6">
+            <origin xyz="-0.000004 -0.159208 -0.018000" rpy="-3.141593 3.141593 1.047198" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_coxa_6_coll_1.dae" />
+            </geometry>
+        </collision>
+        <visual name="coxa_6">
+            <origin xyz="-0.000004 -0.159208 -0.018000" rpy="-3.141593 3.141593 1.047198" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_coxa_6_vis_1.dae" />
+            </geometry>
+            <material name="coxa_6_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint name="Revolute_joint_16" type="revolute">
+        <axis xyz="0 0 1" />
+        <limit upper="1.570796326795" effort="0.52" velocity="10.786134777326" lower="-1.570796326795" />
+        <parent link="coxa_6" />
+        <child link="femur_6" />
+        <origin xyz="-0.000002 0.046997 0.000000" rpy="0.000000 1.570796 0.000000" />
+    </joint>
+    <link name="femur_6">
+        <inertial>
+            <origin rpy="-1.570796 2.617994 1.570796" xyz="-0.057658 0.005510 -0.000002" />
+            <inertia izz="5.3069567822612e-06" iyy="8.0896967111259e-06" ixx="8.555434296028e-06" ixy="4.0338362671976e-07" ixz="1.84041239393e-06" iyz="1.0625033593326e-06" />
+            <mass value="0.028626" />
+        </inertial>
+        <collision name="femur_6">
+            <origin xyz="0.018000 -0.206205 -0.000003" rpy="-1.570796 2.617994 1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_6_coll_1.dae" />
+            </geometry>
+        </collision>
+        <collision name="femur_6">
+            <origin xyz="0.018000 -0.206205 -0.000003" rpy="-1.570796 2.617994 1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_6_coll_2.dae" />
+            </geometry>
+        </collision>
+        <collision name="femur_6">
+            <origin xyz="0.018000 -0.206205 -0.000003" rpy="-1.570796 2.617994 1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_6_coll_3.dae" />
+            </geometry>
+        </collision>
+        <collision name="femur_6">
+            <origin xyz="0.018000 -0.206205 -0.000003" rpy="-1.570796 2.617994 1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_6_coll_4.dae" />
+            </geometry>
+        </collision>
+        <visual name="femur_6">
+            <origin xyz="0.018000 -0.206205 -0.000003" rpy="-1.570796 2.617994 1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_6_vis_1.dae" />
+            </geometry>
+            <material name="femur_6_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="femur_6">
+            <origin xyz="0.018000 -0.206205 -0.000003" rpy="-1.570796 2.617994 1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_6_vis_2.dae" />
+            </geometry>
+            <material name="femur_6_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="femur_6">
+            <origin xyz="0.018000 -0.206205 -0.000003" rpy="-1.570796 2.617994 1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_6_vis_3.dae" />
+            </geometry>
+            <material name="femur_6_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="femur_6">
+            <origin xyz="0.018000 -0.206205 -0.000003" rpy="-1.570796 2.617994 1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_femur_6_vis_4.dae" />
+            </geometry>
+            <material name="femur_6_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint name="Revolute_joint_26" type="revolute">
+        <axis xyz="0 0 1" />
+        <limit upper="1.570796326795" effort="0.52" velocity="10.786134777326" lower="-1.570796326795" />
+        <parent link="femur_6" />
+        <child link="tibia_6" />
+        <origin xyz="-0.039460 0.023557 -0.000002" rpy="-3.141593 3.141593 -3.141593" />
+    </joint>
+    <link name="tibia_6">
+        <inertial>
+            <origin rpy="-1.570796 2.617994 1.570796" xyz="-0.017161 0.015558 -0.000018" />
+            <inertia izz="8.4961724973236e-06" iyy="3.2756769561517e-05" ixx="3.2716807004918e-05" ixy="-1.6863398051028e-08" ixz="-4.4607615202208e-06" iyz="-2.559624207119e-06" />
+            <mass value="0.034569" />
+        </inertial>
+        <collision name="tibia_6">
+            <origin xyz="0.057460 -0.229762 -0.000001" rpy="-1.570796 2.617994 1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_6_coll_1.dae" />
+            </geometry>
+        </collision>
+        <collision name="tibia_6">
+            <origin xyz="0.057460 -0.229762 -0.000001" rpy="-1.570796 2.617994 1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_6_coll_2.dae" />
+            </geometry>
+        </collision>
+        <collision name="tibia_6">
+            <origin xyz="0.057460 -0.229762 -0.000001" rpy="-1.570796 2.617994 1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_6_coll_3.dae" />
+            </geometry>
+        </collision>
+        <collision name="tibia_6">
+            <origin xyz="0.057460 -0.229762 -0.000001" rpy="-1.570796 2.617994 1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_6_coll_4.dae" />
+            </geometry>
+        </collision>
+        <collision name="tibia_6">
+            <origin xyz="0.057460 -0.229762 -0.000001" rpy="-1.570796 2.617994 1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_6_coll_5.dae" />
+            </geometry>
+        </collision>
+        <visual name="tibia_6">
+            <origin xyz="0.057460 -0.229762 -0.000001" rpy="-1.570796 2.617994 1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_6_vis_1.dae" />
+            </geometry>
+            <material name="tibia_6_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="tibia_6">
+            <origin xyz="0.057460 -0.229762 -0.000001" rpy="-1.570796 2.617994 1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_6_vis_2.dae" />
+            </geometry>
+            <material name="tibia_6_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="tibia_6">
+            <origin xyz="0.057460 -0.229762 -0.000001" rpy="-1.570796 2.617994 1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_6_vis_3.dae" />
+            </geometry>
+            <material name="tibia_6_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="tibia_6">
+            <origin xyz="0.057460 -0.229762 -0.000001" rpy="-1.570796 2.617994 1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_6_vis_4.dae" />
+            </geometry>
+            <material name="tibia_6_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+        <visual name="tibia_6">
+            <origin xyz="0.057460 -0.229762 -0.000001" rpy="-1.570796 2.617994 1.570796" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_tibia_6_vis_5.dae" />
+            </geometry>
+            <material name="tibia_6_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint name="Spherical_joint_06" type="fixed">
+        <axis xyz="0 0 1" />
+        <parent link="tibia_6" />
+        <child link="foot_6" />
+        <origin xyz="0.097930 0.020248 -0.000001" rpy="-0.000000 -1.570796 0.000000" />
+    </joint>
+    <link name="foot_6">
+        <inertial>
+            <origin rpy="-3.141593 3.141593 -3.141593" xyz="-0.216517 -0.125006 0.041527" />
+            <inertia izz="5.55e-14" iyy="5.55e-14" ixx="5.55e-14" ixy="0.0" ixz="0.0" iyz="0.0" />
+            <mass value="1e-06" />
+        </inertial>
+        <collision name="foot_6">
+            <origin xyz="-0.000000 0.000000 0.041000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_foot_6_coll_1.dae" />
+            </geometry>
+        </collision>
+        <visual name="foot_6">
+            <origin xyz="-0.000000 0.000000 0.041000" rpy="-3.141593 3.141593 -3.141593" />
+            <geometry>
+                <mesh filename="file:///home/jithin/Desktop/Physics Model (Edited)/Physics Model URDF (Edtd.)_foot_6_vis_1.dae" />
+            </geometry>
+            <material name="foot_6_material">
+                <color rgba="1.000000 1.000000 1.000000 1.0" />
+            </material>
+        </visual>
+    </link>
+</robot>

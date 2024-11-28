@@ -7,6 +7,7 @@ from pathlib import Path
 import sys
 from scipy.optimize import minimize
 import logging
+import matplotlib.pyplot as plt
 
 # We don't want to print every decimal!
 np.set_printoptions(suppress=True, precision=4)
@@ -60,8 +61,16 @@ class hexapod:
         self.qc = self.robot.q0  # Initial joint configuration
         # Initialize visualization if requested
         self.viz_flag = init_viz
+        self.theta = np.pi / 4
         if self.viz_flag == True:
             self.init_viz()
+        self.L_of = 0.058
+        self.phi = np.pi/4
+        for frame in self.robot.model.frames:
+            # Print the frame name, type, ID, and position
+            self.logger.info(
+                f"Frame Name: {frame.name}, Frame Type: {frame.type}, Frame ID: {self.robot.model.getFrameId(frame.name)}, XYZ = {self.robot.framePlacement(self.qc, self.robot.model.getFrameId(frame.name))}")
+
         # Log successful initialization
         self.logger.info(
             f"Hexapod Object Initialised Successfully with init_viz = {self.viz_flag}, logging_level={logging_level}")
@@ -141,27 +150,6 @@ class hexapod:
         self.viz.displayCollisions(visibility=False)
         self.viz.display(self.qc)
 
-    def foot_pos_err(self, q, FRAME_ID=9, desired_pos=np.zeros(3)):
-        """
-        Compute the squared positional error between the foot's current position and desired position.
-
-        Args:
-            q (numpy.ndarray): Joint configuration vector.
-            FRAME_ID (int): Frame ID of the foot.
-            desired_pos (numpy.ndarray): Desired foot position in 3D space.
-
-        Returns:
-            float: Squared Euclidean distance between current and desired foot positions.
-        """
-        # Compute forward kinematics for the given joint configuration
-        self.robot.forwardKinematics(q)
-        # Get the current position of the specified foot frame
-        current_pos = self.robot.framePlacement(q, FRAME_ID).translation
-        # Compute the positional error
-        error = current_pos - desired_pos
-        # Return the squared error (Euclidean distance squared)
-        return error.dot(error)
-
     def print_all_frame_info(self):
         """
         Print information about all frames in the robot model.
@@ -184,6 +172,18 @@ class hexapod:
                 print(
                     f"Frame Name: {frame.name}, Frame Type: {frame.type}, Frame ID: {self.robot.model.getFrameId(frame.name)}, XYZ = {self.robot.framePlacement(self.qc, self.robot.model.getFrameId(frame.name))}")
 
+    def forward_kinematics(self, q):
+        return np.concatenate((self.robot.framePlacement(q=q, index=self.BASE_FRAME_ID).translation, np.array([self.robot.framePlacement(q=q, index=foot_id).translation for foot_id in self.FOOT_IDS]).flatten()))
+
+    def foot_pos_err(self, q, FRAME_ID=9, desired_pos=np.zeros(3)):
+        self.robot.forwardKinematics(q)
+        current_pos = self.robot.framePlacement(q, FRAME_ID).translation
+        error = current_pos - desired_pos
+        # Optionally apply weights
+        weights = np.array([2.0, 3.0, 5.0])  # Modify as needed
+        weighted_error = weights * error
+        return np.dot(weighted_error, weighted_error)
+
     def inverse_geometery(self, q, FRAME_ID=9, desired_pos=np.zeros(3)):
         """
         Perform inverse kinematics to find joint configuration that places a frame at the desired position.
@@ -196,21 +196,25 @@ class hexapod:
         Returns:
             numpy.ndarray: Joint configuration that minimizes the positional error.
         """
-        # Set bounds for optimization (fix the base joint positions)
-        bounds = [(0., 0.)]*self.robot.nq
-        bounds[0] = (self.qc[0], self.qc[0])  # x position of base
-        bounds[1] = (self.qc[1], self.qc[1])  # y position of base
-        bounds[2] = (self.qc[2], self.qc[2])  # z position of base
-        bounds[3] = (self.qc[3], self.qc[3])  # Quaternion component
-        bounds[4] = (self.qc[4], self.qc[4])  # Quaternion component
-        bounds[5] = (self.qc[5], self.qc[5])  # Quaternion component
-        bounds[6] = (self.qc[6], self.qc[6])  # Quaternion component
-        for i in range(7, self.robot.nq):
-            # Joint limits for other joints
-            bounds[i] = ((-np.pi/3), (np.pi/3))
-        # Perform minimization to find joint configuration minimizing foot position error
+        # # Set bounds for optimization (fix the base joint positions)
+        # bounds = [(0., 0.)]*self.robot.nq
+        # bounds[0] = (self.qc[0], self.qc[0])  # x position of base
+        # bounds[1] = (self.qc[1], self.qc[1])  # y position of base
+        # bounds[2] = (self.qc[2], self.qc[2])  # z position of base
+        # bounds[3] = (self.qc[3], self.qc[3])  # Quaternion component
+        # bounds[4] = (self.qc[4], self.qc[4])  # Quaternion component
+        # bounds[5] = (self.qc[5], self.qc[5])  # Quaternion component
+        # bounds[6] = (self.qc[6], self.qc[6])  # Quaternion component
+        # for i in range(7, self.robot.nq):
+        #     # Joint limits for other joints
+        #     bounds[i] = ((-np.pi/3), (np.pi/3))
+        # # Perform minimization to find joint configuration minimizing foot position error
+
+        bounds = [((-np.pi / 3, np.pi / 3) if int(7 + (3 * (np.floor(FRAME_ID / 8) - 1))) <= i < int(7 +
+                   (3 * (np.floor(FRAME_ID / 8) - 1))) + 3 else (self.qc[i], self.qc[i])) for i in range(self.robot.nq)]
+
         res = minimize(
-            self.foot_pos_err, q, args=(FRAME_ID, desired_pos), bounds=bounds, tol=1e-5)
+            self.foot_pos_err, q, args=(FRAME_ID, desired_pos), bounds=bounds, tol=1e-12, method='L-BFGS-B')
         # Return the optimized joint configuration
         return res.x
 
@@ -339,17 +343,63 @@ class hexapod:
         # Generate direction vector based on specified direction
         v = self.generate_direction_vector(DIR=DIR)
         # Get initial position of the foot in XY plane
-        p1 = self.robot.framePlacement(self.qc, FOOT_ID).translation[0:2]
+        p1 = self.robot.framePlacement(self.qc, FOOT_ID).translation
         # Compute the target position p2 in XY plane
-        p2 = p1 + (self.HALF_STEP_SIZE_XY * step_size_xy_mult * v)
+        p2 = p1[0:2] + (self.HALF_STEP_SIZE_XY * step_size_xy_mult * v)
         # Define trajectory functions for x(t) and y(t) as linear interpolation between p1 and p2
+        p2 = np.append(p2, p1[2])
+
+        y_clearance = 0.03           # Vertical clearance for y apex
+        z_clearance = 0.03           # Lateral deviation for z apex
+
+        # Apex points (midway)
+        x_apex = (p1[0] + p2[0]) / 2
+        y_apex = max(p1[1], p2[1]) + (y_clearance * np.sign(max(p1[1], p2[1])))
+        z_apex = max(p1[2], p2[2]) + (z_clearance * np.sign(max(p1[2], p2[2])))
+
+        # Solve for parabolic coefficients for y(t) = a_y * t^2 + b_y * t + c_y
+        A_y = np.array([
+            [0**2, 0, 1],  # y(0) = y0
+            [0.5**2, 0.5, 1],  # y(0.5) = y_apex
+            [1**2, 1, 1]   # y(1) = y1
+        ])
+        b_y = np.array([p1[1], y_apex, p2[1]])
+        a_y, b_y, c_y = np.linalg.solve(A_y, b_y)
+
+        # Solve for parabolic coefficients for z(t) = a_z * t^2 + b_z * t + c_z
+        A_z = np.array([
+            [0**2, 0, 1],  # z(0) = z0
+            [0.5**2, 0.5, 1],  # z(0.5) = z_apex
+            [1**2, 1, 1]   # z(1) = z1
+        ])
+        b_z = np.array([p1[2], z_apex, p2[2]])
+        a_z, b_z, c_z = np.linalg.solve(A_z, b_z)
+
+        # Parameterize t
+        # t = np.linspace(0, 1, 100)
+
+        # Generate 3D trajectory
+        # Linear interpolation for x
+        self.x_t = lambda t: (1 - t) * p1[0] + t * p2[0]
+        self.y_t = lambda t: a_y * t**2 + b_y * t + c_y
+        self.z_t = lambda t: a_z * t**2 + b_z * t + c_z
+
+    def init_body_trajectory_functions(self, step_size_xy_mult, DIR='N'):
+
+        # Generate direction vector based on specified direction
+        v = self.generate_direction_vector(DIR=DIR)
+        # Get initial position of the foot in XY plane
+        p1 = self.robot.framePlacement(self.qc, self.BASE_FRAME_ID).translation
+        # Compute the target position p2 in XY plane
+        p2 = p1[0:2] + (self.HALF_STEP_SIZE_XY * step_size_xy_mult * v)
+        # Define trajectory functions for x(t) and y(t) as linear interpolation between p1 and p2
+        p2 = np.append(p2, p1[2])
         self.x_t = lambda t: ((1 - t) * p1[0]) + (t * p2[0])
         self.y_t = lambda t:  ((1 - t) * p1[1]) + (t * p2[1])
 
         # Define trajectory function for z(t) as a parabolic curve (quadratic)
         self.z_t = lambda t: (((-self.STEP_SIZE_Z)/0.25) *
                               (t ** 2)) + ((self.STEP_SIZE_Z / 0.25) * t)
-        pass
 
     def generate_joint_waypoints(self, step_size_xy_mult, STEPS=5, DIR='N', FOOT_ID=10):
         """
@@ -374,6 +424,9 @@ class hexapod:
             self.y_t(t), 5), round(self.z_t(t), 5)] for t in s]
         # Convert waypoints to array for visualization
         points = np.array([waypoints[0], waypoints[-1]]).T
+
+        # self.plot_trajctory(title=f'Trajectory for Leg {(np.floor(FOOT_ID / 8) - 1)} Before IK ', state=np.array([np.concatenate([np.zeros(int(3 + (3 * (np.floor(FOOT_ID / 8) - 1)))), np.array(waypoints)[
+        #                     i, :], np.zeros(self.robot.nq - int(3 + (3 * (np.floor(FOOT_ID / 8) - 1)) + 3))]) for i in range(len(waypoints))]))
 
         # Visualize the foot trajectory if visualization is enabled
         if self.viz_flag:
@@ -508,13 +561,15 @@ class hexapod:
         # Generate joint waypoints for the specified leg
         q_wps = self.generate_joint_waypoints(step_size_xy_mult,
                                               DIR=DIR, FOOT_ID=self.FOOT_IDS[LEG], STEPS=STEPS)
+        # self.plot_trajctory(title=f'Trajectory for Leg {LEG} after IK Before Interpolation', state=np.array(
+        #     [self.forward_kinematics(q) for q in q_wps]))
         q_traj = self.qc
         # Create a mask to apply joint configurations to the specific leg
         mask = np.concatenate((np.zeros(6), [1], np.zeros(
             LEG*3), [1, 1, 1], np.zeros((5-LEG)*3)))
         for i in range(0, q_wps.__len__()-1):
             t = t_init
-            while t < t_goal:
+            while t <= t_goal:
                 # Compute trajectory using linear interpolation
                 q_t = self.compute_trajectory_p(
                     q_wps[i], q_wps[i+1], t_init, t_goal, t)[0]
@@ -522,6 +577,8 @@ class hexapod:
                 t = (t + dt)
         # Remove the initial configuration
 
+        # self.plot_trajctory(
+        #     np.array([self.forward_kinematics(q) for q in q_traj]), title=f'Leg joint traj for Leg {LEG} After Interpolation')
         return np.delete(q_traj, 0, axis=0)
 
     def get_foot_positions(self, q):
@@ -579,8 +636,8 @@ class hexapod:
             self.feet_error,
             q_joints_init, args=(desired_base_pos),
             bounds=bounds,
-            method='SLSQP', options={'disp': False},
-            tol=1e-5
+            method='L-BFGS-B', options={'disp': False},
+            tol=1e-10
         )
 
         return np.concatenate([desired_base_pos, res.x])
@@ -598,8 +655,8 @@ class hexapod:
             list: List of joint configurations along the body's path.
         """
         # Initialize foot trajectory functions for the base
-        self.init_foot_trajectory_functions(
-            step_size_xy_mult=step_size_xy_mult, DIR=DIR, FOOT_ID=self.BASE_FRAME_ID)
+        self.init_body_trajectory_functions(
+            step_size_xy_mult=step_size_xy_mult, DIR=DIR)
         s = np.linspace(0, 1, STEPS)
         # Generate waypoints by evaluating trajectory functions at each time step
         waypoints = [np.concatenate(([round(self.x_t(t), 5), round(
@@ -632,10 +689,12 @@ class hexapod:
         # Generate waypoints for the body's path
         q_wps = self.generate_body_path_waypoints(step_size_xy_mult,
                                                   DIR=DIR, STEPS=STEPS)
+        # self.plot_trajctory(
+        #     np.array([self.forward_kinematics(q) for q in q_wps]))
         q_traj = self.qc
         for i in range(0, q_wps.__len__()-1):
             t = t_init
-            while t < t_goal:
+            while t <= t_goal:
                 # Compute trajectory using linear interpolation
                 q_t = self.compute_trajectory_p(
                     q_wps[i], q_wps[i+1], t_init, t_goal, t)[0]
@@ -707,17 +766,155 @@ class hexapod:
 
         return q
 
+    def plot_trajctory(self, state, title):
+        x_figsize = 15
+        y_figsize = 30
+        # Create a time array based on the number of columns in x1 or x2
+        time = np.arange(state.shape[0])
+
+        # Create a single figure with a 3-row, 2-column layout
+        fig, axs = plt.subplots(7, 3, figsize=(x_figsize, y_figsize))
+        fig.suptitle(title)
+
+        axs[0, 0].scatter(time, state[:, 0], label='x body', color='blue')
+        axs[0, 0].set_xlabel('time')
+        axs[0, 0].set_ylabel('x body')
+        axs[0, 0].legend()
+        axs[0, 0].grid(True)
+
+        axs[0, 1].scatter(time, state[:, 1], label='y body', color='blue')
+        axs[0, 1].set_xlabel('time')
+        axs[0, 1].set_ylabel('y body')
+        axs[0, 1].legend()
+        axs[0, 1].grid(True)
+
+        axs[0, 2].scatter(time, state[:, 2], label='z body', color='blue')
+        axs[0, 2].set_xlabel('time')
+        axs[0, 2].set_ylabel('z body')
+        axs[0, 2].legend()
+        axs[0, 2].grid(True)
+
+        axs[1, 0].scatter(time, state[:, 3], label='x leg 0', color='blue')
+        axs[1, 0].set_xlabel('time')
+        axs[1, 0].set_ylabel('x  leg 0')
+        axs[1, 0].legend()
+        axs[1, 0].grid(True)
+
+        axs[1, 1].scatter(time, state[:, 4], label='y  leg 0', color='blue')
+        axs[1, 1].set_xlabel('time')
+        axs[1, 1].set_ylabel('y  leg 0')
+        axs[1, 1].legend()
+        axs[1, 1].grid(True)
+
+        axs[1, 2].scatter(time, state[:, 5], label='z  leg 0', color='blue')
+        axs[1, 2].set_xlabel('time')
+        axs[1, 2].set_ylabel('z  leg 0')
+        axs[1, 2].legend()
+        axs[1, 2].grid(True)
+
+        axs[2, 0].scatter(time, state[:, 6], label='x  leg 1', color='blue')
+        axs[2, 0].set_xlabel('time')
+        axs[2, 0].set_ylabel('x leg 1')
+        axs[2, 0].legend()
+        axs[2, 0].grid(True)
+
+        axs[2, 1].scatter(time, state[:, 7], label='y leg 1', color='blue')
+        axs[2, 1].set_xlabel('time')
+        axs[2, 1].set_ylabel('y leg 1')
+        axs[2, 1].legend()
+        axs[2, 1].grid(True)
+
+        axs[2, 2].scatter(time, state[:, 8], label='z leg 1', color='blue')
+        axs[2, 2].set_xlabel('time')
+        axs[2, 2].set_ylabel('z leg 1')
+        axs[2, 2].legend()
+        axs[2, 2].grid(True)
+
+        axs[3, 0].scatter(time, state[:, 9], label='x leg 2', color='blue')
+        axs[3, 0].set_xlabel('time')
+        axs[3, 0].set_ylabel('x leg 2')
+        axs[3, 0].legend()
+        axs[3, 0].grid(True)
+
+        axs[3, 1].scatter(time, state[:, 10], label='y leg 2', color='blue')
+        axs[3, 1].set_xlabel('time')
+        axs[3, 1].set_ylabel('y leg 2')
+        axs[3, 1].legend()
+        axs[3, 1].grid(True)
+
+        axs[3, 2].scatter(time, state[:, 11], label='z leg 2', color='blue')
+        axs[3, 2].set_xlabel('time')
+        axs[3, 2].set_ylabel('z leg 2')
+        axs[3, 2].legend()
+        axs[3, 2].grid(True)
+
+        axs[4, 0].scatter(time, state[:, 12], label='x leg 3', color='blue')
+        axs[4, 0].set_xlabel('time')
+        axs[4, 0].set_ylabel('x leg 3')
+        axs[4, 0].legend()
+        axs[4, 0].grid(True)
+
+        axs[4, 1].scatter(time, state[:, 13], label='y leg 3', color='blue')
+        axs[4, 1].set_xlabel('time')
+        axs[4, 1].set_ylabel('y leg 3')
+        axs[4, 1].legend()
+        axs[4, 1].grid(True)
+
+        axs[4, 2].scatter(time, state[:, 14], label='z leg 3', color='blue')
+        axs[4, 2].set_xlabel('time')
+        axs[4, 2].set_ylabel('z leg 3')
+        axs[4, 2].legend()
+        axs[4, 2].grid(True)
+
+        axs[5, 0].scatter(time, state[:, 15], label='x leg 4', color='blue')
+        axs[5, 0].set_xlabel('time')
+        axs[5, 0].set_ylabel('x leg 4')
+        axs[5, 0].legend()
+        axs[5, 0].grid(True)
+
+        axs[5, 1].scatter(time, state[:, 16], label='y leg 4', color='blue')
+        axs[5, 1].set_xlabel('time')
+        axs[5, 1].set_ylabel('y leg 4')
+        axs[5, 1].legend()
+        axs[5, 1].grid(True)
+
+        axs[5, 2].scatter(time, state[:, 17], label='z leg 4', color='blue')
+        axs[5, 2].set_xlabel('time')
+        axs[5, 2].set_ylabel('z leg 4')
+        axs[5, 2].legend()
+        axs[5, 2].grid(True)
+
+        axs[6, 0].scatter(time, state[:, 18], label='x leg 5', color='blue')
+        axs[6, 0].set_xlabel('time')
+        axs[6, 0].set_ylabel('x leg 5')
+        axs[6, 0].legend()
+        axs[6, 0].grid(True)
+
+        axs[6, 1].scatter(time, state[:, 19], label='y leg 5', color='blue')
+        axs[6, 1].set_xlabel('time')
+        axs[6, 1].set_ylabel('y leg 5')
+        axs[6, 1].legend()
+        axs[6, 1].grid(True)
+
+        axs[6, 2].scatter(time, state[:, 20], label='z leg 5', color='blue')
+        axs[6, 2].set_xlabel('time')
+        axs[6, 2].set_ylabel('z leg 5')
+        axs[6, 2].legend()
+        axs[6, 2].grid(True)
+
+        plt.show()
+
 
 if __name__ == "__main__":
     # Create a hexapod instance with visualization and debug logging
     hexy = hexapod(init_viz=False, logging_level=logging.DEBUG)
     # Set parameters for movement
     step_size_xy_mult = 1
-    v = 0.5  # Velocity in m/s
-    t_goal = hexy.HALF_STEP_SIZE_XY / v
-    # t_goal = 0.02
+    # v = 0.5  # Velocity in m/s
+    # t_goal = hexy.HALF_STEP_SIZE_XY / v
+    t_goal = 0.02
     start_time = time()
-    STEPS = 5
+    STEPS = 10
     # Generate trajectories for legs 0, 2, and 4
     leg0_traj = hexy.generate_leg_joint_trajectory(
         step_size_xy_mult=step_size_xy_mult, DIR='N', LEG=0, t_goal=t_goal, STEPS=STEPS)
@@ -780,6 +977,9 @@ if __name__ == "__main__":
         f'gait_angles/gait_angles_WP{STEPS}_S{STEP_CNT}_{strftime("%Y%m%d_%H%M%S")}.npy')
     gait_angles_file_path.parent.mkdir(parents=True, exist_ok=True)
     np.save(gait_angles_file_path, q)
-    # Play the trajectory in the visualizer
+    # # Play the trajectory in the visualizer
     if hexy.viz_flag:
-        hexy.viz.play(q)
+        hexy.viz.play(hexy.compute_gait())
+
+    # hexy.plot_trajctory(title=f'Final Traj', state=np.array(
+    #     [hexy.forward_kinematics(q_i) for q_i in q]))

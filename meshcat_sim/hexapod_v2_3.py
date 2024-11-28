@@ -644,7 +644,7 @@ class hexapod:
 
 if __name__ == "__main__":
     # Create a hexapod instance with visualization and debug logging
-    hexy = hexapod(init_viz=True, logging_level=logging.DEBUG)
+    hexy = hexapod(init_viz=False, logging_level=logging.DEBUG)
     # Set parameters for movement
     step_size_xy_mult = 1
     v = 1  # Velocity in m/s
@@ -707,5 +707,6 @@ if __name__ == "__main__":
     # Log the time taken to compute the steps
     hexy.logger.debug(
         f'Time taken for computing {(STEP_CNT*2)+1} steps = {time()-start_time}')
+    np.save('gait_angles.npy', q)
     # Play the trajectory in the visualizer
-    hexy.viz.play(q)
+    # hexy.viz.play(q)

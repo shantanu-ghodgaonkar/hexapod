@@ -15,7 +15,7 @@ for i, j in np.ndindex(joint_objects.shape):
     obj = sim.getObject(f'/Revolute_joint_{j}{i+1}')
     print(f'Revolute_joint_{j}{i+1} has ID = {obj}')
     joint_objects[i][j] = obj
-
+    sim.setJointPosition(obj, 0)
 
 hexy = hexapod(init_viz=False)
 v = 0.5

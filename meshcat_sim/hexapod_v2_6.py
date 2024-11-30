@@ -10,6 +10,7 @@ import logging
 import matplotlib.pyplot as plt
 from enum import Enum
 from typing import List, Tuple, NoReturn
+from concurrent.futures import ThreadPoolExecutor
 import os
 
 # We don't want to print every decimal!
@@ -70,6 +71,8 @@ class hexapod:
             self.init_viz()
         self.L_of = 0.058
         self.phi = np.pi/4
+        self.dt = 0.005
+        self.dt_precision = abs(int(f"{self.dt:e}".split('e')[-1]))
         for frame in self.robot.model.frames:
             # Log the frame name, type, ID, and position
             self.logger.info(
@@ -140,10 +143,10 @@ class hexapod:
             self.viz.initViewer(open=True)
         except ImportError as err:
             # Handle import error if Meshcat is not installed
-            print(
+            self.logger.error(
                 "Error while initializing the viewer. It seems you should install Python meshcat"
             )
-            print(err)
+            self.logger.error(err)
             sys.exit(0)
 
         # Load the robot model into the viewer
@@ -160,7 +163,7 @@ class hexapod:
         """
         for frame in self.robot.model.frames:
             # Print the frame name, type, ID, and position
-            print(
+            self.logger.error(
                 f"Frame Name: {frame.name}, Frame Type: {frame.type}, Frame ID: {self.robot.model.getFrameId(frame.name)}, XYZ = {self.robot.framePlacement(self.qc, self.robot.model.getFrameId(frame.name))}")
 
     def find_frame_info_by_name(self, name: str) -> int:
@@ -231,7 +234,7 @@ class hexapod:
 
         # Perform minimization to find joint configuration minimizing foot position error
         res = minimize(
-            self.foot_pos_err, q, args=(FRAME_ID, desired_pos), bounds=bounds, tol=1e-12, method='SLSQP', options={'disp': True})
+            self.foot_pos_err, q, args=(FRAME_ID, desired_pos), bounds=bounds, tol=1e-12, method='L-BFGS-B')
         # Return the optimized joint configuration
         return res.x
 
@@ -252,11 +255,11 @@ class hexapod:
         # Normalize the vector to create a unit vector
         v = v/(np.sqrt((v[0]**2) + (v[1]**2)))
         # Visualize the direction vector if visualization is enabled
-        if self.viz_flag:
-            self.viz.viewer['direction_vector'].set_object(
-                g.Line(g.PointsGeometry(np.array(
-                    ([0, 0, 0], np.hstack((v, [0.0])))).T
-                ), g.MeshBasicMaterial(color=0xffff00)))
+        # if self.viz_flag:
+        #     self.viz.viewer['direction_vector'].set_object(
+        #         g.Line(g.PointsGeometry(np.array(
+        #             ([0, 0, 0], np.hstack((v, [0.0])))).T
+        #         ), g.MeshBasicMaterial(color=0xffff00)))
         return v
 
     def south_vector(self) -> np.ndarray:
@@ -276,11 +279,11 @@ class hexapod:
         # Normalize the vector to create a unit vector
         v = v/(np.sqrt((v[0]**2) + (v[1]**2)))
         # Visualize the direction vector if visualization is enabled
-        if self.viz_flag:
-            self.viz.viewer['direction_vector'].set_object(
-                g.Line(g.PointsGeometry(np.array(
-                    ([0, 0, 0], np.hstack((v, [0.0])))).T
-                ), g.MeshBasicMaterial(color=0xffff00)))
+        # if self.viz_flag:
+        #     self.viz.viewer['direction_vector'].set_object(
+        #         g.Line(g.PointsGeometry(np.array(
+        #             ([0, 0, 0], np.hstack((v, [0.0])))).T
+        #         ), g.MeshBasicMaterial(color=0xffff00)))
         return v
 
     def east_vector(self) -> np.ndarray:
@@ -300,11 +303,11 @@ class hexapod:
         # Normalize the vector to create a unit vector
         v = v/(np.sqrt((v[0]**2) + (v[1]**2)))
         # Visualize the direction vector if visualization is enabled
-        if self.viz_flag:
-            self.viz.viewer['direction_vector'].set_object(
-                g.Line(g.PointsGeometry(np.array(
-                    ([0, 0, 0], np.hstack((v, [0.0])))).T
-                ), g.MeshBasicMaterial(color=0xffff00)))
+        # if self.viz_flag:
+        #     self.viz.viewer['direction_vector'].set_object(
+        #         g.Line(g.PointsGeometry(np.array(
+        #             ([0, 0, 0], np.hstack((v, [0.0])))).T
+        #         ), g.MeshBasicMaterial(color=0xffff00)))
         return v
 
     def west_vector(self) -> np.ndarray:
@@ -324,11 +327,11 @@ class hexapod:
         # Normalize the vector to create a unit vector
         v = v/(np.sqrt((v[0]**2) + (v[1]**2)))
         # Visualize the direction vector if visualization is enabled
-        if self.viz_flag:
-            self.viz.viewer['direction_vector'].set_object(
-                g.Line(g.PointsGeometry(np.array(
-                    ([0, 0, 0], np.hstack((v, [0.0])))).T
-                ), g.MeshBasicMaterial(color=0xffff00)))
+        # if self.viz_flag:
+        #     self.viz.viewer['direction_vector'].set_object(
+        #         g.Line(g.PointsGeometry(np.array(
+        #             ([0, 0, 0], np.hstack((v, [0.0])))).T
+        #         ), g.MeshBasicMaterial(color=0xffff00)))
         return v
 
     def north_east_vector(self) -> np.ndarray:
@@ -348,11 +351,11 @@ class hexapod:
         # Normalize the vector to create a unit vector
         v = v/(np.sqrt((v[0]**2) + (v[1]**2)))
         # Visualize the direction vector if visualization is enabled
-        if self.viz_flag:
-            self.viz.viewer['direction_vector'].set_object(
-                g.Line(g.PointsGeometry(np.array(
-                    ([0, 0, 0], np.hstack((v, [0.0])))).T
-                ), g.MeshBasicMaterial(color=0xffff00)))
+        # if self.viz_flag:
+        #     self.viz.viewer['direction_vector'].set_object(
+        #         g.Line(g.PointsGeometry(np.array(
+        #             ([0, 0, 0], np.hstack((v, [0.0])))).T
+        #         ), g.MeshBasicMaterial(color=0xffff00)))
         return v
 
     def north_west_vector(self) -> np.ndarray:
@@ -372,11 +375,11 @@ class hexapod:
         # Normalize the vector to create a unit vector
         v = v/(np.sqrt((v[0]**2) + (v[1]**2)))
         # Visualize the direction vector if visualization is enabled
-        if self.viz_flag:
-            self.viz.viewer['direction_vector'].set_object(
-                g.Line(g.PointsGeometry(np.array(
-                    ([0, 0, 0], np.hstack((v, [0.0])))).T
-                ), g.MeshBasicMaterial(color=0xffff00)))
+        # if self.viz_flag:
+        #     self.viz.viewer['direction_vector'].set_object(
+        #         g.Line(g.PointsGeometry(np.array(
+        #             ([0, 0, 0], np.hstack((v, [0.0])))).T
+        #         ), g.MeshBasicMaterial(color=0xffff00)))
         return v
 
     def south_east_vector(self) -> np.ndarray:
@@ -396,11 +399,11 @@ class hexapod:
         # Normalize the vector to create a unit vector
         v = v/(np.sqrt((v[0]**2) + (v[1]**2)))
         # Visualize the direction vector if visualization is enabled
-        if self.viz_flag:
-            self.viz.viewer['direction_vector'].set_object(
-                g.Line(g.PointsGeometry(np.array(
-                    ([0, 0, 0], np.hstack((v, [0.0])))).T
-                ), g.MeshBasicMaterial(color=0xffff00)))
+        # if self.viz_flag:
+        #     self.viz.viewer['direction_vector'].set_object(
+        #         g.Line(g.PointsGeometry(np.array(
+        #             ([0, 0, 0], np.hstack((v, [0.0])))).T
+        #         ), g.MeshBasicMaterial(color=0xffff00)))
         return v
 
     def south_west_vector(self) -> np.ndarray:
@@ -420,11 +423,11 @@ class hexapod:
         # Normalize the vector to create a unit vector
         v = v/(np.sqrt((v[0]**2) + (v[1]**2)))
         # Visualize the direction vector if visualization is enabled
-        if self.viz_flag:
-            self.viz.viewer['direction_vector'].set_object(
-                g.Line(g.PointsGeometry(np.array(
-                    ([0, 0, 0], np.hstack((v, [0.0])))).T
-                ), g.MeshBasicMaterial(color=0xffff00)))
+        # if self.viz_flag:
+        #     self.viz.viewer['direction_vector'].set_object(
+        #         g.Line(g.PointsGeometry(np.array(
+        #             ([0, 0, 0], np.hstack((v, [0.0])))).T
+        #         ), g.MeshBasicMaterial(color=0xffff00)))
         return v
 
     def default_vector(self) -> NoReturn:
@@ -547,12 +550,12 @@ class hexapod:
         waypoints = [[round(self.x_t(t), 5), round(
             self.y_t(t), 5), round(self.z_t(t), 5)] for t in s]
         # Convert waypoints to array for visualization
-        points = np.array([waypoints[0], waypoints[-1]]).T
+        # points = np.array([waypoints[0], waypoints[-1]]).T
 
         # Visualize the foot trajectory if visualization is enabled
-        if self.viz_flag:
-            self.viz.viewer[('Foot_ID_' + str(FOOT_ID) + '_trajectory')].set_object(
-                g.Line(g.PointsGeometry(points), g.MeshBasicMaterial(color=0xffff00)))
+        # if self.viz_flag:
+        #     self.viz.viewer[('Foot_ID_' + str(FOOT_ID) + '_trajectory')].set_object(
+        #         g.Line(g.PointsGeometry(points), g.MeshBasicMaterial(color=0xffff00)))
 
         # Perform inverse kinematics to get joint configurations for each waypoint
         return [self.inverse_geometery(self.qc, FOOT_ID, wp)
@@ -664,7 +667,7 @@ class hexapod:
 
         return self.desired_position, self.desired_velocity, self.desired_acceleration
 
-    def generate_leg_joint_trajectory(self, step_size_xy_mult: float, DIR: str = 'N', LEG: int = 0, WAYPOINTS: int = 5, t_init: float = 0, t_goal: float = 0.1, dt: float = 0.01) -> np.ndarray:
+    def generate_leg_joint_trajectory(self, step_size_xy_mult: float, DIR: str = 'N', LEG: int = 0, WAYPOINTS: int = 5, t_init: float = 0, t_goal: float = 0.1) -> np.ndarray:
         """
         Generate a joint trajectory for a specific leg.
 
@@ -689,12 +692,12 @@ class hexapod:
             LEG*3), [1, 1, 1], np.zeros((5-LEG)*3)))
         for i in range(0, q_wps.__len__()-1):
             t = t_init
-            while round(t, 3) <= t_goal:
+            while round(t, self.dt_precision) <= t_goal:
                 # Compute trajectory using linear interpolation
                 q_t = self.compute_trajectory_p(
                     q_wps[i], q_wps[i+1], t_init, t_goal, t)[0]
                 q_traj = np.vstack((q_traj, np.multiply(q_t, mask)))
-                t = (t + dt)
+                t = (t + self.dt)
         # Remove the initial configuration
         return np.delete(q_traj, 0, axis=0)
 
@@ -753,7 +756,7 @@ class hexapod:
             self.feet_error,
             q_joints_init, args=(desired_base_pos),
             bounds=bounds,
-            method='SLSQP', options={'disp': True},
+            method='L-BFGS-B', options={'disp': False},
             tol=1e-10
         )
 
@@ -781,14 +784,14 @@ class hexapod:
 
         points = np.array(waypoints)[:, 0:3].T
         # Visualize the base trajectory if visualization is enabled
-        if self.viz_flag:
-            self.viz.viewer[('Base_trajectory')].set_object(
-                g.Line(g.PointsGeometry(points), g.MeshBasicMaterial(color=0xffff00)))
+        # if self.viz_flag:
+        #     self.viz.viewer[('Base_trajectory')].set_object(
+        #         g.Line(g.PointsGeometry(points), g.MeshBasicMaterial(color=0xffff00)))
         # Perform inverse kinematics to get joint configurations for each waypoint
         return [self.body_inverse_geometry(self.qc, wp)
                 for wp in waypoints]
 
-    def generate_body_joint_trajectory(self, step_size_xy_mult: float, DIR: str = 'N', WAYPOINTS: int = 5, t_init: float = 0, t_goal: float = 0.1, dt: float = 0.01) -> np.ndarray:
+    def generate_body_joint_trajectory(self, step_size_xy_mult: float, DIR: str = 'N', WAYPOINTS: int = 5, t_init: float = 0, t_goal: float = 0.1) -> np.ndarray:
         """
         Generate a joint trajectory for the robot's body.
 
@@ -809,12 +812,12 @@ class hexapod:
         q_traj = self.qc.copy()
         for i in range(0, q_wps.__len__()-1):
             t = t_init
-            while round(t, 3) <= t_goal:
+            while round(t, self.dt_precision) <= t_goal:
                 # Compute trajectory using linear interpolation
                 q_t = self.compute_trajectory_p(
                     q_wps[i], q_wps[i+1], t_init, t_goal, t)[0]
                 q_traj = np.vstack((q_traj, q_t))
-                t = (t + dt)
+                t = (t + self.dt)
         # Remove the initial configuration
         return np.delete(q_traj, 0, axis=0)
 
@@ -831,84 +834,14 @@ class hexapod:
         Returns:
             np.ndarray: The gait trajectory as a numpy array of joint configurations.
         """
-        step_size_xy_mult = 1
-        t_goal = self.HALF_STEP_SIZE_XY / v
         start_time = time()
-        # Generate trajectories for legs 0, 2, and 4
-        leg0_traj = self.generate_leg_joint_trajectory(
-            step_size_xy_mult=step_size_xy_mult, DIR=DIR, LEG=0, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-        leg2_traj = self.generate_leg_joint_trajectory(
-            step_size_xy_mult=step_size_xy_mult, DIR=DIR, LEG=2, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-        leg4_traj = self.generate_leg_joint_trajectory(
-            step_size_xy_mult=step_size_xy_mult, DIR=DIR, LEG=4, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-        # Generate body trajectory
-        body_traj = self.generate_body_joint_trajectory(
-            step_size_xy_mult=step_size_xy_mult, DIR=DIR, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-        # Combine the trajectories into a single trajectory q
-        q = np.hstack((body_traj[:, 0:7], leg0_traj[:, 7:10], body_traj[:, 10:13],
-                       leg2_traj[:, 13:16], body_traj[:, 16:19], leg4_traj[:, 19:22], body_traj[:, 22:25]))
-        # Update the current configuration
-        self.qc = q[-1]
-        step_size_xy_mult = 2
-        for i in range(0, STEP_CNT):
-            # Generate trajectories for legs 1, 3, and 5
-            leg1_traj = self.generate_leg_joint_trajectory(
-                step_size_xy_mult=step_size_xy_mult, DIR=DIR, LEG=1, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-            leg3_traj = self.generate_leg_joint_trajectory(
-                step_size_xy_mult=step_size_xy_mult, DIR=DIR, LEG=3, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-            leg5_traj = self.generate_leg_joint_trajectory(
-                step_size_xy_mult=step_size_xy_mult, DIR=DIR, LEG=5, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-            # Generate body trajectory
-            body_traj = self.generate_body_joint_trajectory(
-                step_size_xy_mult=step_size_xy_mult, DIR=DIR, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-            # Append trajectories to q
-            q = np.vstack((q,
-                           np.hstack((body_traj[:, 0:7], body_traj[:, 7:10],
-                                      leg1_traj[:, 10:13], body_traj[:, 13:16],
-                                      leg3_traj[:, 16:19], body_traj[:, 19:22], leg5_traj[:, 22:25]))
-                           ))
-            # Update the current configuration
-            self.qc = q[-1]
-            # Generate trajectories for legs 0, 2, and 4 again
-            leg0_traj = self.generate_leg_joint_trajectory(
-                step_size_xy_mult=step_size_xy_mult, DIR=DIR, LEG=0, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-            leg2_traj = self.generate_leg_joint_trajectory(
-                step_size_xy_mult=step_size_xy_mult, DIR=DIR, LEG=2, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-            leg4_traj = self.generate_leg_joint_trajectory(
-                step_size_xy_mult=step_size_xy_mult, DIR=DIR, LEG=4, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-            # Generate body trajectory
-            body_traj = self.generate_body_joint_trajectory(
-                step_size_xy_mult=step_size_xy_mult, DIR=DIR, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-            # Append trajectories to q
-            q = np.vstack((q,
-                           np.hstack((body_traj[:, 0:7], leg0_traj[:, 7:10],
-                                      body_traj[:, 10:13], leg2_traj[:, 13:16],
-                                      body_traj[:, 16:19], leg4_traj[:, 19:22], body_traj[:, 22:25]))
-                           ))
-            # Update the current configuration
-            self.qc = q[-1]
-
-        step_size_xy_mult = 1
-        # Generate trajectories for legs 1, 3, and 5
-        leg1_traj = self.generate_leg_joint_trajectory(
-            step_size_xy_mult=step_size_xy_mult, DIR=DIR, LEG=1, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-        leg3_traj = self.generate_leg_joint_trajectory(
-            step_size_xy_mult=step_size_xy_mult, DIR=DIR, LEG=3, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-        leg5_traj = self.generate_leg_joint_trajectory(
-            step_size_xy_mult=step_size_xy_mult, DIR=DIR, LEG=5, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-        # Generate body trajectory
-        body_traj = self.generate_body_joint_trajectory(
-            step_size_xy_mult=step_size_xy_mult, DIR=DIR, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-        # Append trajectories to q
-        q = np.vstack((q,
-                       np.hstack((body_traj[:, 0:7], body_traj[:, 7:10],
-                                  leg1_traj[:, 10:13], body_traj[:, 13:16],
-                                  leg3_traj[:, 16:19], body_traj[:, 19:22], leg5_traj[:, 22:25]))
-                       ))
-        # Update the current configuration
-        q = np.vstack((q, np.hstack((q[-1, :7], np.zeros(self.robot.nq - 7)))))
-        self.qc = q[-1]
-        # Log the time taken to compute the steps
+        q = self.compute_gait_step(
+            v=v, WAYPOINTS=WAYPOINTS, DIR=DIR, type='S')
+        for _ in range(STEP_CNT):
+            q = np.vstack((q, self.compute_gait_step(
+                v=v, WAYPOINTS=WAYPOINTS, DIR=DIR, type='M')))
+        q = np.vstack((q, self.compute_gait_step(
+            v=v, WAYPOINTS=WAYPOINTS, DIR=DIR, type='E')))
         self.logger.debug(
             f'Time taken for computing {(STEP_CNT*2)+2} steps = {time()-start_time}')
 
@@ -976,17 +909,191 @@ class hexapod:
 
         plt.show()
 
+    def compute_gait_step(self, v: float = 0.5, WAYPOINTS: int = 5, DIR: str = 'N', type: str = 'S'):
+        accepted_types = ('S', 'M', 'E')
+        if type not in accepted_types:
+            raise ValueError(
+                f"Expected type to be {accepted_types} but received {type}"
+            )
+
+        t_goal = self.HALF_STEP_SIZE_XY / v
+        q = np.empty(0)
+
+        # Set step_size_xy_mult based on type
+        step_size_xy_mult = 1 if type in ('S', 'E') else 2
+
+        # Process type 'S'
+        if type == 'S':
+            tasks = [
+                (self.generate_leg_joint_trajectory, {
+                    'step_size_xy_mult': step_size_xy_mult, 'DIR': DIR, 'LEG': leg, 't_goal': t_goal, 'WAYPOINTS': WAYPOINTS})
+                for leg in [0, 2, 4]
+            ]
+            tasks.append(
+                (self.generate_body_joint_trajectory, {
+                    'step_size_xy_mult': step_size_xy_mult, 'DIR': DIR, 't_goal': t_goal, 'WAYPOINTS': WAYPOINTS})
+            )
+
+            # Execute tasks in parallel
+            with ThreadPoolExecutor(max_workers=min(len(tasks), os.cpu_count())) as executor:
+                futures = [executor.submit(func, **kwargs)
+                           for func, kwargs in tasks]
+                try:
+                    results = [future.result() for future in futures]
+                except Exception as e:
+                    self.logger.error(
+                        f"Error occurred while generating trajectories: {e}")
+                    raise
+
+            # Unpack results
+            leg0_traj, leg2_traj, leg4_traj, body_traj = results
+
+            # Append results for the second set
+            q = np.hstack((
+                body_traj[:, 0:7],
+                leg0_traj[:, 7:10],
+                body_traj[:, 10:13],
+                leg2_traj[:, 13:16],
+                body_traj[:, 16:19],
+                leg4_traj[:, 19:22],
+                body_traj[:, 22:25]
+            ))
+
+            # Update the current configuration
+            self.qc = q[-1]
+
+        # Process type 'M'
+        elif type == 'M':
+            # First set of legs (1, 3, 5) and body trajectory
+            tasks_1 = [
+                (self.generate_leg_joint_trajectory, {
+                    'step_size_xy_mult': step_size_xy_mult, 'DIR': DIR, 'LEG': leg, 't_goal': t_goal, 'WAYPOINTS': WAYPOINTS})
+                for leg in [1, 3, 5]
+            ]
+            tasks_1.append(
+                (self.generate_body_joint_trajectory, {
+                    'step_size_xy_mult': step_size_xy_mult, 'DIR': DIR, 't_goal': t_goal, 'WAYPOINTS': WAYPOINTS})
+            )
+
+            with ThreadPoolExecutor(max_workers=min(len(tasks_1), os.cpu_count())) as executor:
+                futures_1 = [executor.submit(func, **kwargs)
+                             for func, kwargs in tasks_1]
+                try:
+                    results_1 = [future.result() for future in futures_1]
+                except Exception as e:
+                    self.logger.error(
+                        f"Error occurred while generating trajectories (first set): {e}")
+                    raise
+
+            leg1_traj, leg3_traj, leg5_traj, body_traj_1 = results_1
+
+            # Concatenate results for the first set
+            q = np.hstack((
+                body_traj_1[:, 0:7],
+                body_traj_1[:, 7:10],
+                leg1_traj[:, 10:13],
+                body_traj_1[:, 13:16],
+                leg3_traj[:, 16:19],
+                body_traj_1[:, 19:22],
+                leg5_traj[:, 22:25]
+            ))
+
+            # Update the current configuration
+            self.qc = q[-1]
+
+            # Second set of legs (0, 2, 4) and updated body trajectory
+            tasks_2 = [
+                (self.generate_leg_joint_trajectory, {
+                    'step_size_xy_mult': step_size_xy_mult, 'DIR': DIR, 'LEG': leg, 't_goal': t_goal, 'WAYPOINTS': WAYPOINTS})
+                for leg in [0, 2, 4]
+            ]
+            tasks_2.append(
+                (self.generate_body_joint_trajectory, {
+                    'step_size_xy_mult': step_size_xy_mult, 'DIR': DIR, 't_goal': t_goal, 'WAYPOINTS': WAYPOINTS})
+            )
+
+            with ThreadPoolExecutor(max_workers=min(len(tasks_2), os.cpu_count())) as executor:
+                futures_2 = [executor.submit(func, **kwargs)
+                             for func, kwargs in tasks_2]
+                try:
+                    results_2 = [future.result() for future in futures_2]
+                except Exception as e:
+                    self.logger.error(
+                        f"Error occurred while generating trajectories (second set): {e}")
+                    raise
+
+            leg0_traj, leg2_traj, leg4_traj, body_traj_2 = results_2
+
+            # Append results for the second set
+            q = np.vstack((q, np.hstack((
+                body_traj_2[:, 0:7],
+                leg0_traj[:, 7:10],
+                body_traj_2[:, 10:13],
+                leg2_traj[:, 13:16],
+                body_traj_2[:, 16:19],
+                leg4_traj[:, 19:22],
+                body_traj_2[:, 22:25]
+            ))))
+
+            # Update the current configuration
+            self.qc = q[-1]
+
+        # Process type 'E'
+        elif type == 'E':
+            tasks = [
+                (self.generate_leg_joint_trajectory, {
+                    'step_size_xy_mult': step_size_xy_mult, 'DIR': DIR, 'LEG': leg, 't_goal': t_goal, 'WAYPOINTS': WAYPOINTS})
+                for leg in [1, 3, 5]
+            ]
+            tasks.append(
+                (self.generate_body_joint_trajectory, {
+                    'step_size_xy_mult': step_size_xy_mult, 'DIR': DIR, 't_goal': t_goal, 'WAYPOINTS': WAYPOINTS})
+            )
+
+            with ThreadPoolExecutor(max_workers=min(len(tasks), os.cpu_count())) as executor:
+                futures = [executor.submit(func, **kwargs)
+                           for func, kwargs in tasks]
+                try:
+                    results = [future.result() for future in futures]
+                except Exception as e:
+                    self.logger.error(
+                        f"Error occurred while generating trajectories: {e}")
+                    raise
+
+            leg1_traj, leg3_traj, leg5_traj, body_traj = results
+
+            # Concatenate results
+            q = np.hstack((
+                body_traj[:, 0:7],
+                body_traj[:, 7:10],
+                leg1_traj[:, 10:13],
+                body_traj[:, 13:16],
+                leg3_traj[:, 16:19],
+                body_traj[:, 19:22],
+                leg5_traj[:, 22:25]
+            ))
+
+            # Append zero-padded row for `E` type
+            q = np.vstack(
+                (q, np.hstack((q[-1, :7], np.zeros(self.robot.nq - 7)))))
+
+            # Update the current configuration
+            self.qc = q[-1]
+        self.logger.info(
+            f'Computed Step Final Location = {self.forward_kinematics(self.qc)}')
+        return q
+
 
 if __name__ == "__main__":
     # Create a hexapod instance with visualization and debug logging
-    hexy = hexapod(init_viz=False, logging_level=logging.DEBUG)
+    hexy = hexapod(init_viz=True, logging_level=logging.DEBUG)
     # Set parameters for movement
-    v = 0.5  # Velocity in m/s
+    v = 1  # Velocity in m/s
     start_time = time()
     WAYPOINTS = 5
     DIR = 'N'
-    # STEP_CNT = 1
-    # # Compute the gait trajectory
+    STEP_CNT = 5
+    # Compute the gait trajectory
     # q = hexy.compute_gait(v=v, WAYPOINTS=WAYPOINTS, STEP_CNT=STEP_CNT, DIR=DIR)
 
     # # Save the gait angles to a file
@@ -995,15 +1102,21 @@ if __name__ == "__main__":
     # gait_angles_file_path.parent.mkdir(parents=True, exist_ok=True)
     # np.save(gait_angles_file_path, q)
     # # Play the trajectory in the visualizer if enabled
-    # if hexy.viz_flag:
-    #     hexy.viz.play(q)
+
+    sleep(1)
+    if hexy.viz_flag:
+        hexy.viz.play(hexy.compute_gait_step(
+            v=v, WAYPOINTS=WAYPOINTS, DIR=DIR, type='S'))
+        for _ in range(STEP_CNT):
+            hexy.viz.play(hexy.compute_gait_step(
+                v=v, WAYPOINTS=WAYPOINTS, DIR=DIR, type='M'))
+        hexy.viz.play(hexy.compute_gait_step(
+            v=v, WAYPOINTS=WAYPOINTS, DIR=DIR, type='E'))
 
     # sleep(1)
-    STEP_CNT = 10
-    # Compute the gait trajectory for more steps
-    q = hexy.compute_gait(v=v, WAYPOINTS=WAYPOINTS, STEP_CNT=STEP_CNT, DIR=DIR)
-    if hexy.viz_flag:
-        hexy.viz.play(q)
+    # STEP_CNT = 10
+    # # Compute the gait trajectory for more steps
+    # q = hexy.compute_gait(v=v, WAYPOINTS=WAYPOINTS, STEP_CNT=STEP_CNT, DIR=DIR)
 
     # # Save the gait angles to a file
     # gait_angles_file_path = Path(

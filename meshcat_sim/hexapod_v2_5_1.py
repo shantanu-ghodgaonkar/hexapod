@@ -226,16 +226,24 @@ class hexapod:
             np.ndarray: Joint configuration that minimizes the positional error.
         """
         # Set bounds for optimization
-        # bounds = [((-(48 * np.pi / 180), (48 * np.pi / 180)) if int(7 + (3 * (np.floor(FRAME_ID / 8) - 1))) <= i < int(7 +
-        #            (3 * (np.floor(FRAME_ID / 8) - 1))) + 3 else (self.qc[i], self.qc[i])) for i in range(self.robot.nq)]
-        bounds = [((self.qc[i], self.qc[i])) for i in range(self.robot.nq)]
-        bounds[int(7 + (3 * (np.floor(FRAME_ID / 8) - 1))): int(7 + (3 * (np.floor(FRAME_ID / 8) - 1)))+3] = \
-            [(-(85 * np.pi / 180), (85 * np.pi / 180)), (-(45 * np.pi / 180),
-                                                         (45 * np.pi / 180)), (-(45 * np.pi / 180), (45 * np.pi / 180))]
+        # bounds = [((self.qc[i], self.qc[i])) for i in range(self.robot.nq)]
+        # bounds[int(7 + (3 * (np.floor(FRAME_ID / 8) - 1))): int(7 + (3 * (np.floor(FRAME_ID / 8) - 1)))+3] = \
+        #     [(-(85 * np.pi / 180), (85 * np.pi / 180)), (-(45 * np.pi / 180),
+        #                                                  (45 * np.pi / 180)), (-(45 * np.pi / 180), (45 * np.pi / 180))]
+
+        # Default to fixed joint values
+        joint_bounds = np.full((self.robot.nq, 2), self.qc[:, None])
+        joint_indices = np.array(
+            [7 + (3 * ((FRAME_ID // 8) - 1)) + i for i in range(3)])  # Indices for this leg
+        joint_bounds[joint_indices, 0] = [-85 * np.pi /
+                                          180, -45 * np.pi / 180, -45 * np.pi / 180]
+        joint_bounds[joint_indices, 1] = [
+            85 * np.pi / 180, 45 * np.pi / 180, 45 * np.pi / 180]
+        bounds = list(map(tuple, joint_bounds))
 
         # Perform minimization to find joint configuration minimizing foot position error
         res = minimize(
-            self.foot_pos_err, q, args=(FRAME_ID, desired_pos), bounds=bounds, tol=1e-12, method='SLSQP', options={'disp': False})
+            self.foot_pos_err, q, args=(FRAME_ID, desired_pos), bounds=bounds, tol=1e-8, method='SLSQP', options={'disp': False})
         # Return the optimized joint configuration
         return res.x
 
@@ -729,11 +737,18 @@ class hexapod:
         initial_foot_positions = self.get_foot_positions(self.qc)
         q_full = np.concatenate([desired_base_pose, q_joints])
         self.robot.forwardKinematics(q_full)
-        error = 0
-        for foot_id, desired_pos in zip(self.FOOT_IDS, initial_foot_positions):
-            current_pos = self.robot.framePlacement(
-                q_full, foot_id).translation
-            error += np.linalg.norm(current_pos - desired_pos)**2
+        # error = 0
+        # for foot_id, desired_pos in zip(self.FOOT_IDS, initial_foot_positions):
+        #     current_pos = self.robot.framePlacement(
+        #         q_full, foot_id).translation
+        #     error += np.linalg.norm(current_pos - desired_pos)**2
+
+        current_positions = np.array([self.robot.framePlacement(
+            q_full, fid).translation for fid in self.FOOT_IDS])
+        desired_positions = np.array(initial_foot_positions)
+        error = np.sum(np.linalg.norm(current_positions -
+                       desired_positions, axis=1) ** 2)
+
         return error
 
     def body_inverse_geometry(self, q: np.ndarray, desired_base_pos: np.ndarray) -> np.ndarray:
@@ -759,7 +774,7 @@ class hexapod:
             q_joints_init, args=(desired_base_pos),
             bounds=bounds,
             method='SLSQP', options={'disp': False},
-            tol=1e-10
+            tol=1e-8
         )
 
         return np.concatenate([desired_base_pos, res.x])
@@ -995,7 +1010,7 @@ if __name__ == "__main__":
     # # Compute the gait trajectory
     q = hexy.compute_gait(v=v, WAYPOINTS=WAYPOINTS, STEP_CNT=STEP_CNT, DIR=DIR)
     states = np.array([hexy.forward_kinematics(q_i) for q_i in q])
-    hexy.plot_trajctory(state=states, title='v2.5')
+    hexy.plot_trajctory(state=states, title='v2.5.1')
 
     # # Save the gait angles to a file
     # gait_angles_file_path = Path(

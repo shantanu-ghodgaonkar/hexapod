@@ -1,5 +1,5 @@
 from coppeliasim_zmqremoteapi_client import RemoteAPIClient
-from hexapod_v2_6 import hexapod
+from hexapod_v2_5 import hexapod
 import numpy as np
 from time import sleep
 
@@ -21,6 +21,8 @@ hexy = hexapod(init_viz=False)
 v = 0.5
 WAYPOINTS = 5
 
+robot_base = '/robot_base_respondable'
+
 # Step 2: Start the simulation
 print("Starting the simulation...")
 sim.startSimulation()
@@ -28,19 +30,24 @@ sim.startSimulation()
 # sleep(5)
 sim.addLog(sim.verbosity_scriptinfos, f"Simulation Started...\nMoving North")
 q_traj = hexy.compute_gait(v=v, WAYPOINTS=WAYPOINTS, STEP_CNT=1, DIR='N')
-q_traj[:, 2] = [sim.getObjectPose(sim.getObject('/HexY'))[2]]*(q_traj.shape[0])
+q_traj[:, 2] = [sim.getObjectPose(sim.getObject(robot_base))[
+    2]]*(q_traj.shape[0])
 for q_i in q_traj:
-    sim.setObjectPose(sim.getObject('/HexY'), list(q_i[:7]))
+    sim.setObjectPose(sim.getObject(robot_base), list(q_i[:7]))
     sim.moveToConfig({
         'joints': list(joint_objects.flatten()),
         'targetPos': list(q_i[7:])
     })
+
+# exit()
+
 # sleep(3)
 sim.addLog(sim.verbosity_scriptinfos, f"Moving South")
 q_traj = hexy.compute_gait(v=v, WAYPOINTS=WAYPOINTS, STEP_CNT=1, DIR='S')
-q_traj[:, 2] = [sim.getObjectPose(sim.getObject('/HexY'))[2]]*(q_traj.shape[0])
+q_traj[:, 2] = [sim.getObjectPose(sim.getObject(robot_base))[
+    2]]*(q_traj.shape[0])
 for q_i in q_traj:
-    sim.setObjectPose(sim.getObject('/HexY'), list(q_i[:7]))
+    sim.setObjectPose(sim.getObject(robot_base), list(q_i[:7]))
     sim.moveToConfig({
         'joints': list(joint_objects.flatten()),
         'targetPos': list(q_i[7:])
@@ -49,9 +56,10 @@ for q_i in q_traj:
 
 sim.addLog(sim.verbosity_scriptinfos, f"Moving West")
 q_traj = hexy.compute_gait(v=v, WAYPOINTS=WAYPOINTS, STEP_CNT=1, DIR='W')
-q_traj[:, 2] = [sim.getObjectPose(sim.getObject('/HexY'))[2]]*(q_traj.shape[0])
+q_traj[:, 2] = [sim.getObjectPose(sim.getObject(robot_base))[
+    2]]*(q_traj.shape[0])
 for q_i in q_traj:
-    sim.setObjectPose(sim.getObject('/HexY'), list(q_i[:7]))
+    sim.setObjectPose(sim.getObject(robot_base), list(q_i[:7]))
     sim.moveToConfig({
         'joints': list(joint_objects.flatten()),
         'targetPos': list(q_i[7:])
@@ -60,9 +68,10 @@ for q_i in q_traj:
 
 sim.addLog(sim.verbosity_scriptinfos, f"Moving East")
 q_traj = hexy.compute_gait(v=v, WAYPOINTS=WAYPOINTS, STEP_CNT=1, DIR='E')
-q_traj[:, 2] = [sim.getObjectPose(sim.getObject('/HexY'))[2]]*(q_traj.shape[0])
+q_traj[:, 2] = [sim.getObjectPose(sim.getObject(robot_base))[
+    2]]*(q_traj.shape[0])
 for q_i in q_traj:
-    sim.setObjectPose(sim.getObject('/HexY'), list(q_i[:7]))
+    sim.setObjectPose(sim.getObject(robot_base), list(q_i[:7]))
     sim.moveToConfig({
         'joints': list(joint_objects.flatten()),
         'targetPos': list(q_i[7:])
@@ -70,9 +79,10 @@ for q_i in q_traj:
 
 sim.addLog(sim.verbosity_scriptinfos, f"Moving Northeast")
 q_traj = hexy.compute_gait(v=v, WAYPOINTS=WAYPOINTS, STEP_CNT=1, DIR='NE')
-q_traj[:, 2] = [sim.getObjectPose(sim.getObject('/HexY'))[2]]*(q_traj.shape[0])
+q_traj[:, 2] = [sim.getObjectPose(sim.getObject(robot_base))[
+    2]]*(q_traj.shape[0])
 for q_i in q_traj:
-    sim.setObjectPose(sim.getObject('/HexY'), list(q_i[:7]))
+    sim.setObjectPose(sim.getObject(robot_base), list(q_i[:7]))
     sim.moveToConfig({
         'joints': list(joint_objects.flatten()),
         'targetPos': list(q_i[7:])
@@ -80,9 +90,10 @@ for q_i in q_traj:
 
 sim.addLog(sim.verbosity_scriptinfos, f"Moving Southeast")
 q_traj = hexy.compute_gait(v=v, WAYPOINTS=WAYPOINTS, STEP_CNT=1, DIR='SE')
-q_traj[:, 2] = [sim.getObjectPose(sim.getObject('/HexY'))[2]]*(q_traj.shape[0])
+q_traj[:, 2] = [sim.getObjectPose(sim.getObject(robot_base))[
+    2]]*(q_traj.shape[0])
 for q_i in q_traj:
-    sim.setObjectPose(sim.getObject('/HexY'), list(q_i[:7]))
+    sim.setObjectPose(sim.getObject(robot_base), list(q_i[:7]))
     sim.moveToConfig({
         'joints': list(joint_objects.flatten()),
         'targetPos': list(q_i[7:])
@@ -90,9 +101,10 @@ for q_i in q_traj:
 
 sim.addLog(sim.verbosity_scriptinfos, f"Moving Northwest")
 q_traj = hexy.compute_gait(v=v, WAYPOINTS=WAYPOINTS, STEP_CNT=1, DIR='NW')
-q_traj[:, 2] = [sim.getObjectPose(sim.getObject('/HexY'))[2]]*(q_traj.shape[0])
+q_traj[:, 2] = [sim.getObjectPose(sim.getObject(robot_base))[
+    2]]*(q_traj.shape[0])
 for q_i in q_traj:
-    sim.setObjectPose(sim.getObject('/HexY'), list(q_i[:7]))
+    sim.setObjectPose(sim.getObject(robot_base), list(q_i[:7]))
     sim.moveToConfig({
         'joints': list(joint_objects.flatten()),
         'targetPos': list(q_i[7:])
@@ -100,9 +112,9 @@ for q_i in q_traj:
 
 sim.addLog(sim.verbosity_scriptinfos, f"Moving Southwest")
 q_traj = hexy.compute_gait(v=v, WAYPOINTS=WAYPOINTS, STEP_CNT=1, DIR='SW')
-q_traj[:, 2] = [sim.getObjectPose(sim.getObject('/HexY'))[2]]
+q_traj[:, 2] = [sim.getObjectPose(sim.getObject(robot_base))[2]]
 for q_i in q_traj:
-    sim.setObjectPose(sim.getObject('/HexY'), list(q_i[:7]))
+    sim.setObjectPose(sim.getObject(robot_base), list(q_i[:7]))
     sim.moveToConfig({
         'joints': list(joint_objects.flatten()),
         'targetPos': list(q_i[7:])
@@ -111,8 +123,8 @@ for q_i in q_traj:
 sim.addLog(sim.verbosity_scriptinfos, f"Resetting robot state.")
 q = np.array([1 if i == 6 else 0 for i in range(
     hexy.robot.nq)], dtype=np.float64)
-q[2] = sim.getObjectPose(sim.getObject('/HexY'))[2]
-sim.setObjectPose(sim.getObject('/HexY'), list(q[:7]))
+q[2] = sim.getObjectPose(sim.getObject(robot_base))[2]
+sim.setObjectPose(sim.getObject(robot_base), list(q[:7]))
 sim.moveToConfig({
     'joints': list(joint_objects.flatten()),
     'targetPos': list(q[7:])

@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 from enum import Enum
 from typing import List, Tuple, NoReturn
 import os
+import jax
 
 # We don't want to print every decimal!
 np.set_printoptions(suppress=True, precision=4)
@@ -61,6 +62,9 @@ class hexapod:
             frame.name) for frame in self.robot.model.frames if "Revolute_joint_0" in frame.name]
         # Get the frame ID for the robot base
         self.BASE_FRAME_ID = self.robot.model.getFrameId("robot_base_inertial")
+        self.cMb_se3 = self.robot.framePlacement(
+            index=self.robot.model.getFrameId("CAM"), q=self.robot.q0).inverse()
+        self.cMb_xyzquat = pin.SE3ToXYZQUAT(self.cMb_se3)
         # Set initial state and configuration
         self.state_flag = 'START'
         self.qc = self.robot.q0  # Initial joint configuration
@@ -83,6 +87,7 @@ class hexapod:
             self.logger.info(
                 f"Frame Name: {frame.name}, Frame Type: {frame.type}, Frame ID: {self.robot.model.getFrameId(frame.name)}, XYZ = {self.robot.framePlacement(self.qc, self.robot.model.getFrameId(frame.name))}")
 
+        # self.cost_grad = jax.grad(self.cost_function)
         # Log successful initialization
         self.logger.info(
             f"Hexapod Object Initialised Successfully with init_viz = {self.viz_flag}, logging_level={logging_level}")
@@ -226,16 +231,69 @@ class hexapod:
     def cost_function(self, q: np.ndarray, desired_pos: np.ndarray = np.zeros((21, 1))) -> float:
         Q = np.eye(self.state_c.__len__())
         R = np.eye(self.robot.nq)
-        q = q.reshape(-1, 1)
+        # q = q.reshape(-1, 1)
+        # if type(q) == jax._src.interpreters.ad.JVPTracer:
+        #     q = q.primal
         current_pos = self.forward_kinematics(q)
         return (((current_pos - desired_pos).T @ Q @
                 (current_pos - desired_pos))).item()
         # + (q.T @ R @ q)
 
+    def get_jacobains(self, q: np.ndarray, desired_pos: np.ndarray = np.zeros((21, 1))) -> np.ndarray:
+        return pin.computeJointJacobians(self.robot.model, self.robot.data, q)
+
+    def cost_function_new(self, q: np.ndarray, desired_pos: np.ndarray = np.zeros((21, 1))) -> float:
+        QR = np.eye(self.state_c.__len__() + self.robot.nq)
+        # q = q.reshape(-1, 1)
+        # if type(q) == jax._src.interpreters.ad.JVPTracer:
+        #     q = q.primal
+        current_pos = self.forward_kinematics(q)
+        error = current_pos - desired_pos
+        x = np.zeros((self.state_c.__len__() + self.robot.nq, 1))
+        x[:self.state_c.__len__()] = error
+        x[self.state_c.__len__():] = q.reshape(-1, 1)
+        return (x.T @ QR @ x).item()
+
+    def cost_function_new_grad(self, q: np.ndarray, desired_pos: np.ndarray = np.zeros((21, 1))) -> float:
+        QR = np.eye(self.state_c.__len__() + self.robot.nq)
+        # q = q.reshape(-1, 1)
+        # if type(q) == jax._src.interpreters.ad.JVPTracer:
+        #     q = q.primal
+        current_pos = self.forward_kinematics(q)
+        error = current_pos - desired_pos
+        x = np.zeros((self.state_c.__len__() + self.robot.nq, 1))
+        x[:self.state_c.__len__()] = error
+        x[self.state_c.__len__():] = q.reshape(-1, 1)
+        return 2 * QR @ x
+        # + (q.T @ R @ q)
+
+    # def cost_function_gradient(self, q: np.ndarray, desired_pos: np.ndarray = np.zeros((21, 1))) -> np.ndarray:
+    #     Q = np.eye(self.state_c.__len__())
+    #     R = np.eye(self.robot.nq)
+    #     # q = q.reshape(-1, 1)
+    #     current_pos = self.forward_kinematics(q)
+    #     return (2 * Q @ (current_pos - desired_pos)).flatten()
+
     def equality_constraints(self, q: np.ndarray):
-        desired = np.array([0, 0, 0, 1])
-        actual = q[3:7]
+        desired = np.array([0, 0, 0, 0, 1])
+        actual = q[2:7]
         return np.sum(np.abs(actual - desired))
+
+    def feet_024_stop_constraints(self, q: np.ndarray):
+        desired = self.state_c.flatten()
+        state = self.forward_kinematics(q).flatten()
+        actual_0 = state[3:6]
+        actual_2 = state[9:12]
+        actual_4 = state[15:18]
+        return np.sum(np.abs(actual_0 - desired[3:6])) + np.sum(np.abs(actual_2 - desired[9:12])) + np.sum(np.abs(actual_4 - desired[15:18]))
+
+    def feet_135_stop_constraints(self, q: np.ndarray):
+        desired = self.state_c.flatten()
+        state = self.forward_kinematics(q).flatten()
+        actual_1 = state[6:9]
+        actual_3 = state[12:15]
+        actual_5 = state[18:21]
+        return np.sum(np.abs(actual_1 - desired[6:9])) + np.sum(np.abs(actual_3 - desired[12:15])) + np.sum(np.abs(actual_5 - desired[18:21]))
 
     def inverse_geometery(self, q: np.ndarray, FRAME_ID: int = 9, desired_pos: np.ndarray = np.zeros(3)) -> np.ndarray:
         """
@@ -1064,25 +1122,60 @@ class hexapod:
 if __name__ == "__main__":
     # Create a hexapod instance with visualization and debug logging
 
-    hexy = hexapod(init_viz=True, logging_level=logging.DEBUG)
+    hexy = hexapod(init_viz=False, logging_level=logging.DEBUG)
+    sleep(2)
     # Set parameters for movement
     v = 0.5  # Velocity in m/s
     # start_time = time()
-    WAYPOINTS = 5
+    WAYPOINTS = 20
     # DIR = 'N'
     step_size_mult = 1
     start = time()
-    wp = hexy.generate_waypoints(step_size_xy_mult=step_size_mult)
+    wp = hexy.generate_waypoints(
+        WAYPOINTS=WAYPOINTS, step_size_xy_mult=step_size_mult)
     q = np.zeros((WAYPOINTS, hexy.robot.nq))
     for i in range(WAYPOINTS):
-        q[i, :] = minimize(hexy.cost_function, hexy.robot.q0, args=wp[:, i].reshape(
-            -1, 1), constraints={'type': 'eq', 'fun': hexy.equality_constraints}).x
+        q[i, :] = minimize(fun=hexy.cost_function, x0=hexy.qc, args=wp[:, i].reshape(
+            -1, 1), constraints=[{'type': 'eq', 'fun': hexy.equality_constraints},
+                                 #  {'type': 'eq', 'fun': hexy.feet_135_stop_constraints}
+                                 ], method='SLSQP', options={'disp': True}, tol=1e-7,
+            # jac=hexy.cost_grad
+            # jac=hexy.cost_function_new_grad
+        ).x
+        # hexy.qc = minimize(fun=hexy.cost_function, x0=hexy.qc, args=wp[:, 0].reshape(
+        #     -1, 1), constraints=[{'type': 'eq', 'fun': hexy.equality_constraints},
+        #                          #  {'type': 'eq', 'fun': hexy.feet_135_stop_constraints}
+        #                          ], method='SLSQP', options={'disp': True}, tol=1e-7,
+        #     # jac=hexy.cost_grad
+        #     # jac=hexy.cost_function_new_grad
+        # ).x
+        hexy.qc = q[i, :]
+        hexy.state_c = hexy.forward_kinematics(hexy.qc)
+        # hexy.viz.display(hexy.qc)
     print(f'Computation done in {time()-start} seconds')
-    sleep(3)
+    states = np.array([hexy.forward_kinematics(q_i) for q_i in q])
+    hexy.plot_trajctory(state=states, title='v2.5.1')
+    # sleep(3)
     # STEP_CNT = 1
     # # Compute the gait trajectory
     # q = hexy.compute_gait(v=v, WAYPOINTS=WAYPOINTS, STEP_CNT=STEP_CNT, DIR=DIR)
-    # states = np.array([hexy.forward_kinematics(q_i) for q_i in q])
+    # q_traj = []
+    # q = np.round(q, )
+    # t_goal = 0.2
+    # dt = 0.01
+    # q_traj = np.zeros((int(((t_goal/dt)*(WAYPOINTS-1)) + 1), q.shape[1]))
+    # q_traj_iter = 0
+    # for i in range(q.shape[0] - 1):
+    #     t = 0
+    #     while t < t_goal:
+    #         q_traj[q_traj_iter, :] = hexy.compute_trajectory_p(
+    #             position_init=q[i, :], position_goal=q[i+1, :], t_init=0, t_goal=t_goal, t=t)[0]
+    #         t += dt
+    #         q_traj_iter += 1
+
+    # q_traj[-1, :] = q[-1, :]
+
+    # states = np.array([hexy.forward_kinematics(q_i) for q_i in q_traj])
     # hexy.plot_trajctory(state=states, title='v2.5.1')
 
     # # Save the gait angles to a file
@@ -1091,8 +1184,8 @@ if __name__ == "__main__":
     # gait_angles_file_path.parent.mkdir(parents=True, exist_ok=True)
     # np.save(gait_angles_file_path, q)
     # # Play the trajectory in the visualizer if enabled
-    if hexy.viz_flag:
-        hexy.viz.play(q)
+    # if hexy.viz_flag:
+    #     hexy.viz.play(q)
 
     # sleep(1)
     # STEP_CNT = 10

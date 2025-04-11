@@ -51,8 +51,8 @@ class hexapod:
         pin.updateFramePlacements(self.robot.model, self.robot.data)
         # Set up movement parameters
         self.direction_slope = 0.0
-        self.HALF_STEP_SIZE_XY = 0.05 / 2  # Half of the step size in XY plane
-        self.Y_CLEARANCE = 0.015
+        self.HALF_STEP_SIZE_XY = 0.05/2  # Half of the step size in XY plane
+        self.XY_CLEARANCE = 0.015
         self.Z_CLEARANCE = 0.015  # Step size in Z (vertical) direction
         # Retrieve frame IDs for the feet
         self.FOOT_IDS = [self.robot.model.getFrameId(
@@ -209,130 +209,6 @@ class hexapod:
                 index=self.BASE_FRAME_ID, q=q).translation,
             *[self.robot.framePlacement(index=i, q=q).translation for i in self.FOOT_IDS]
         ]).reshape(-1, 1)
-
-    # def foot_pos_err(self, q: np.ndarray, FRAME_ID: int = 9, desired_pos: np.ndarray = np.zeros(3)) -> float:
-    #     """
-    #     Compute the weighted squared error between current and desired foot position.
-
-    #     Args:
-    #         q (np.ndarray): Joint configuration vector.
-    #         FRAME_ID (int): Frame ID of the foot.
-    #         desired_pos (np.ndarray): Desired position of the foot.
-
-    #     Returns:
-    #         float: Weighted squared error.
-    #     """
-    #     # self.robot.forwardKinematics(q)
-    #     current_pos = self.robot.framePlacement(q, FRAME_ID).translation
-    #     error = current_pos - desired_pos
-    #     weighted_error = self.weights * error
-    #     return np.dot(weighted_error, weighted_error)
-
-    def cost_function(self, q: np.ndarray, desired_pos: np.ndarray = np.zeros((21, 1))) -> float:
-        Q = np.eye(self.state_c.__len__())
-        R = np.eye(self.robot.nq)
-        # q = q.reshape(-1, 1)
-        # if type(q) == jax._src.interpreters.ad.JVPTracer:
-        #     q = q.primal
-        current_pos = self.forward_kinematics(q)
-        return (((current_pos - desired_pos).T @ Q @
-                (current_pos - desired_pos))).item()
-        # + (q.T @ R @ q)
-
-    def get_jacobains(self, q: np.ndarray, desired_pos: np.ndarray = np.zeros((21, 1))) -> np.ndarray:
-        return pin.computeJointJacobians(self.robot.model, self.robot.data, q)
-
-    def cost_function_new(self, q: np.ndarray, desired_pos: np.ndarray = np.zeros((21, 1))) -> float:
-        QR = np.eye(self.state_c.__len__() + self.robot.nq)
-        # q = q.reshape(-1, 1)
-        # if type(q) == jax._src.interpreters.ad.JVPTracer:
-        #     q = q.primal
-        current_pos = self.forward_kinematics(q)
-        error = current_pos - desired_pos
-        x = np.zeros((self.state_c.__len__() + self.robot.nq, 1))
-        x[:self.state_c.__len__()] = error
-        x[self.state_c.__len__():] = q.reshape(-1, 1)
-        return (x.T @ QR @ x).item()
-
-    def cost_function_new_grad(self, q: np.ndarray, desired_pos: np.ndarray = np.zeros((21, 1))) -> float:
-        QR = np.eye(self.state_c.__len__() + self.robot.nq)
-        # q = q.reshape(-1, 1)
-        # if type(q) == jax._src.interpreters.ad.JVPTracer:
-        #     q = q.primal
-        current_pos = self.forward_kinematics(q)
-        error = current_pos - desired_pos
-        x = np.zeros((self.state_c.__len__() + self.robot.nq, 1))
-        x[:self.state_c.__len__()] = error
-        x[self.state_c.__len__():] = q.reshape(-1, 1)
-        return 2 * QR @ x
-        # + (q.T @ R @ q)
-
-    # def cost_function_gradient(self, q: np.ndarray, desired_pos: np.ndarray = np.zeros((21, 1))) -> np.ndarray:
-    #     Q = np.eye(self.state_c.__len__())
-    #     R = np.eye(self.robot.nq)
-    #     # q = q.reshape(-1, 1)
-    #     current_pos = self.forward_kinematics(q)
-    #     return (2 * Q @ (current_pos - desired_pos)).flatten()
-
-    def equality_constraints(self, q: np.ndarray):
-        desired = np.array([0, 0, 0, 0, 1])
-        actual = q[2:7]
-        return np.sum(np.abs(actual - desired))
-
-    def feet_024_stop_constraints(self, q: np.ndarray):
-        desired = self.state_c.flatten()
-        state = self.forward_kinematics(q).flatten()
-        actual_0 = state[3:6]
-        actual_2 = state[9:12]
-        actual_4 = state[15:18]
-        return np.sum(np.abs(actual_0 - desired[3:6])) + np.sum(np.abs(actual_2 - desired[9:12])) + np.sum(np.abs(actual_4 - desired[15:18]))
-
-    def feet_135_stop_constraints(self, q: np.ndarray):
-        desired = self.state_c.flatten()
-        state = self.forward_kinematics(q).flatten()
-        actual_1 = state[6:9]
-        actual_3 = state[12:15]
-        actual_5 = state[18:21]
-        return np.sum(np.abs(actual_1 - desired[6:9])) + np.sum(np.abs(actual_3 - desired[12:15])) + np.sum(np.abs(actual_5 - desired[18:21]))
-
-    def inverse_geometery(self, q: np.ndarray, FRAME_ID: int = 9, desired_pos: np.ndarray = np.zeros(3)) -> np.ndarray:
-        """
-        Perform inverse kinematics to find joint configuration that places a frame at the desired position.
-
-        Args:
-            q (np.ndarray): Initial guess for the joint configuration.
-            FRAME_ID (int): Frame ID for which to compute inverse kinematics.
-            desired_pos (np.ndarray): Desired position for the frame.
-
-        Returns:
-            np.ndarray: Joint configuration that minimizes the positional error.
-        """
-        warn("This function is deprecated.", DeprecationWarning)
-        # Set bounds for optimization
-        # bounds = [((self.qc[i], self.qc[i])) for i in range(self.robot.nq)]
-        # bounds[int(7 + (3 * (np.floor(FRAME_ID / 8) - 1))): int(7 + (3 * (np.floor(FRAME_ID / 8) - 1)))+3] = \
-        #     [(-(85 * np.pi / 180), (85 * np.pi / 180)), (-(45 * np.pi / 180),
-        #                                                  (45 * np.pi / 180)), (-(45 * np.pi / 180), (45 * np.pi / 180))]
-
-        # Default to fixed joint values
-        # start = time()
-        joint_bounds = np.full((self.robot.nq, 2), self.qc[:, None])
-        joint_indices = np.array(
-            [7 + (3 * ((FRAME_ID // 8) - 1)) + i for i in range(3)])  # Indices for this leg
-        joint_bounds[joint_indices, 0] = [-85 * np.pi /
-                                          180, -45 * np.pi / 180, -45 * np.pi / 180]
-        joint_bounds[joint_indices, 1] = [
-            85 * np.pi / 180, 45 * np.pi / 180, 45 * np.pi / 180]
-        bounds = list(map(tuple, joint_bounds))
-
-        # Perform minimization to find joint configuration minimizing foot position error
-        res = minimize(
-            self.foot_pos_err, q, args=(
-                FRAME_ID, desired_pos),
-            bounds=bounds, tol=1e-8, method='L-BFGS-B', options={'disp': False})
-        # Return the optimized joint configuration
-        # print(f"Optimised in {time()-start}")
-        return res.x
 
     def north_vector(self) -> np.ndarray:
         """
@@ -572,12 +448,12 @@ class hexapod:
         # Get initial position of the foot in XY plane
         p1 = self.robot.framePlacement(self.qc, FOOT_ID).translation
         # Compute the target position p2 in XY plane
-        p2 = p1[0:2] + (self.HALF_STEP_SIZE_XY * step_size_xy_mult * v)
+        p2 = p1[0:2] + (self.HALF_STEP_SIZE_XY * step_size_xy_mult * v * 2)
         # Define trajectory functions for x(t) and y(t) as linear interpolation between p1 and p2
         p2 = np.append(p2, p1[2])
 
         # Apex points (midway)
-        y_apex = max(p1[1], p2[1]) + (self.Y_CLEARANCE *
+        y_apex = max(p1[1], p2[1]) + (self.XY_CLEARANCE *
                                       np.sign(max(p1[1], p2[1])))
         z_apex = max(p1[2], p2[2]) + (self.Z_CLEARANCE *
                                       np.sign(max(p1[2], p2[2])))
@@ -657,29 +533,17 @@ class hexapod:
         return [self.inverse_geometery(q=self.qc, FRAME_ID=FOOT_ID, desired_pos=wp)
                 for wp in waypoints]
 
-    def generate_waypoints(self, step_size_xy_mult: float, WAYPOINTS: int = 5, DIR: str = 'N', leg_set: str = '024'):
+    def generate_waypoints(self, step_size_xy_mult: float, WAYPOINTS: int = 5, DIR: str = 'N', leg_set: int = 0):
         start = None
-        if (leg_set == '024'):
-            start = 0
-        elif (leg_set == '135'):
-            start = 1
+        if (leg_set == 0 or leg_set == 1):
+            start = leg_set
         else:
             raise ValueError(
                 f'Expected value for leg_set is a string "024" or "135". Got {leg_set} instead')
 
         waypoints = self.state_c @ np.ones((1, WAYPOINTS))
 
-        # Initialize body trajectory functions
-        self.init_body_trajectory_functions(
-            step_size_xy_mult=step_size_xy_mult, DIR=DIR)
-        s = np.linspace(0, 1, WAYPOINTS)
-        # Generate waypoints by evaluating trajectory functions at each time step
-        wp = np.array([[round(self.x_t(t), 5), round(
-            self.y_t(t), 5), self.state_c[2][0]] for t in s]).T
-
-        waypoints[0:3, :] = wp
         for foot in self.FOOT_IDS[start::2]:
-            # Initialize foot trajectory functions
             self.init_foot_trajectory_functions(
                 step_size_xy_mult=step_size_xy_mult, DIR=DIR, FOOT_ID=foot)
             # Create time steps from 0 to 1
@@ -690,372 +554,15 @@ class hexapod:
             idx = (3 * (foot // 8 - 1) + 3)
             waypoints[idx:idx+3, :] = wp
 
-        return waypoints
-
-    def compute_trajectory_pva(self, position_init: np.ndarray, position_goal: np.ndarray, t_init: float, t_goal: float, t: float) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
-        """
-        Time parameterization of the trajectory with acceleration and velocity constraints.
-
-        Args:
-            position_init (numpy.ndarray): Initial position in Joint state form.
-            position_goal (numpy.ndarray): Goal position in Joint state form.
-            t_init (float): Initial time.
-            t_goal (float): Goal time.
-            t (float): Current time.
-
-        Returns:
-            tuple: Desired position, velocity, and acceleration at time t.
-        """
-        t_tot = t_goal - t_init
-        # Compute normalized time variable between 0 and 1
-        tau = (t - t_init) / t_tot
-        position_diff = position_goal - position_init
-        # Compute position using a 5th-degree polynomial (quintic trajectory)
-        self.desired_position = position_init + (
-            ((10 * tau**3) - (15 * tau**4) + (6 * tau**5)) * position_diff)
-        # Compute velocity
-        self.desired_velocity = (
-            ((30 * tau**2) - (60 * tau**3) + (30 * tau**4)) * position_diff / t_tot)
-        # Compute acceleration
-        self.desired_acceleration = (
-            ((60 * tau) - (180 * tau**2) + (120 * tau**3)) * position_diff / (t_tot**2))
-
-        return self.desired_position, self.desired_velocity, self.desired_acceleration
-
-    def compute_trajectory_pv(self, position_init: np.ndarray, position_goal: np.ndarray, t_init: float, t_goal: float, t: float) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
-        """
-        Compute the desired trajectory, velocity, and acceleration at time t
-        using third-degree (cubic) polynomial equations.
-
-        Args:
-            position_init (numpy.ndarray): Initial position in Joint state form.
-            position_goal (numpy.ndarray): Goal position in Joint state form.
-            t_init (float): Initial time.
-            t_goal (float): Goal time.
-            t (float): Current time.
-
-        Returns:
-            tuple: Desired position, velocity, and acceleration at time t.
-        """
-        T = t_goal - t_init
-        if T <= 0:
-            raise ValueError("t_goal must be greater than t_init.")
-
-        tau = (t - t_init) / T
-        # Clamp tau to the range [0, 1] to handle times outside the trajectory duration
-        tau = np.clip(tau, 0.0, 1.0)
-
-        theta_diff = position_goal - position_init
-
-        # Compute desired position using cubic polynomial
-        self.desired_position = position_init + \
-            (3 * tau**2 - 2 * tau**3) * theta_diff
-
-        # Compute desired velocity
-        self.desired_velocity = (6 * tau - 6 * tau**2) * theta_diff / T
-
-        # Compute desired acceleration
-        self.desired_acceleration = (6 - 12 * tau) * theta_diff / (T**2)
-
-        return self.desired_position, self.desired_velocity, self.desired_acceleration
-
-    def compute_trajectory_p(self, position_init: np.ndarray, position_goal: np.ndarray, t_init: float, t_goal: float, t: float) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
-        """
-        Compute the desired position, velocity, and acceleration at time t
-        using linear time parametrization without using a normalized time variable τ.
-
-        Args:
-            position_init (numpy.ndarray): Initial position in joint state form.
-            position_goal (numpy.ndarray): Goal position in joint state form.
-            t_init (float): Initial time.
-            t_goal (float): Goal time.
-            t (float): Current time.
-
-        Returns:
-            tuple: Desired position, velocity, and acceleration at time t.
-        """
-        T = t_goal - t_init
-        if T <= 0:
-            raise ValueError("t_goal must be greater than t_init.")
-
-        delta_t = t - t_init
-        theta_diff = position_goal - position_init
-
-        # Clamp delta_t to the range [0, T] to handle times outside the trajectory duration
-        delta_t_clamped = np.clip(delta_t, 0.0, T)
-
-        # Compute the fraction of time elapsed
-        fraction = delta_t_clamped / T
-
-        # Compute desired position using linear interpolation
-        self.desired_position = position_init + fraction * theta_diff
-
-        # Compute desired velocity (constant)
-        self.desired_velocity = theta_diff / T
-
-        # Compute desired acceleration (zero)
-        self.desired_acceleration = np.zeros_like(position_init)
-
-        return self.desired_position, self.desired_velocity, self.desired_acceleration
-
-    def generate_leg_joint_trajectory(self, step_size_xy_mult: float, DIR: str = 'N', LEG: int = 0, WAYPOINTS: int = 5, t_init: float = 0, t_goal: float = 0.1, dt: float = 0.01) -> np.ndarray:
-        """
-        Generate a joint trajectory for a specific leg.
-
-        Args:
-            step_size_xy_mult (float): Multiplier for step size in XY plane.
-            DIR (str): Direction of movement ('N', 'S', etc.).
-            LEG (int): Index of the leg (0 to 5).
-            WAYPOINTS (int): Number of waypoints in the trajectory.
-            t_init (float): Initial time.
-            t_goal (float): Goal time.
-            dt (float): Time step for trajectory generation.
-
-        Returns:
-            numpy.ndarray: Array of joint configurations along the trajectory.
-        """
-        # Generate joint waypoints for the specified leg
-        q_wps = self.generate_joint_waypoints(step_size_xy_mult,
-                                              DIR=DIR, FOOT_ID=self.FOOT_IDS[LEG], WAYPOINTS=WAYPOINTS)
-        q_traj = []
-        # Create a mask to apply joint configurations to the specific leg
-        mask = np.concatenate((np.zeros(6), [1], np.zeros(
-            LEG*3), [1, 1, 1], np.zeros((5-LEG)*3)))
-        for i in range(0, q_wps.__len__()-1):
-            t = t_init
-            while round(t, 3) <= t_goal:
-                # Compute trajectory using linear interpolation
-                q_t = self.compute_trajectory_p(
-                    q_wps[i], q_wps[i+1], t_init, t_goal, t)[0]
-                q_traj.append(np.multiply(q_t, mask))
-                t = (t + dt)
-        # Remove the initial configuration
-        return np.vstack(q_traj)
-
-    def get_foot_positions(self, q: np.ndarray) -> List[np.ndarray]:
-        """
-        Get the positions of all feet for a given joint configuration.
-
-        Args:
-            q (numpy.ndarray): Joint configuration vector.
-
-        Returns:
-            list: List of foot positions.
-        """
-        return [self.robot.framePlacement(q, foot_id).translation for foot_id in self.FOOT_IDS]
-
-    def feet_error(self, q_joints: np.ndarray, desired_base_pose: np.ndarray) -> float:
-        """
-        Compute the sum of squared errors between current and desired foot positions.
-
-        Args:
-            q_joints (numpy.ndarray): Joint angles excluding base joints.
-            desired_base_pose (numpy.ndarray): Desired base pose.
-
-        Returns:
-            float: Sum of squared positional errors for all feet.
-        """
-        # Record initial foot positions
-        initial_foot_positions = self.get_foot_positions(self.qc)
-        q_full = np.concatenate([desired_base_pose, q_joints])
-        self.robot.forwardKinematics(q_full)
-        # error = 0
-        # for foot_id, desired_pos in zip(self.FOOT_IDS, initial_foot_positions):
-        #     current_pos = self.robot.framePlacement(
-        #         q_full, foot_id).translation
-        #     error += np.linalg.norm(current_pos - desired_pos)**2
-
-        current_positions = np.array([self.robot.framePlacement(
-            q_full, fid).translation for fid in self.FOOT_IDS])
-        desired_positions = np.array(initial_foot_positions)
-        error = np.sum(np.linalg.norm(current_positions -
-                       desired_positions, axis=1) ** 2)
-
-        return error
-
-    def body_inverse_geometry(self, q: np.ndarray, desired_base_pos: np.ndarray) -> np.ndarray:
-        """
-        Compute inverse kinematics for the robot's body to maintain foot positions.
-
-        Args:
-            q (numpy.ndarray): Current joint configuration.
-            desired_base_pos (numpy.ndarray): Desired base position.
-
-        Returns:
-            numpy.ndarray: Joint configuration that maintains foot positions.
-        """
-        # Joint angle bounds (exclude base joints)
-        bounds = [(-(48 * np.pi / 180), (48 * np.pi / 180))] * \
-            (self.robot.nq - 7)
-
-        # Initial joint angles
-        q_joints_init = q[7:].copy()
-
-        res = minimize(
-            self.feet_error,
-            q_joints_init, args=(desired_base_pos),
-            bounds=bounds,
-            method='L-BFGS-B', options={'disp': False},
-            tol=1e-8
-        )
-
-        return np.concatenate([desired_base_pos, res.x])
-
-    def generate_body_path_waypoints(self, step_size_xy_mult: float = 1, WAYPOINTS: int = 5, DIR: str = 'N') -> List[np.ndarray]:
-        """
-        Generate waypoints for the robot body's path.
-
-        Args:
-            step_size_xy_mult (float): Multiplier for step size in XY plane.
-            WAYPOINTS (int): Number of waypoints in the trajectory.
-            DIR (str): Direction of movement ('N', 'S', etc.).
-
-        Returns:
-            list: List of joint configurations along the body's path.
-        """
         # Initialize body trajectory functions
         self.init_body_trajectory_functions(
             step_size_xy_mult=step_size_xy_mult, DIR=DIR)
         s = np.linspace(0, 1, WAYPOINTS)
         # Generate waypoints by evaluating trajectory functions at each time step
-        waypoints = [np.concatenate(([round(self.x_t(t), 5), round(
-            self.y_t(t), 5)], self.qc[2:7].copy())) for t in s]
-
-        points = np.array(waypoints)[:, 0:3].T
-        # Visualize the base trajectory if visualization is enabled
-        # if self.viz_flag:
-        #     self.viz.viewer[('Base_trajectory')].set_object(
-        #         g.Line(g.PointsGeometry(points), g.MeshBasicMaterial(color=0xffff00)))
-        # Perform inverse kinematics to get joint configurations for each waypoint
-        return [self.body_inverse_geometry(self.qc, wp)
-                for wp in waypoints]
-
-    def generate_body_joint_trajectory(self, step_size_xy_mult: float, DIR: str = 'N', WAYPOINTS: int = 5, t_init: float = 0, t_goal: float = 0.1, dt: float = 0.01) -> np.ndarray:
-        """
-        Generate a joint trajectory for the robot's body.
-
-        Args:
-            step_size_xy_mult (float): Multiplier for step size in XY plane.
-            DIR (str): Direction of movement ('N', 'S', etc.).
-            WAYPOINTS (int): Number of waypoints in the trajectory.
-            t_init (float): Initial time.
-            t_goal (float): Goal time.
-            dt (float): Time step for trajectory generation.
-
-        Returns:
-            numpy.ndarray: Array of joint configurations along the trajectory.
-        """
-        # Generate waypoints for the body's path
-        q_wps = self.generate_body_path_waypoints(step_size_xy_mult,
-                                                  DIR=DIR, WAYPOINTS=WAYPOINTS)
-        q_traj = []
-        for i in range(0, q_wps.__len__()-1):
-            t = t_init
-            while round(t, 3) <= t_goal:
-                # Compute trajectory using linear interpolation
-                q_t = self.compute_trajectory_p(
-                    q_wps[i], q_wps[i+1], t_init, t_goal, t)[0]
-                q_traj.append(q_t)
-                t = (t + dt)
-        # Remove the initial configuration
-        return np.vstack(q_traj)
-
-    def compute_gait(self, v: float = 0.5, WAYPOINTS: int = 5, STEP_CNT: int = 3, DIR: str = 'N') -> np.ndarray:
-        """
-        Compute the gait trajectory for the robot.
-
-        Args:
-            v (float): Velocity in m/s.
-            WAYPOINTS (int): Number of waypoints per step.
-            STEP_CNT (int): Number of steps.
-            DIR (str): Direction of movement.
-
-        Returns:
-            np.ndarray: The gait trajectory as a numpy array of joint configurations.
-        """
-        step_size_xy_mult = 1
-        t_goal = self.HALF_STEP_SIZE_XY / v
-        start_time = time()
-        # Generate trajectories for legs 0, 2, and 4
-        start = time()
-        leg0_traj = self.generate_leg_joint_trajectory(
-            step_size_xy_mult=step_size_xy_mult, DIR=DIR, LEG=0, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-        leg2_traj = self.generate_leg_joint_trajectory(
-            step_size_xy_mult=step_size_xy_mult, DIR=DIR, LEG=2, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-        leg4_traj = self.generate_leg_joint_trajectory(
-            step_size_xy_mult=step_size_xy_mult, DIR=DIR, LEG=4, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-        # Generate body trajectory
-        body_traj = self.generate_body_joint_trajectory(
-            step_size_xy_mult=step_size_xy_mult, DIR=DIR, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-        # Combine the trajectories into a single trajectory q
-        q = np.hstack((body_traj[:, 0:7], leg0_traj[:, 7:10], body_traj[:, 10:13],
-                       leg2_traj[:, 13:16], body_traj[:, 16:19], leg4_traj[:, 19:22], body_traj[:, 22:25]))
-        # Update the current configuration
-        self.qc = q[-1]
-        step_size_xy_mult = 2
-        for i in range(0, STEP_CNT):
-            # Generate trajectories for legs 1, 3, and 5
-            leg1_traj = self.generate_leg_joint_trajectory(
-                step_size_xy_mult=step_size_xy_mult, DIR=DIR, LEG=1, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-            leg3_traj = self.generate_leg_joint_trajectory(
-                step_size_xy_mult=step_size_xy_mult, DIR=DIR, LEG=3, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-            leg5_traj = self.generate_leg_joint_trajectory(
-                step_size_xy_mult=step_size_xy_mult, DIR=DIR, LEG=5, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-            # Generate body trajectory
-            body_traj = self.generate_body_joint_trajectory(
-                step_size_xy_mult=step_size_xy_mult, DIR=DIR, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-            # Append trajectories to q
-            q = np.vstack((q,
-                           np.hstack((body_traj[:, 0:7], body_traj[:, 7:10],
-                                      leg1_traj[:, 10:13], body_traj[:, 13:16],
-                                      leg3_traj[:, 16:19], body_traj[:, 19:22], leg5_traj[:, 22:25]))
-                           ))
-            # Update the current configuration
-            self.qc = q[-1]
-            # Generate trajectories for legs 0, 2, and 4 again
-            leg0_traj = self.generate_leg_joint_trajectory(
-                step_size_xy_mult=step_size_xy_mult, DIR=DIR, LEG=0, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-            leg2_traj = self.generate_leg_joint_trajectory(
-                step_size_xy_mult=step_size_xy_mult, DIR=DIR, LEG=2, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-            leg4_traj = self.generate_leg_joint_trajectory(
-                step_size_xy_mult=step_size_xy_mult, DIR=DIR, LEG=4, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-            # Generate body trajectory
-            body_traj = self.generate_body_joint_trajectory(
-                step_size_xy_mult=step_size_xy_mult, DIR=DIR, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-            # Append trajectories to q
-            q = np.vstack((q,
-                           np.hstack((body_traj[:, 0:7], leg0_traj[:, 7:10],
-                                      body_traj[:, 10:13], leg2_traj[:, 13:16],
-                                      body_traj[:, 16:19], leg4_traj[:, 19:22], body_traj[:, 22:25]))
-                           ))
-            # Update the current configuration
-            self.qc = q[-1]
-
-        step_size_xy_mult = 1
-        # Generate trajectories for legs 1, 3, and 5
-        leg1_traj = self.generate_leg_joint_trajectory(
-            step_size_xy_mult=step_size_xy_mult, DIR=DIR, LEG=1, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-        leg3_traj = self.generate_leg_joint_trajectory(
-            step_size_xy_mult=step_size_xy_mult, DIR=DIR, LEG=3, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-        leg5_traj = self.generate_leg_joint_trajectory(
-            step_size_xy_mult=step_size_xy_mult, DIR=DIR, LEG=5, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-        # Generate body trajectory
-        body_traj = self.generate_body_joint_trajectory(
-            step_size_xy_mult=step_size_xy_mult, DIR=DIR, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-        # Append trajectories to q
-        q = np.vstack((q,
-                       np.hstack((body_traj[:, 0:7], body_traj[:, 7:10],
-                                  leg1_traj[:, 10:13], body_traj[:, 13:16],
-                                  leg3_traj[:, 16:19], body_traj[:, 19:22], leg5_traj[:, 22:25]))
-                       ))
-        # Update the current configuration
-        q = np.vstack((q, np.hstack((q[-1, :7], np.zeros(self.robot.nq - 7)))))
-        self.qc = q[-1]
-        # Log the time taken to compute the steps
-        self.logger.debug(
-            f'Time taken for computing {(STEP_CNT*2)+2} steps = {time()-start_time}')
-
-        return q
+        wp = np.array([[round(self.x_t(t), 5), round(
+            self.y_t(t), 5), self.state_c[2][0]] for t in s]).T
+        waypoints[0:3, :] = wp
+        return waypoints
 
     def plot_trajctory(self, state: np.ndarray, title: str) -> None:
         """
@@ -1126,7 +633,7 @@ class hexapod:
         Returns J_full: (3×25) in your full q = [x,y,z,qx,qy,qz,qw,θ1…θ18].
         """
         # split out the blocks
-        J_xyz = np.eye(3)             # (3×3)
+        J_xyz = J_trans[:, :3]             # (3×3)
         J_dtheta = J_trans[:, 3:6]       # (3×3) minimal orient
         J_theta = J_trans[:, 6:]        # (3×18)
 
@@ -1177,10 +684,9 @@ class hexapod:
         x = self.forward_kinematics(q)         # (21×1)
         diff = x - desired_pos                    # (21×1)
         J_fk = self.compute_full_fk_jacobian(q)   # (21×25)
+        if (np.isnan(J_fk).any()):
+            print('NaN in Jacobian')
         grad_fk = J_fk.T @ (Q @ diff)              # (25×1)
-        R = np.eye(self.robot.nq)
-        grad_q = R @ q                             # (25×1)
-        # return grad_fk.flatten() + grad_q        # (25,)
         return grad_fk.flatten()        # (25,)
 
     def eq_constraints(self, q: np.ndarray) -> np.ndarray:
@@ -1217,190 +723,243 @@ class hexapod:
             jac=self.cost_grad,
             constraints=cons,
             method='SLSQP',     # or 'trust-constr'
-            options={'ftol': 1e-9, 'maxiter': 500, 'disp': True}
+            options={'ftol': 1e-9, 'maxiter': 500, 'disp': True},
+            tol=1e-8
         )
         return res
 
+    def mpc_cost(self, q: np.ndarray, desired_seq: List[np.ndarray], horizon: int):
+        n_q = self.robot.nq
+        q_seq_flat = q.flatten()
+        total_cost = 0.0
+        # Loop over each step in the horizon
+        for i in range(horizon):
+            # Extract the i-th configuration from the flattened decision vector
+            q_i = q_seq_flat[i*n_q:(i+1)*n_q]
+            total_cost += self.cost(q=q_i, desired_pos=desired_seq[i])
+        return total_cost
+
+    def mpc_cost_grad(self, q: np.ndarray, desired_seq: List[np.ndarray], horizon: int):
+        n_q = self.robot.nq
+        q_seq_flat = q.flatten()
+        grad_seq = np.zeros(q_seq_flat.shape)
+        for i in range(horizon):
+            # Extract the i-th configuration from the flattened decision vector.
+            q_i = q_seq_flat[i * n_q:(i + 1) * n_q]
+            grad_seq[i * n_q:(i + 1) * n_q] = self.cost_grad(q=q_i,
+                                                             desired_pos=desired_seq[i])
+        if (np.isnan(grad_seq).any()):
+            print('NaN in gradient')
+        return grad_seq
+
+    def mpc_eq_constraints(self, q_seq_flat: np.ndarray, horizon: int) -> np.ndarray:
+        """
+        Construct equality constraints for each configuration in the MPC horizon.
+        For each predicted configuration q_i (of dimension n_q), enforce that:
+            q_i[2:7] == [0, 0, 0, 0, 1]
+        The constraints are stacked into one long vector.
+
+        Args:
+            q_seq_flat (np.ndarray): Flattened decision vector of shape (horizon*n_q,).
+            horizon (int): The prediction horizon (number of configurations).
+
+        Returns:
+            np.ndarray: Concatenated constraint vector (length 5*horizon) that should equal zero.
+        """
+        n_q = self.robot.nq
+        constraints = []
+        for i in range(horizon):
+            constraints.append(self.eq_constraints(
+                q=q_seq_flat[i * n_q:(i + 1) * n_q]))
+        return np.concatenate(constraints)
+
+    def mpc_eq_jacobian(self, q_seq_flat: np.ndarray, horizon: int) -> np.ndarray:
+        """
+        Compute the Jacobian of the equality constraints over the entire MPC horizon.
+        Each block is the Jacobian of a single configuration's constraints (5×n_q),
+        arranged in a block-diagonal structure of size (5*horizon, n_q*horizon).
+
+        Args:
+            q_seq_flat (np.ndarray): Flattened decision vector of shape (horizon*n_q,).
+            horizon (int): Prediction horizon.
+
+        Returns:
+            np.ndarray: Block-diagonal Jacobian matrix of shape (5*horizon, n_q*horizon).
+        """
+        n_q = self.robot.nq
+        # Get the Jacobian for a single configuration.
+        eq_jac_single = self.eq_jacobian(q_seq_flat[:n_q])  # shape: (5, n_q)
+        # Build block diagonal matrix by repeating eq_jac_single along the diagonal.
+        return np.kron(np.eye(horizon), eq_jac_single)
+
+    def mpc_step(self, current_q: np.ndarray, desired_seq: List[np.ndarray], horizon: int):
+        n_q = self.robot.nq
+        # Initial guess: repeat current_q over the horizon
+        q_guess = np.tile(current_q, horizon)
+
+        # Define the equality constraints for the optimizer.
+        cons = [{
+            'type': 'eq',
+            'fun': lambda q_seq: self.mpc_eq_constraints(q_seq, horizon),
+            'jac': lambda q_seq: self.mpc_eq_jacobian(q_seq, horizon)
+        }]
+
+        # Define the optimization problem using your new MPC cost function
+        res = minimize(
+            fun=lambda q_seq: self.mpc_cost(q_seq, desired_seq, horizon),
+            x0=q_guess,
+            jac=lambda q_seq: self.mpc_cost_grad(q_seq, desired_seq, horizon),
+            constraints=cons,
+            method='SLSQP',   # or another suitable method
+            options={'ftol': 1e-9, 'maxiter': 500, 'disp': True}
+        )
+        # Reshape the solution if needed
+        q_seq_opt = res.x.reshape(horizon, n_q)
+        # Return only the first configuration to apply to the robot
+        return q_seq_opt[0]
+
 
 if __name__ == "__main__":
-    # Create a hexapod instance with visualization and debug logging
 
-    hexy = hexapod(init_viz=False, logging_level=logging.DEBUG)
-    sleep(3)
+    # Create a hexapod instance with visualization and debug logging
+    hexy = hexapod(init_viz=False, logging_level=logging.WARNING)
+
+    q_old = np.load('gait_angles/gait_angles_DIR_N_WP5_S1_20250406_134944.npy')
+    states = np.array([hexy.forward_kinematics(q_i) for q_i in q_old])
+    # hexy.plot_trajctory(state=states, title='q old')
+    # exit()
+    # sleep(3)
     # Set parameters for movement
     v = 0.5  # Velocity in m/s
     # start_time = time()
-    WAYPOINTS = 25
+    WAYPOINTS = 20
     # DIR = 'N'
-    step_size_mult = 1
-    start = time()
+    # start = time()
+    q = np.copy(hexy.qc)
+
+    horizon = 3
+
     wp = hexy.generate_waypoints(
-        WAYPOINTS=WAYPOINTS, step_size_xy_mult=step_size_mult)
-    q = np.zeros((WAYPOINTS, hexy.robot.nq))
-    for i in range(WAYPOINTS):
-        q[i, :] = hexy.optimize(
-            q0=hexy.qc, desired_pos=wp[:, i].reshape(-1, 1)).x
-        # hexy.qc = minimize(fun=hexy.cost_function, x0=hexy.qc, args=wp[:, 0].reshape(
-        #     -1, 1), constraints=[{'type': 'eq', 'fun': hexy.equality_constraints},
-        #                          #  {'type': 'eq', 'fun': hexy.feet_135_stop_constraints}
-        #                          ], method='SLSQP', options={'disp': True}, tol=1e-7,
-        #     # jac=hexy.cost_grad
-        #     # jac=hexy.cost_function_new_grad
-        # ).x
-        hexy.qc = q[i, :]
-        hexy.state_c = hexy.forward_kinematics(hexy.qc)
-        # hexy.viz.display(hexy.qc)
-    print(f'Computation done in {time()-start} seconds')
+        WAYPOINTS=WAYPOINTS, step_size_xy_mult=1, leg_set=0)
+    wp = [wp[:, i].reshape(-1, 1) for i in range(wp.shape[1])]
+    for i in range(len(wp)):
+        window = wp[i:i + horizon]
+        if len(window) < horizon:
+            # pad with last element
+            window += [wp[-1]] * (horizon - len(window))
+        start = time()
+        qi = hexy.mpc_step(current_q=hexy.qc,
+                           desired_seq=window, horizon=horizon)
+        print(f'Optimized in {time()-start}s')
+        hexy.qc = qi
+        q = np.vstack((q, qi))
+
+    wp = hexy.generate_waypoints(
+        WAYPOINTS=WAYPOINTS, step_size_xy_mult=2, leg_set=1)
+    wp = [wp[:, i].reshape(-1, 1) for i in range(wp.shape[1])]
+    for i in range(len(wp)):
+        window = wp[i:i + horizon]
+        if len(window) < horizon:
+            # pad with last element
+            window += [wp[-1]] * (horizon - len(window))
+        start = time()
+        qi = hexy.mpc_step(current_q=hexy.qc,
+                           desired_seq=window, horizon=horizon)
+        print(f'Optimized in {time()-start}s')
+        hexy.qc = qi
+        q = np.vstack((q, qi))
+
+    wp = hexy.generate_waypoints(
+        WAYPOINTS=WAYPOINTS, step_size_xy_mult=2, leg_set=0)
+    wp = [wp[:, i].reshape(-1, 1) for i in range(wp.shape[1])]
+    for i in range(len(wp)):
+        window = wp[i:i + horizon]
+        if len(window) < horizon:
+            # pad with last element
+            window += [wp[-1]] * (horizon - len(window))
+        start = time()
+        qi = hexy.mpc_step(current_q=hexy.qc,
+                           desired_seq=window, horizon=horizon)
+        print(f'Optimized in {time()-start}s')
+        hexy.qc = qi
+        q = np.vstack((q, qi))
+
+    wp = hexy.generate_waypoints(
+        WAYPOINTS=WAYPOINTS, step_size_xy_mult=1, leg_set=1)
+    wp = [wp[:, i].reshape(-1, 1) for i in range(wp.shape[1])]
+    for i in range(len(wp)):
+        window = wp[i:i + horizon]
+        if len(window) < horizon:
+            # pad with last element
+            window += [wp[-1]] * (horizon - len(window))
+        start = time()
+        qi = hexy.mpc_step(current_q=hexy.qc,
+                           desired_seq=window, horizon=horizon)
+        print(f'Optimized in {time()-start}s')
+        hexy.qc = qi
+        q = np.vstack((q, qi))
+    q = np.delete(q, 0, axis=0)
     states = np.array([hexy.forward_kinematics(q_i) for q_i in q])
-    hexy.plot_trajctory(state=states, title='v2.5.1')
-    # sleep(3)
-    # STEP_CNT = 1
-    # # Compute the gait trajectory
-    # q = hexy.compute_gait(v=v, WAYPOINTS=WAYPOINTS, STEP_CNT=STEP_CNT, DIR=DIR)
-    # q_traj = []
-    # q = np.round(q, )
-    # t_goal = 0.2
-    # dt = 0.01
-    # q_traj = np.zeros((int(((t_goal/dt)*(WAYPOINTS-1)) + 1), q.shape[1]))
-    # q_traj_iter = 0
-    # for i in range(q.shape[0] - 1):
-    #     t = 0
-    #     while t < t_goal:
-    #         q_traj[q_traj_iter, :] = hexy.compute_trajectory_p(
-    #             position_init=q[i, :], position_goal=q[i+1, :], t_init=0, t_goal=t_goal, t=t)[0]
-    #         t += dt
-    #         q_traj_iter += 1
+    hexy.plot_trajctory(state=states, title='v2.5.3 MPC')
 
-    # q_traj[-1, :] = q[-1, :]
+    # wp_hist = wp
+    # # hexy.plot_trajctory(state=wp.T, title='traj')
+    # q = np.copy(hexy.qc)
+    # # q = np.zeros(0)
+    # for i in range(WAYPOINTS):
+    #     qi = hexy.optimize(
+    #         q0=hexy.qc, desired_pos=wp[:, i].reshape(-1, 1)).x
+    #     hexy.qc = qi
+    #     hexy.state_c = hexy.forward_kinematics(hexy.qc)
+    #     q = np.vstack((q, qi))
+    # # print(f'Computation done in {time()-start} seconds')
+    # q = np.delete(q, 0, axis=0)
+    # # states = np.array([hexy.forward_kinematics(q_i) for q_i in q])
+    # # hexy.plot_trajctory(state=states, title='v2.5.1')
 
-    # states = np.array([hexy.forward_kinematics(q_i) for q_i in q_traj])
-    # hexy.plot_trajctory(state=states, title='v2.5.1')
+    # # start = time()
+    # wp = hexy.generate_waypoints(
+    #     WAYPOINTS=WAYPOINTS, step_size_xy_mult=2, leg_set=1)
+    # wp_hist = np.hstack((wp_hist, wp))
+    # # hexy.plot_trajctory(state=wp.T, title='traj')
+    # for i in range(WAYPOINTS):
+    #     qi = hexy.optimize(
+    #         q0=hexy.qc, desired_pos=wp[:, i].reshape(-1, 1)).x
+    #     hexy.qc = qi
+    #     hexy.state_c = hexy.forward_kinematics(hexy.qc)
+    #     q = np.vstack((q, qi))
+    # # print(f'Computation done in {time()-start} seconds')
+    # # states = np.array([hexy.forward_kinematics(q_i) for q_i in q])
+    # # hexy.plot_trajctory(state=states, title='v2.5.1')
 
-    # # Save the gait angles to a file
-    # gait_angles_file_path = Path(
-    #     f'gait_angles/gait_angles_DIR_{DIR}_WP{WAYPOINTS}_S{STEP_CNT}_{strftime("%Y%m%d_%H%M%S")}.npy')
-    # gait_angles_file_path.parent.mkdir(parents=True, exist_ok=True)
-    # np.save(gait_angles_file_path, q)
-    # # Play the trajectory in the visualizer if enabled
-    # if hexy.viz_flag:
-    #     hexy.viz.play(q)
+    # # start = time()
+    # wp = hexy.generate_waypoints(
+    #     WAYPOINTS=WAYPOINTS, step_size_xy_mult=2, leg_set=0)
+    # wp_hist = np.hstack((wp_hist, wp))
+    # for i in range(WAYPOINTS):
+    #     qi = hexy.optimize(
+    #         q0=hexy.qc, desired_pos=wp[:, i].reshape(-1, 1)).x
+    #     hexy.qc = qi
+    #     hexy.state_c = hexy.forward_kinematics(hexy.qc)
+    #     q = np.vstack((q, qi))
+    # # print(f'Computation done in {time()-start} seconds')
+    # # states = np.array([hexy.forward_kinematics(q_i) for q_i in q])
+    # # hexy.plot_trajctory(state=states, title='v2.5.1')
 
-    # sleep(1)
-    # STEP_CNT = 10
-    # Compute the gait trajectory for more steps
-    # q = hexy.compute_gait(v=v, WAYPOINTS=WAYPOINTS, STEP_CNT=STEP_CNT, DIR=DIR)
-    # if hexy.viz_flag:
-    #     hexy.viz.play(q)
-
-    # # Save the gait angles to a file
-    # gait_angles_file_path = Path(
-    #     f'gait_angles/gait_angles_DIR_{DIR}_WP{WAYPOINTS}_S{STEP_CNT}_{strftime("%Y%m%d_%H%M%S")}.npy')
-    # gait_angles_file_path.parent.mkdir(parents=True, exist_ok=True)
-    # np.save(gait_angles_file_path, q)
-
-    # for DIR in ['N', 'S', 'E', 'W', 'NE', 'SE', 'NW', 'SW']:
-    #     step_size_xy_mult = 1
-    #     t_goal = hexy.HALF_STEP_SIZE_XY / v
-    #     # Generate trajectories for legs 0, 2, and 4
-    #     leg0_traj = hexy.generate_leg_joint_trajectory(
-    #         step_size_xy_mult=step_size_xy_mult, DIR=DIR, LEG=0, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-    #     leg2_traj = hexy.generate_leg_joint_trajectory(
-    #         step_size_xy_mult=step_size_xy_mult, DIR=DIR, LEG=2, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-    #     leg4_traj = hexy.generate_leg_joint_trajectory(
-    #         step_size_xy_mult=step_size_xy_mult, DIR=DIR, LEG=4, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-    #     # Generate body trajectory
-    #     body_traj = hexy.generate_body_joint_trajectory(
-    #         step_size_xy_mult=step_size_xy_mult, DIR=DIR, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-    #     # Combine the trajectories into a single trajectory q
-    #     q = np.hstack((body_traj[:, 0:7], leg0_traj[:, 7:10], body_traj[:, 10:13],
-    #                    leg2_traj[:, 13:16], body_traj[:, 16:19], leg4_traj[:, 19:22], body_traj[:, 22:25]))
-
-    #     gait_angles_file_path = Path(
-    #         f'gait_angles/gait_angles_DIR_{DIR}_WP{WAYPOINTS}_START_HALF_STEP_{strftime("%Y%m%d_%H%M%S")}.npy')
-    #     gait_angles_file_path.parent.mkdir(parents=True, exist_ok=True)
-    #     np.save(gait_angles_file_path, q)
-
-    #     # if hexy.viz_flag:
-    #     #     hexy.viz.play(q)
-
-    #     # Update the current configuration
-    #     hexy.qc = q[-1]
-    #     step_size_xy_mult = 2
-    #     # Generate trajectories for legs 1, 3, and 5
-    #     leg1_traj = hexy.generate_leg_joint_trajectory(
-    #         step_size_xy_mult=step_size_xy_mult, DIR=DIR, LEG=1, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-    #     leg3_traj = hexy.generate_leg_joint_trajectory(
-    #         step_size_xy_mult=step_size_xy_mult, DIR=DIR, LEG=3, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-    #     leg5_traj = hexy.generate_leg_joint_trajectory(
-    #         step_size_xy_mult=step_size_xy_mult, DIR=DIR, LEG=5, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-    #     # Generate body trajectory
-    #     body_traj = hexy.generate_body_joint_trajectory(
-    #         step_size_xy_mult=step_size_xy_mult, DIR=DIR, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-    #     # Append trajectories to q
-    #     q = np.vstack((q,
-    #                    np.hstack((body_traj[:, 0:7], body_traj[:, 7:10],
-    #                               leg1_traj[:, 10:13], body_traj[:, 13:16],
-    #                               leg3_traj[:, 16:19], body_traj[:, 19:22], leg5_traj[:, 22:25]))
-    #                    ))
-    #     # Update the current configuration
-    #     hexy.qc = q[-1]
-    #     # Generate trajectories for legs 0, 2, and 4 again
-    #     leg0_traj = hexy.generate_leg_joint_trajectory(
-    #         step_size_xy_mult=step_size_xy_mult, DIR=DIR, LEG=0, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-    #     leg2_traj = hexy.generate_leg_joint_trajectory(
-    #         step_size_xy_mult=step_size_xy_mult, DIR=DIR, LEG=2, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-    #     leg4_traj = hexy.generate_leg_joint_trajectory(
-    #         step_size_xy_mult=step_size_xy_mult, DIR=DIR, LEG=4, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-    #     # Generate body trajectory
-    #     body_traj = hexy.generate_body_joint_trajectory(
-    #         step_size_xy_mult=step_size_xy_mult, DIR=DIR, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-    #     # Append trajectories to q
-    #     q = np.vstack((q,
-    #                    np.hstack((body_traj[:, 0:7], leg0_traj[:, 7:10],
-    #                               body_traj[:, 10:13], leg2_traj[:, 13:16],
-    #                               body_traj[:, 16:19], leg4_traj[:, 19:22], body_traj[:, 22:25]))
-    #                    ))
-    #     # Update the current configuration
-    #     hexy.qc = q[-1]
-
-    #     gait_angles_file_path = Path(
-    #         f'gait_angles/gait_angles_DIR_{DIR}_WP{WAYPOINTS}_MID_FULL_STEP_{strftime("%Y%m%d_%H%M%S")}.npy')
-    #     gait_angles_file_path.parent.mkdir(parents=True, exist_ok=True)
-    #     np.save(gait_angles_file_path, q)
-
-    #     # if hexy.viz_flag:
-    #     #     hexy.viz.play(q)
-
-    #     step_size_xy_mult = 1
-    #     # Generate trajectories for legs 1, 3, and 5
-    #     leg1_traj = hexy.generate_leg_joint_trajectory(
-    #         step_size_xy_mult=step_size_xy_mult, DIR=DIR, LEG=1, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-    #     leg3_traj = hexy.generate_leg_joint_trajectory(
-    #         step_size_xy_mult=step_size_xy_mult, DIR=DIR, LEG=3, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-    #     leg5_traj = hexy.generate_leg_joint_trajectory(
-    #         step_size_xy_mult=step_size_xy_mult, DIR=DIR, LEG=5, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-    #     # Generate body trajectory
-    #     body_traj = hexy.generate_body_joint_trajectory(
-    #         step_size_xy_mult=step_size_xy_mult, DIR=DIR, t_goal=t_goal, WAYPOINTS=WAYPOINTS)
-    #     # Append trajectories to q
-    #     q = np.vstack((q,
-    #                    np.hstack((body_traj[:, 0:7], body_traj[:, 7:10],
-    #                               leg1_traj[:, 10:13], body_traj[:, 13:16],
-    #                               leg3_traj[:, 16:19], body_traj[:, 19:22], leg5_traj[:, 22:25]))
-    #                    ))
-    #     # Update the current configuration
-    #     q = np.vstack((q, np.hstack((q[-1, :7], np.zeros(hexy.robot.nq - 7)))))
-
-    #     gait_angles_file_path = Path(
-    #         f'gait_angles/gait_angles_DIR_{DIR}_WP{WAYPOINTS}_END_HALF_STEP_{strftime("%Y%m%d_%H%M%S")}.npy')
-    #     gait_angles_file_path.parent.mkdir(parents=True, exist_ok=True)
-    #     np.save(gait_angles_file_path, q)
-
-    #     # hexy.plot_trajctory(state=np.array([hexy.forward_kinematics(
-    #     #     q=qi) for qi in q]), title=f'Start Half Step + Two Full Steps + Stop Half Step in Direction = {DIR}')
-    #     if hexy.viz_flag:
-    #         hexy.viz.play(q)
-    #     sleep(3)
-    #     # hexy.qc = hexy.robot.q0
-    #     hexy.qc = q[-1]
-    #     sleep(3)
+    # # start = time()
+    # wp = hexy.generate_waypoints(
+    #     WAYPOINTS=WAYPOINTS, step_size_xy_mult=1, leg_set=1)
+    # wp_hist = np.hstack((wp_hist, wp))
+    # for i in range(WAYPOINTS):
+    #     qi = hexy.optimize(
+    #         q0=hexy.qc, desired_pos=wp[:, i].reshape(-1, 1)).x
+    #     hexy.qc = qi
+    #     hexy.state_c = hexy.forward_kinematics(hexy.qc)
+    #     q = np.vstack((q, qi))
+    # print(f'Computation done in {time()-start} seconds')
+    # q = np.delete(q, 0, axis=0)
+    # hexy.viz.play(q)
+    # states = np.array([hexy.forward_kinematics(q_i) for q_i in q])
+    # # hexy.plot_trajctory(state=states, title='v2.5.3')
+    # # hexy.plot_trajctory(state=wp_hist.T, title='Waypoints')
+    # # comp = q == q_old

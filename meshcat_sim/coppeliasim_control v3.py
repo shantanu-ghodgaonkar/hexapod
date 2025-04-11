@@ -1,5 +1,5 @@
 from coppeliasim_zmqremoteapi_client import RemoteAPIClient
-from hexapod_v2_5_2 import hexapod
+from hexapod_v2_5_3 import hexapod
 import numpy as np
 from time import sleep
 import pinocchio as pin
@@ -70,16 +70,15 @@ sim.startSimulation()
 # sleep(5)
 sim.addLog(sim.verbosity_scriptinfos, f"Simulation Started...")
 
-# WAYPOINTS = 5
+WAYPOINTS = 20
 # DIR = 'N'
 # step_size_mult = 1
-wp = hexy.generate_waypoints(
-    step_size_xy_mult=1, leg_set='024')
-hexy.plot_trajctory(state=wp.T, title='start half')
+wp = hexy.generate_waypoints(WAYPOINTS=WAYPOINTS,
+                             step_size_xy_mult=1, leg_set=0)
+# hexy.plot_trajctory(state=wp.T, title='start half')
 for wpi in wp.T:
-    q_i = minimize(fun=hexy.cost_function, x0=hexy.qc, args=wpi.reshape(
-        -1, 1), constraints=[{'type': 'eq', 'fun': hexy.equality_constraints},
-                             ], method='SLSQP', options={'disp': True}, tol=1e-6,).x
+    q_i = hexy.optimize(
+        q0=hexy.qc, desired_pos=wpi.reshape(-1, 1)).x
     q_i[2] = sim.getObjectPose(robot_base)[2]
 
     sim.setObjectPose(robot_base, list(q_i[:7]))
@@ -92,33 +91,12 @@ for wpi in wp.T:
                        joint_objects=joint_objects)
     hexy.state_c = hexy.forward_kinematics(hexy.qc)
 
-wp = hexy.generate_waypoints(
-    step_size_xy_mult=2, leg_set='135')
-hexy.plot_trajctory(state=wp.T, title='mid full 1')
+wp = hexy.generate_waypoints(WAYPOINTS=WAYPOINTS,
+                             step_size_xy_mult=2, leg_set=1)
+# hexy.plot_trajctory(state=wp.T, title='start half')
 for wpi in wp.T:
-    q_i = minimize(fun=hexy.cost_function, x0=hexy.qc, args=wpi.reshape(
-        -1, 1), constraints=[{'type': 'eq', 'fun': hexy.equality_constraints},
-                             ], method='SLSQP', options={'disp': True}, tol=1e-6,).x
-    q_i[2] = sim.getObjectPose(robot_base)[2]
-
-    sim.setObjectPose(robot_base, list(q_i[:7]))
-    sim.moveToConfig({
-        'joints': list(joint_objects.flatten()),
-        'targetPos': list(q_i[7:])
-    })
-
-    hexy.qc = get_pose(sim=sim, camera_object=camera,
-                       joint_objects=joint_objects)
-    hexy.state_c = hexy.forward_kinematics(hexy.qc)
-    # Step 4: Stop the simulation
-
-wp = hexy.generate_waypoints(
-    step_size_xy_mult=2, leg_set='024')
-hexy.plot_trajctory(state=wp.T, title='mid full 2')
-for wpi in wp.T:
-    q_i = minimize(fun=hexy.cost_function, x0=hexy.qc, args=wpi.reshape(
-        -1, 1), constraints=[{'type': 'eq', 'fun': hexy.equality_constraints},
-                             ], method='SLSQP', options={'disp': True}, tol=1e-6,).x
+    q_i = hexy.optimize(
+        q0=hexy.qc, desired_pos=wpi.reshape(-1, 1)).x
     q_i[2] = sim.getObjectPose(robot_base)[2]
 
     sim.setObjectPose(robot_base, list(q_i[:7]))
@@ -132,13 +110,12 @@ for wpi in wp.T:
     hexy.state_c = hexy.forward_kinematics(hexy.qc)
 
 
-wp = hexy.generate_waypoints(
-    step_size_xy_mult=1, leg_set='135')
-hexy.plot_trajctory(state=wp.T, title='end half')
+wp = hexy.generate_waypoints(WAYPOINTS=WAYPOINTS,
+                             step_size_xy_mult=2, leg_set=0)
+# hexy.plot_trajctory(state=wp.T, title='start half')
 for wpi in wp.T:
-    q_i = minimize(fun=hexy.cost_function, x0=hexy.qc, args=wpi.reshape(
-        -1, 1), constraints=[{'type': 'eq', 'fun': hexy.equality_constraints},
-                             ], method='SLSQP', options={'disp': True}, tol=1e-6,).x
+    q_i = hexy.optimize(
+        q0=hexy.qc, desired_pos=wpi.reshape(-1, 1)).x
     q_i[2] = sim.getObjectPose(robot_base)[2]
 
     sim.setObjectPose(robot_base, list(q_i[:7]))
@@ -150,6 +127,27 @@ for wpi in wp.T:
     hexy.qc = get_pose(sim=sim, camera_object=camera,
                        joint_objects=joint_objects)
     hexy.state_c = hexy.forward_kinematics(hexy.qc)
+
+
+wp = hexy.generate_waypoints(WAYPOINTS=WAYPOINTS,
+                             step_size_xy_mult=1, leg_set=1)
+# hexy.plot_trajctory(state=wp.T, title='start half')
+for wpi in wp.T:
+    q_i = hexy.optimize(
+        q0=hexy.qc, desired_pos=wpi.reshape(-1, 1)).x
+    q_i[2] = sim.getObjectPose(robot_base)[2]
+
+    sim.setObjectPose(robot_base, list(q_i[:7]))
+    sim.moveToConfig({
+        'joints': list(joint_objects.flatten()),
+        'targetPos': list(q_i[7:])
+    })
+
+    hexy.qc = get_pose(sim=sim, camera_object=camera,
+                       joint_objects=joint_objects)
+    hexy.state_c = hexy.forward_kinematics(hexy.qc)
+
+sleep(3)
 
 sim.addLog(sim.verbosity_scriptinfos, f"Stopping Simulation...")
 sim.stopSimulation()

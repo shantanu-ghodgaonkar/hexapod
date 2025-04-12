@@ -818,14 +818,21 @@ class hexapod:
         # Return only the first configuration to apply to the robot
         return q_seq_opt[0]
 
+    def update_current_pose(self, q: np.ndarray):
+        if q.shape != (25, ):
+            raise ValueError(
+                f'Expected shape of parameter q was (25, ), but got {q.shape}')
+        self.qc = q
+        self.state_c = self.forward_kinematics(q=q)
+
 
 if __name__ == "__main__":
 
     # Create a hexapod instance with visualization and debug logging
     hexy = hexapod(init_viz=False, logging_level=logging.WARNING)
 
-    q_old = np.load('gait_angles/gait_angles_DIR_N_WP5_S1_20250406_134944.npy')
-    states = np.array([hexy.forward_kinematics(q_i) for q_i in q_old])
+    # q_old = np.load('gait_angles/gait_angles_DIR_N_WP5_S1_20250406_134944.npy')
+    # states = np.array([hexy.forward_kinematics(q_i) for q_i in q_old])
     # hexy.plot_trajctory(state=states, title='q old')
     # exit()
     # sleep(3)
@@ -851,7 +858,7 @@ if __name__ == "__main__":
         qi = hexy.mpc_step(current_q=hexy.qc,
                            desired_seq=window, horizon=horizon)
         print(f'Optimized in {time()-start}s')
-        hexy.qc = qi
+        hexy.update_current_pose(q=qi)
         q = np.vstack((q, qi))
 
     wp = hexy.generate_waypoints(
@@ -866,7 +873,7 @@ if __name__ == "__main__":
         qi = hexy.mpc_step(current_q=hexy.qc,
                            desired_seq=window, horizon=horizon)
         print(f'Optimized in {time()-start}s')
-        hexy.qc = qi
+        hexy.update_current_pose(q=qi)
         q = np.vstack((q, qi))
 
     wp = hexy.generate_waypoints(
@@ -881,7 +888,7 @@ if __name__ == "__main__":
         qi = hexy.mpc_step(current_q=hexy.qc,
                            desired_seq=window, horizon=horizon)
         print(f'Optimized in {time()-start}s')
-        hexy.qc = qi
+        hexy.update_current_pose(q=qi)
         q = np.vstack((q, qi))
 
     wp = hexy.generate_waypoints(
@@ -896,7 +903,7 @@ if __name__ == "__main__":
         qi = hexy.mpc_step(current_q=hexy.qc,
                            desired_seq=window, horizon=horizon)
         print(f'Optimized in {time()-start}s')
-        hexy.qc = qi
+        hexy.update_current_pose(q=qi)
         q = np.vstack((q, qi))
     q = np.delete(q, 0, axis=0)
     states = np.array([hexy.forward_kinematics(q_i) for q_i in q])

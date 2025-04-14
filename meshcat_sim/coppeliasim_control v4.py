@@ -57,10 +57,8 @@ def step(wp: List[np.ndarray], horizon: int, hexy: hexapod, sim):
             'joints': list(joint_objects.flatten()),
             'targetPos': list(q_i[7:])
         })
-
-        hexy.qc = get_pose(sim=sim, camera_object=camera,
-                           joint_objects=joint_objects)
-        hexy.state_c = hexy.forward_kinematics(hexy.qc)
+        hexy.update_current_pose(get_pose(sim=sim, camera_object=camera,
+                                          joint_objects=joint_objects))
 
 
 if __name__ == '__main__':
@@ -82,9 +80,8 @@ if __name__ == '__main__':
         joint_objects[i][j] = obj
         sim.setJointPosition(obj, 0)
 
-    hexy.qc = get_pose(sim=sim, camera_object=camera,
-                       joint_objects=joint_objects)
-    hexy.state_c = hexy.forward_kinematics(hexy.qc)
+    hexy.update_current_pose(get_pose(sim=sim, camera_object=camera,
+                                      joint_objects=joint_objects))
 
     # Step 2: Start the simulation
     print("Starting the simulation...")

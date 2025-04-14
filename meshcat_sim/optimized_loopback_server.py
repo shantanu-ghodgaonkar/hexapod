@@ -53,7 +53,7 @@ def start_udp_discovery_listener():
 def start_zmq_loopback():
     context = zmq.Context()
     socket = context.socket(zmq.REP)
-    socket.setsockopt(zmq.TCP_NODELAY, 1)
+    # socket.setsockopt(zmq.TCP_NODELAY, 1)
     socket.setsockopt(zmq.LINGER, 0)
     socket.bind(f"tcp://*:{ZMQ_PORT}")
     print(f"⚙️ ZMQ loopback server listening on port {ZMQ_PORT}...")

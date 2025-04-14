@@ -4,12 +4,20 @@ import zmq
 import pickle
 import threading
 
+# Configuration for ZeroMQ and Zeroconf
 ZMQ_PORT = 5555
 SERVICE_TYPE = "_loopback._tcp.local."
 SERVICE_NAME = "LoopbackService"
 
 
 def get_real_ip():
+    """
+    Gets the actual IP address of the host on the local network,
+    avoiding loopback addresses like 127.0.1.1.
+
+    Returns:
+        str: The local network IP address.
+    """
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:
         s.connect(('8.8.8.8', 80))
@@ -22,6 +30,12 @@ def get_real_ip():
 
 
 def advertise_service():
+    """
+    Advertises the loopback echo service on the local network using Zeroconf.
+
+    Returns:
+        Zeroconf: The active Zeroconf instance (keep it alive to maintain registration).
+    """
     local_ip = get_real_ip()
     hostname = socket.gethostname()
     info = ServiceInfo(
@@ -39,6 +53,10 @@ def advertise_service():
 
 
 def start_udp_discovery_listener():
+    """
+    Starts a lightweight UDP responder that listens for broadcast messages
+    from clients seeking the loopback service. Replies with a confirmation.
+    """
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.bind(("", 50000))
     print("🔍 UDP discovery responder listening...")
@@ -50,6 +68,10 @@ def start_udp_discovery_listener():
 
 
 def start_zmq_loopback():
+    """
+    Starts the ZeroMQ REP (reply) server to handle echo requests.
+    Waits for a NumPy array from the client, prints it, then echoes it back.
+    """
     context = zmq.Context()
     socket = context.socket(zmq.REP)
     socket.bind(f"tcp://*:{ZMQ_PORT}")
@@ -59,10 +81,16 @@ def start_zmq_loopback():
         data = socket.recv()
         array = pickle.loads(data)
         print("📥 Received array:\n", array)
-        socket.send(pickle.dumps(array))
+        socket.send(pickle.dumps(array))  # Echo the array back
 
 
 if __name__ == "__main__":
+    """
+    Entry point for the loopback server.
+    - Advertises itself with Zeroconf
+    - Listens for UDP broadcast-based discovery
+    - Handles ZMQ echo requests
+    """
     zeroconf = advertise_service()
     threading.Thread(target=start_udp_discovery_listener, daemon=True).start()
     try:

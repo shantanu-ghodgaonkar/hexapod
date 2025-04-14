@@ -9,9 +9,21 @@ SERVICE_TYPE = "_loopback._tcp.local."
 SERVICE_NAME = "LoopbackService"
 
 
+def get_real_ip():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        s.connect(('8.8.8.8', 80))
+        ip = s.getsockname()[0]
+    except Exception:
+        ip = '127.0.0.1'
+    finally:
+        s.close()
+    return ip
+
+
 def advertise_service():
+    local_ip = get_real_ip()
     hostname = socket.gethostname()
-    local_ip = socket.gethostbyname(hostname)
     info = ServiceInfo(
         SERVICE_TYPE,
         f"{SERVICE_NAME}.{SERVICE_TYPE}",
@@ -22,12 +34,11 @@ def advertise_service():
     )
     zeroconf = Zeroconf()
     zeroconf.register_service(info)
-    print(f"📡 Service advertised as {SERVICE_NAME} on {local_ip}:{ZMQ_PORT}")
+    print(f"📱 Service advertised as {SERVICE_NAME} on {local_ip}:{ZMQ_PORT}")
     return zeroconf
 
 
 def start_udp_discovery_listener():
-    """ Listens for UDP broadcasts and replies with IP """
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.bind(("", 50000))
     print("🔍 UDP discovery responder listening...")
@@ -48,7 +59,7 @@ def start_zmq_loopback():
         data = socket.recv()
         array = pickle.loads(data)
         print("📥 Received array:\n", array)
-        socket.send(pickle.dumps(array))  # loopback
+        socket.send(pickle.dumps(array))
 
 
 if __name__ == "__main__":

@@ -18,9 +18,12 @@ class ZeroconfListener:
         if info:
             self.server_ip = socket.inet_ntoa(info.addresses[0])
             self.port = info.port
-            print(f"🛰️ Zeroconf discovered: {self.server_ip}:{self.port}")
+            print(f"🚀 Zeroconf discovered: {self.server_ip}:{self.port}")
 
     def remove_service(self, zeroconf, type, name):
+        pass
+
+    def update_service(self, zeroconf, type, name):
         pass
 
 
@@ -43,14 +46,13 @@ def discover_with_udp(timeout=3):
     try:
         data, addr = sock.recvfrom(1024)
         if data == b"loopback_here":
-            print(f"📡 UDP discovered: {addr[0]}:5555")
+            print(f"📱 UDP discovered: {addr[0]}:5555")
             return addr[0], 5555
     except socket.timeout:
         return None, None
 
 
 def main():
-    # Try Zeroconf first
     ip, port = discover_with_zeroconf()
     if not ip:
         print("⚠️ Zeroconf failed. Trying UDP fallback...")
@@ -65,7 +67,6 @@ def main():
     socket = context.socket(zmq.REQ)
     socket.connect(f"tcp://{ip}:{port}")
 
-    # Create and send test array
     array = np.random.rand(4, 4)
     socket.send(pickle.dumps(array))
 

@@ -16,7 +16,7 @@ def step(window: List[np.ndarray], hexy: hexapod, q: np.ndarray):
     hexy.update_current_pose(q=q)
     q_i = hexy.mpc_step(current_q=hexy.qc,
                         desired_seq=window, horizon=len(window))
-    return q_i[7:]
+    return q_i
 
 
 def get_real_ip():
@@ -76,12 +76,12 @@ def start_zmq(hexy: hexapod):
         if (array.shape[0] - 25) % 21 != 0:
             raise ValueError(
                 f'Received array of shape {array.shape}, but expected to be (25 + 21*n, )')
-        q = array[:25]
-        window = [array[i:i+21].reshape(21, 1)
+        q = array[:25].astype(np.float64)
+        window = [array[i:i+21].reshape(21, 1).astype(np.float64)
                   for i in range(25, array.shape[0], 21)]
         res = step(window=window, hexy=hexy, q=q)
 
-        reply = msgpack.packb({"meta": meta, "data": res})
+        reply = msgpack.packb({"meta": meta, "data": res.tolist()})
         socket.send(reply)
 
 

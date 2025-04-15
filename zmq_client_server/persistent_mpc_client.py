@@ -99,8 +99,10 @@ def main():
         window = wp[i:i + horizon]
         if len(window) < horizon:
             window += [wp[-1]] * (horizon - len(window))
+        start = time.time()
         qi = send_array(socket=socket, array=np.concatenate(
             (hexy.qc, np.concatenate([w.flatten() for w in window]))))
+        print(f'Minimized in {time.time() - start}s')
         hexy.update_current_pose(q=qi)
         print(f'Res = {qi}')
 

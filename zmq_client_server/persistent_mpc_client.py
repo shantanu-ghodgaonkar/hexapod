@@ -6,7 +6,7 @@ import msgpack
 import numpy as np
 from hexapod_v2_5_3 import hexapod
 
-SERVICE_TYPE = "_loopback._tcp.local."
+SERVICE_TYPE = "_mpcStep._tcp.local."
 
 
 class ZeroconfListener:

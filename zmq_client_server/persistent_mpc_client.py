@@ -80,28 +80,14 @@ def main():
     socket = create_socket(ip, port)
     print(f"Connected to server at {ip}:{port}")
 
-    # Send multiple arrays
-    for i in range(10):
-        array = np.random.rand(4, 4)
-        t0 = time.perf_counter()
-        result = send_array(socket, array)
-        t1 = time.perf_counter()
-        print(f"Round-trip: {(t1 - t0)*1000:.2f} ms")
+    # # Send multiple arrays
+    # for i in range(10):
+    #     array = np.random.rand(4, 4)
+    #     t0 = time.perf_counter()
+    #     result = send_array(socket, array)
+    #     t1 = time.perf_counter()
+    #     print(f"Round-trip: {(t1 - t0)*1000:.2f} ms")
 
-
-def connect_socket():
-    ip, port = discover_once()
-    if not ip:
-        print("Could not discover server")
-        return
-
-    socket = create_socket(ip, port)
-    print(f"Connected to server at {ip}:{port}")
-    return socket
-
-
-if __name__ == "__main__":
-    socket = connect_socket()
     hexy = hexapod()
     # hexy.update_current_pose() using latest visual and joint data
     WAYPOINTS = 20
@@ -117,3 +103,18 @@ if __name__ == "__main__":
             (hexy.qc, np.concatenate([w.flatten() for w in window]))))
         hexy.update_current_pose(q=qi)
         print(f'Res = {qi}')
+
+
+def connect_socket():
+    ip, port = discover_once()
+    if not ip:
+        print("Could not discover server")
+        return
+
+    socket = create_socket(ip, port)
+    print(f"Connected to server at {ip}:{port}")
+    return socket
+
+
+if __name__ == "__main__":
+    main()

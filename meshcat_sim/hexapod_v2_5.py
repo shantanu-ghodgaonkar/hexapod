@@ -2,6 +2,7 @@
 from time import sleep, time, strftime
 import numpy as np
 import pinocchio as pin
+from pinocchio.visualize import MeshcatVisualizer
 import meshcat.geometry as g
 from pathlib import Path
 import sys
@@ -135,7 +136,7 @@ class hexapod:
         """
         try:
             # Initialize Meshcat visualizer
-            self.viz = pin.visualize.MeshcatVisualizer(
+            self.viz = MeshcatVisualizer(
                 self.robot.model, self.robot.collision_model, self.robot.visual_model)
             self.viz.initViewer(open=True)
         except ImportError as err:
@@ -226,8 +227,14 @@ class hexapod:
             np.ndarray: Joint configuration that minimizes the positional error.
         """
         # Set bounds for optimization
-        bounds = [((-np.pi / 3, np.pi / 3) if int(7 + (3 * (np.floor(FRAME_ID / 8) - 1))) <= i < int(7 +
-                   (3 * (np.floor(FRAME_ID / 8) - 1))) + 3 else (self.qc[i], self.qc[i])) for i in range(self.robot.nq)]
+        joint_bounds = np.full((self.robot.nq, 2), self.qc[:, None])
+        joint_indices = np.array(
+            [7 + (3 * ((FRAME_ID // 8) - 1)) + i for i in range(3)])  # Indices for this leg
+        joint_bounds[joint_indices, 0] = [-85 * np.pi /
+                                          180, -45 * np.pi / 180, -45 * np.pi / 180]
+        joint_bounds[joint_indices, 1] = [
+            85 * np.pi / 180, 45 * np.pi / 180, 45 * np.pi / 180]
+        bounds = list(map(tuple, joint_bounds))
 
         # Perform minimization to find joint configuration minimizing foot position error
         res = minimize(
@@ -744,7 +751,8 @@ class hexapod:
             numpy.ndarray: Joint configuration that maintains foot positions.
         """
         # Joint angle bounds (exclude base joints)
-        bounds = [(-np.pi/3, np.pi/3)] * (self.robot.nq - 7)
+        bounds = [(-(48 * np.pi / 180), (48 * np.pi / 180))] * \
+            (self.robot.nq - 7)
 
         # Initial joint angles
         q_joints_init = q[7:].copy()
@@ -979,7 +987,7 @@ class hexapod:
 
 if __name__ == "__main__":
     # Create a hexapod instance with visualization and debug logging
-    hexy = hexapod(init_viz=False, logging_level=logging.DEBUG)
+    hexy = hexapod(init_viz=False, logging_level=logging.CRITICAL)
     # Set parameters for movement
     v = 0.5  # Velocity in m/s
     start_time = time()
@@ -999,11 +1007,13 @@ if __name__ == "__main__":
     #     hexy.viz.play(q)
 
     # sleep(1)
-    STEP_CNT = 10
+    STEP_CNT = 1
     # Compute the gait trajectory for more steps
     q = hexy.compute_gait(v=v, WAYPOINTS=WAYPOINTS, STEP_CNT=STEP_CNT, DIR=DIR)
     if hexy.viz_flag:
         hexy.viz.play(q)
+    states = np.array([hexy.forward_kinematics(q_i) for q_i in q])
+    hexy.plot_trajctory(state=states, title='v2.5')
 
     # # Save the gait angles to a file
     # gait_angles_file_path = Path(
@@ -1092,9 +1102,9 @@ if __name__ == "__main__":
     #                    leg1_traj[:, 10:13], body_traj[:, 13:16],
     #                    leg3_traj[:, 16:19], body_traj[:, 19:22], leg5_traj[:, 22:25]))
     #     # Update the current configuration
-    #     q = np.vstack((q, np.hstack((q[-1, :7], np.zeros(hexy.robot.nq - 7)))))
+    q = np.vstack((q, np.hstack((q[-1, :7], np.zeros(hexy.robot.nq - 7)))))
 
-    #     gait_angles_file_path = Path(
-    #         f'gait_angles/gait_angles_DIR_{DIR}_WP{WAYPOINTS}_END_HALF_STEP_{strftime("%Y%m%d_%H%M%S")}.npy')
-    #     gait_angles_file_path.parent.mkdir(parents=True, exist_ok=True)
-    #     np.save(gait_angles_file_path, q)
+    gait_angles_file_path = Path(
+        f'gait_angles/gait_angles_DIR_{DIR}_WP{WAYPOINTS}_END_HALF_STEP_{strftime("%Y%m%d_%H%M%S")}.npy')
+    gait_angles_file_path.parent.mkdir(parents=True, exist_ok=True)
+    np.save(gait_angles_file_path, q)

@@ -70,8 +70,8 @@ class Hexapod:
         
         self.robot.forwardKinematics(pin.neutral(self.robot.model))
               
-        self.HALF_STEPSIZE_XY=0.005
-        self.Vert_STEPSIZE_Z=0.005
+        self.HALF_STEPSIZE_XY=0.03
+        
         
         self.FOOT_IDS = [self.robot.model.getFrameId(
             frame.name) for frame in self.robot.model.frames if "foot" in frame.name]
@@ -494,7 +494,7 @@ class Hexapod:
         p2 = np.append(p2, p1[2])
 
         y_clearance = 0.03           # Vertical clearance for y apex
-        z_clearance = 0.01           # Lateral deviation for z apex
+        z_clearance = 0.02           # Lateral deviation for z apex
 
         # Apex points (midway)
         x_apex = (p1[0] + p2[0]) / 2
@@ -851,6 +851,7 @@ class Hexapod:
              leg0_traj[i][22:] = qset[-1][22:]
 
         qset = np.vstack((qset,leg0_traj))
+        self.STARTseq = qset
         #_____________________________________________________________________________________________________________________________________________
         self.qc = qset[-1]
         STEP_CNT = 3
@@ -964,21 +965,24 @@ def main():
     IO = Hexapod(home_visualizer,debuging_mode)
    
     
-    # time.sleep(5)
+    time.sleep(5)
     qset = IO.compute_quad_homing()
     q= IO.compute_quad_gait(qset=qset)    
     print(q)
     disable = IO.compute_quad_homing_disable()
 
     Q_fin = np.vstack((q,disable))    
-    IO.animate_trajectory(Q_fin, delay=0.01)
+    IO.animate_trajectory(Q_fin, delay=0.001)
     
-    a = Q_fin[0:75,:] 
-    b = Q_fin[75:171,:]
-    c = Q_fin[171:247,:]
+    index_start,_ = (IO.STARTseq.shape)
+    n_rows, _ = Q_fin.shape
+    index_end = n_rows-index_start
     
+    START = Q_fin[0:index_start,:]
+    MID   = Q_fin[index_start:index_end,:]
+    END   = Q_fin[index_end:,:]
     
-    # IO.save_file(a,b,c)
+    IO.save_file(a=START,b=MID,c=END)
     
     
  
@@ -988,5 +992,4 @@ def main():
 if __name__ == "__main__":
     main()
    
-
 

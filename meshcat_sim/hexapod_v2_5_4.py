@@ -38,7 +38,7 @@ class hexapod:
         self.init_logger(logging_level)
         # Set up the paths to the URDF model files
         self.pin_model_dir = str(
-            Path('./URDF/Physics_Model_Edited').absolute())
+            Path('./URDF/Corrected_URDF').absolute())
         self.urdf_filename = (self.pin_model_dir +
                               '/Physics Model URDF (Edtd.).urdf')
 
@@ -62,8 +62,9 @@ class hexapod:
             frame.name) for frame in self.robot.model.frames if "Revolute_joint_0" in frame.name]
         # Get the frame ID for the robot base
         self.BASE_FRAME_ID = self.robot.model.getFrameId("robot_base_inertial")
-        self.cMb_se3 = self.robot.framePlacement(
-            index=self.robot.model.getFrameId("CAM"), q=self.robot.q0).inverse()
+        self.uMc_se3 = self.robot.framePlacement(
+            index=self.robot.model.getFrameId("CAM_inertial"), q=self.robot.q0)
+        self.cMb_se3 = self.uMc_se3.inverse()
         self.cMb_xyzquat = pin.SE3ToXYZQUAT(self.cMb_se3)
         # Set initial state and configuration
         self.state_flag = 'START'
@@ -78,6 +79,7 @@ class hexapod:
         self.bounds[7:] = [(self._deg2rad(-85), self._deg2rad(85)), (self._deg2rad(-45),
                                                                      self._deg2rad(170)), (self._deg2rad(-180), self._deg2rad(45))] * 6
         # Initialize visualization if requested
+        self.swing_weight = 10.0
         self.viz_flag = init_viz
         self.theta = np.pi / 4
         if self.viz_flag == True:
@@ -97,6 +99,9 @@ class hexapod:
             f"Hexapod Object Initialised Successfully with init_viz = {self.viz_flag}, logging_level={logging_level}")
 
     def _deg2rad(self, deg): return deg * (np.pi / 180)
+
+    def find_root_pose_from_cam_pose(self, cam_xyzq: np.ndarray):
+        return pin.SE3ToXYZQUAT(self.uMc_se3 * pin.XYZQUATToSE3(cam_xyzq) * self.cMb_se3)
 
     def init_logger(self, logging_level: int) -> None:
         """
@@ -539,35 +544,78 @@ class hexapod:
         return [self.inverse_geometery(q=self.qc, FRAME_ID=FOOT_ID, desired_pos=wp)
                 for wp in waypoints]
 
-    def generate_waypoints(self, step_size_xy_mult: float, WAYPOINTS: int = 5, DIR: str = 'N', leg_set: int = 0):
-        start = None
-        if (leg_set == 0 or leg_set == 1):
-            start = leg_set
-        else:
-            raise ValueError(
-                f'Expected value for leg_set is a string "024" or "135". Got {leg_set} instead')
+    # def generate_waypoints(self, step_size_xy_mult: float, WAYPOINTS: int = 5, DIR: str = 'N', leg_set: int = 0):
+    #     start = None
+    #     if (leg_set == 0 or leg_set == 1):
+    #         start = leg_set
+    #     else:
+    #         raise ValueError(
+    #             f'Expected value for leg_set is a string "024" or "135". Got {leg_set} instead')
 
+    #     waypoints = self.state_c @ np.ones((1, WAYPOINTS))
+
+    #     for foot in self.FOOT_IDS[start::2]:
+    #         self.init_foot_trajectory_functions(
+    #             step_size_xy_mult=step_size_xy_mult, DIR=DIR, FOOT_ID=foot)
+    #         # Create time steps from 0 to 1
+    #         s = np.linspace(0, 1, WAYPOINTS)
+    #         # Generate waypoints by evaluating trajectory functions at each time step
+    #         wp = np.array([[round(self.x_t(t), 5), round(
+    #             self.y_t(t), 5), round(self.z_t(t), 5)] for t in s]).T
+    #         idx = (3 * (foot // 8 - 1) + 3)
+    #         waypoints[idx:idx+3, :] = wp
+
+    #     # Initialize body trajectory functions
+    #     self.init_body_trajectory_functions(
+    #         step_size_xy_mult=step_size_xy_mult, DIR=DIR)
+    #     s = np.linspace(0, 1, WAYPOINTS)
+    #     # Generate waypoints by evaluating trajectory functions at each time step
+    #     wp = np.array([[round(self.x_t(t), 5), round(
+    #         self.y_t(t), 5), self.state_c[2][0]] for t in s]).T
+    #     waypoints[0:3, :] = wp
+    #     return waypoints
+
+    def generate_waypoints(self,
+                           step_size_xy_mult: float,
+                           WAYPOINTS: int = 5,
+                           DIR: str = 'N',
+                           leg_set: int = 0) -> np.ndarray:
+        """
+        Corrected: re‑plan ALL six feet, using leg_idx→row mapping.
+        """
+        s = np.linspace(0, 1, WAYPOINTS)
+        # start from current state_c repeated
         waypoints = self.state_c @ np.ones((1, WAYPOINTS))
 
-        for foot in self.FOOT_IDS[start::2]:
-            self.init_foot_trajectory_functions(
-                step_size_xy_mult=step_size_xy_mult, DIR=DIR, FOOT_ID=foot)
-            # Create time steps from 0 to 1
-            s = np.linspace(0, 1, WAYPOINTS)
-            # Generate waypoints by evaluating trajectory functions at each time step
-            wp = np.array([[round(self.x_t(t), 5), round(
-                self.y_t(t), 5), round(self.z_t(t), 5)] for t in s]).T
-            idx = (3 * (foot // 8 - 1) + 3)
-            waypoints[idx:idx+3, :] = wp
+        # Loop through all six feet by their index in FOOT_IDS
+        for leg_idx, foot_id in enumerate(self.FOOT_IDS):
+            # rows 3–5 = foot 0, 6–8 = foot 1, etc.
+            start_row = 3 * (leg_idx + 1)
+            is_swing = (leg_idx % 2 == leg_set)  # even/odd tripod
 
-        # Initialize body trajectory functions
-        self.init_body_trajectory_functions(
-            step_size_xy_mult=step_size_xy_mult, DIR=DIR)
-        s = np.linspace(0, 1, WAYPOINTS)
-        # Generate waypoints by evaluating trajectory functions at each time step
-        wp = np.array([[round(self.x_t(t), 5), round(
-            self.y_t(t), 5), self.state_c[2][0]] for t in s]).T
-        waypoints[0:3, :] = wp
+            if not is_swing:
+                # stance foot: leave at p1
+                p1 = self.robot.framePlacement(self.qc, foot_id).translation
+                wp_leg = np.tile(p1.reshape(3, 1), (1, WAYPOINTS))
+            else:
+                # swing foot: full spline
+                self.init_foot_trajectory_functions(
+                    step_size_xy_mult=step_size_xy_mult*2,
+                    DIR=DIR,
+                    FOOT_ID=foot_id
+                )
+                wp_leg = np.array(
+                    [[self.x_t(t), self.y_t(t), self.z_t(t)] for t in s]
+                ).T
+
+            waypoints[start_row:start_row+3, :] = wp_leg
+
+        # Re‑plan the body at rows 0–2
+        self.init_body_trajectory_functions(step_size_xy_mult, DIR)
+        wp_body = np.array(
+            [[self.x_t(t), self.y_t(t), self.state_c[2, 0]] for t in s]).T
+        waypoints[0:3, :] = wp_body
+
         return waypoints
 
     def plot_trajctory(self, state: np.ndarray, title: str) -> None:
@@ -847,7 +895,7 @@ if __name__ == "__main__":
     # Set parameters for movement
     v = 0.5  # Velocity in m/s
     # start_time = time()
-    WAYPOINTS = 40
+    WAYPOINTS = 20
     # DIR = 'N'
     # start = time()
     q = np.copy(hexy.qc)
@@ -869,54 +917,59 @@ if __name__ == "__main__":
         hexy.update_current_pose(q=qi)
         q = np.vstack((q, qi))
 
-    # wp = hexy.generate_waypoints(
-    #     WAYPOINTS=WAYPOINTS, step_size_xy_mult=2, leg_set=1)
-    # wp = [wp[:, i].reshape(-1, 1) for i in range(wp.shape[1])]
-    # for i in range(len(wp)):
-    #     window = wp[i:i + horizon]
-    #     if len(window) < horizon:
-    #         # pad with last element
-    #         window += [wp[-1]] * (horizon - len(window))
-    #     start = time()
-    #     qi = hexy.mpc_step(current_q=hexy.qc,
-    #                        desired_seq=window, horizon=horizon)
-    #     print(f'Optimized in {time()-start}s')
-    #     hexy.update_current_pose(q=qi)
-    #     q = np.vstack((q, qi))
+    wp = hexy.generate_waypoints(
+        WAYPOINTS=WAYPOINTS, step_size_xy_mult=2, leg_set=1)
+    wp = [wp[:, i].reshape(-1, 1) for i in range(wp.shape[1])]
+    for i in range(len(wp)):
+        window = wp[i:i + horizon]
+        if len(window) < horizon:
+            # pad with last element
+            window += [wp[-1]] * (horizon - len(window))
+        start = time()
+        qi = hexy.mpc_step(current_q=hexy.qc,
+                           desired_seq=window, horizon=horizon)
+        print(f'Optimized in {time()-start}s')
+        hexy.update_current_pose(q=qi)
+        q = np.vstack((q, qi))
 
-    # wp = hexy.generate_waypoints(
-    #     WAYPOINTS=WAYPOINTS, step_size_xy_mult=2, leg_set=0)
-    # wp = [wp[:, i].reshape(-1, 1) for i in range(wp.shape[1])]
-    # for i in range(len(wp)):
-    #     window = wp[i:i + horizon]
-    #     if len(window) < horizon:
-    #         # pad with last element
-    #         window += [wp[-1]] * (horizon - len(window))
-    #     start = time()
-    #     qi = hexy.mpc_step(current_q=hexy.qc,
-    #                        desired_seq=window, horizon=horizon)
-    #     print(f'Optimized in {time()-start}s')
-    #     hexy.update_current_pose(q=qi)
-    #     q = np.vstack((q, qi))
+    wp = hexy.generate_waypoints(
+        WAYPOINTS=WAYPOINTS, step_size_xy_mult=2, leg_set=0)
+    wp = [wp[:, i].reshape(-1, 1) for i in range(wp.shape[1])]
+    for i in range(len(wp)):
+        window = wp[i:i + horizon]
+        if len(window) < horizon:
+            # pad with last element
+            window += [wp[-1]] * (horizon - len(window))
+        start = time()
+        qi = hexy.mpc_step(current_q=hexy.qc,
+                           desired_seq=window, horizon=horizon)
+        print(f'Optimized in {time()-start}s')
+        hexy.update_current_pose(q=qi)
+        q = np.vstack((q, qi))
 
-    # wp = hexy.generate_waypoints(
-    #     WAYPOINTS=WAYPOINTS, step_size_xy_mult=1, leg_set=1)
-    # wp = [wp[:, i].reshape(-1, 1) for i in range(wp.shape[1])]
-    # for i in range(len(wp)):
-    #     window = wp[i:i + horizon]
-    #     if len(window) < horizon:
-    #         # pad with last element
-    #         window += [wp[-1]] * (horizon - len(window))
-    #     start = time()
-    #     qi = hexy.mpc_step(current_q=hexy.qc,
-    #                        desired_seq=window, horizon=horizon)
-    #     print(f'Optimized in {time()-start}s')
-    #     hexy.update_current_pose(q=qi)
-    #     q = np.vstack((q, qi))
+    wp = hexy.generate_waypoints(
+        WAYPOINTS=WAYPOINTS, step_size_xy_mult=1, leg_set=1)
+    wp = [wp[:, i].reshape(-1, 1) for i in range(wp.shape[1])]
+    for i in range(len(wp)):
+        window = wp[i:i + horizon]
+        if len(window) < horizon:
+            # pad with last element
+            window += [wp[-1]] * (horizon - len(window))
+        start = time()
+        qi = hexy.mpc_step(current_q=hexy.qc,
+                           desired_seq=window, horizon=horizon)
+        print(f'Optimized in {time()-start}s')
+        hexy.update_current_pose(q=qi)
+        q = np.vstack((q, qi))
     q = np.delete(q, 0, axis=0)
     states = np.array([hexy.forward_kinematics(q_i) for q_i in q])
     hexy.plot_trajctory(state=states, title='v2.5.4 MPC')
     # hexy.viz.play(q)
+
+    gait_angles_file_path = Path(
+        f'gait_angles/gait_angles_MPC_1.npy')
+    gait_angles_file_path.parent.mkdir(parents=True, exist_ok=True)
+    np.save(gait_angles_file_path, q)
 
     # wp_hist = wp
     # # hexy.plot_trajctory(state=wp.T, title='traj')

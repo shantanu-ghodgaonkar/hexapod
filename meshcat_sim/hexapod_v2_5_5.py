@@ -1,5 +1,12 @@
+import os
+# Pinocchio/Eigen multithreading can cause intermittent segfaults
+os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["OPENBLAS_NUM_THREADS"] = "1"
+os.environ["MKL_NUM_THREADS"] = "1"
+
+
 # We import useful libraries
-from time import sleep, time, strftime
+from time import time, strftime
 import numpy as np
 import pinocchio as pin
 from pinocchio.visualize import MeshcatVisualizer
@@ -7,12 +14,13 @@ import meshcat.geometry as g
 from pathlib import Path
 import sys
 from scipy.optimize import minimize
+from scipy.sparse import block_diag, csr_matrix
 import logging
 import matplotlib.pyplot as plt
-from enum import Enum
 from typing import List, Tuple, NoReturn
 import os
-from warnings import warn
+from cyipopt import minimize_ipopt
+
 
 # We don't want to print every decimal!
 np.set_printoptions(suppress=True, precision=4)
@@ -26,7 +34,7 @@ class hexapod:
     generate trajectories, and visualize the robot's movements.
     """
 
-    def __init__(self, init_viz: bool = True, logging_level: int = logging.DEBUG) -> None:
+    def __init__(self, init_viz: bool = False, logging_level: int = logging.DEBUG) -> None:
         """
         Initialize the Hexapod robot model and visualization.
 
@@ -61,14 +69,17 @@ class hexapod:
         self.SHOULDER_IDS = [self.robot.model.getFrameId(
             frame.name) for frame in self.robot.model.frames if "Revolute_joint_0" in frame.name]
         # Get the frame ID for the robot base
+        self.q0 = np.require(self.robot.q0, dtype=np.float64, requirements=[
+                             'C'])
         self.BASE_FRAME_ID = self.robot.model.getFrameId("robot_base_inertial")
         self.uMc_se3 = self.robot.framePlacement(
-            index=self.robot.model.getFrameId("CAM_inertial"), q=self.robot.q0)
+            index=self.robot.model.getFrameId("CAM_inertial"), q=self.q0)
         self.cMb_se3 = self.uMc_se3.inverse()
         self.cMb_xyzquat = pin.SE3ToXYZQUAT(self.cMb_se3)
         # Set initial state and configuration
         self.state_flag = 'START'
-        self.qc = self.robot.q0  # Initial joint configuration
+        self.qc = np.require(self.robot.q0, dtype=np.float64, requirements=[
+                             'C'])  # Initial joint configuration
         self.state_c = np.concatenate([
             self.robot.framePlacement(
                 index=self.BASE_FRAME_ID, q=self.qc).translation,
@@ -860,14 +871,15 @@ class hexapod:
         }]
 
         # Define the optimization problem using your new MPC cost function
-        res = minimize(
+        res = minimize_ipopt(
             fun=lambda q_seq: self.mpc_cost(q_seq, desired_seq, horizon),
             x0=q_guess,
             jac=lambda q_seq: self.mpc_cost_grad(q_seq, desired_seq, horizon),
+            # hess=lambda q_seq: self.mpc_hessian(q_seq.flatten()),
             constraints=cons,
             bounds=(self.bounds*horizon),
             method='SLSQP',   # or another suitable method
-            options={'ftol': 1e-9, 'maxiter': 500, 'disp': True}
+            options={'ftol': 1e-8, 'maxiter': 100, 'disp': False}
         )
         # Reshape the solution if needed
         q_seq_opt = res.x.reshape(horizon, n_q)
@@ -880,6 +892,21 @@ class hexapod:
                 f'Expected shape of parameter q was (25, ), but got {q.shape}')
         self.qc = q
         self.state_c = self.forward_kinematics(q=q)
+
+    def mpc_hessian(self, q_seq_flat: np.ndarray, lam=None):
+        n_q = self.robot.nq         # 25
+        horizon = len(q_seq_flat) // n_q
+        H_blocks = []
+        for i in range(horizon):
+            q_i = q_seq_flat[i*n_q:(i+1)*n_q]
+            J_fk = self.compute_full_fk_jacobian(q_i)   # (21×25) dense
+            H_i = J_fk.T @ J_fk                         # (25×25)
+        #     H_blocks.append(csr_matrix(H_i))
+        # # block-diag: (25h × 25h)
+        # return block_diag(H_blocks, format='csr')
+            H_blocks.append(H_i)
+        # block-diag: (25h × 25h)
+        return block_diag(H_blocks)
 
 
 if __name__ == "__main__":

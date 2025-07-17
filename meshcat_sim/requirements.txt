@@ -1,4 +1,0 @@
-pin
-meshcat
-scipy
-matplotlib

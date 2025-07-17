@@ -1,0 +1,662 @@
+'''___________base_link_____________________________________________________________________________________________________________________________________'''
+
+#Name	base_link
+Mass	729.883E-03 Kg
+Center of Mass	0.00E-03 m, 0.00E-03 m, 42.75E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	3380081.839E-09
+		Ixy	-2.242E-15
+		Ixz	0.00
+		Iyx	-2.242E-15
+		Iyy	3380081.839E-09
+		Iyz	0.00
+		Izx	0.00
+		Izy	0.00
+		Izz	6758673.499E-09
+		
+'''___________01_____________________________________________________________________________________________________________________________________'''
+
+#Name	bracket_00
+Mass	3.492E-03 Kg
+Center of Mass	0.00E-03 m, -133.847E-03 m, 59.50E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	338.438E-09
+		Ixy	0.00
+		Ixz	0.00
+		Iyx	0.00
+		Iyy	475.675E-09
+		Iyz	0.00
+		Izx	0.00
+		Izy	0.00
+		Izz	156.11E-09
+#Name	motor_00
+Mass	18E-03 Kg
+Center of Mass	0.00E-03 m, -152.03E-03 m, 59.50E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	2417.525E-09
+		Ixy	0.00
+		Ixz	9.271E-18
+		Iyx	0.00
+		Iyy	1383.114E-09
+		Iyz	0.00
+		Izx	9.271E-18
+		Izy	0.00
+		Izz	2127.902E-09
+#Name	coxa_0
+Mass	17.291E-03 Kg
+Center of Mass	1.338E-08E-03 m, -182.708E-03 m, 59.50E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	5597.302E-09
+		Ixy	-8.917E-16
+		Ixz	0.00
+		Iyx	-8.917E-16
+		Iyy	3966.114E-09
+		Iyz	0.00
+		Izx	0.00
+		Izy	0.00
+		Izz	5597.302E-09
+#Name	motor_10
+Mass	18E-03 Kg
+Center of Mass	0.00E-03 m, -208.088E-03 m, 67.041E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	2072.58E-09
+		Ixy	6.647E-18
+		Ixz	0.00
+		Iyx	6.647E-18
+		Iyy	2252.556E-09
+		Iyz	229.93E-09
+		Izx	0.00
+		Izy	229.93E-09
+		Izz	1387.687E-09
+#Name	femur_1
+Mass	10.626E-03 Kg
+Center of Mass	-1.161E-09E-03 m, -217.857E-03 m, 90.254E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	1546.272E-09
+		Ixy	2.061E-16
+		Ixz	-1.241E-16
+		Iyx	2.061E-16
+		Iyy	2935.439E-09
+		Iyz	380.056E-09
+		Izx	-1.241E-16
+		Izy	380.056E-09
+		Izz	3281.676E-09
+#Name	motor_20
+Mass	18E-03 Kg
+Center of Mass	0.032E-03 m, -237.427E-03 m, 93.594E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	2570.741E-09
+		Ixy	-4.322E-09
+		Ixz	-2.743E-09
+		Iyx	-4.322E-09
+		Iyy	1861.484E-09
+		Iyz	-625.862E-09
+		Izx	-2.743E-09
+		Izy	-625.862E-09
+		Izz	2450.501E-09
+#Name	tibia_
+Mass	16.569E-03 Kg
+Center of Mass	0.00E-03 m, -253.895E-03 m, 54.01E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	14332.226E-09
+		Ixy	5.151E-19
+		Ixz	0.00
+		Iyx	5.151E-10E-09
+		Iyy	17332.424E-09
+		Iyz	1107.386E-09
+		Izx	0.00
+		Izy	1107.386E-09
+		Izz	3705.524E-09
+#Name	endeff
+Mass	0.001E-03 Kg
+Center of Mass	0.00E-03 m, -250.013E-03 m, 0.527E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	5.550E-14
+		Ixy	0.00
+		Ixz	0.00
+		Iyx	0.00
+		Iyy	5.550E-14
+		Iyz	0.00
+		Izx	0.00
+		Izy	0.00
+		Izz	5.550E-14
+
+
+'''____02____________________________________________________________________________________________________________________________________________'''
+
+
+#Name	bracket_00
+Mass	3.492E-03 Kg
+Center of Mass	115.915E-03 m, -66.924E-03 m, 59.50E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	441.365E-09
+		Ixy	-59.425E-09
+		Ixz	0.00
+		Iyx	-59.425E-09
+		Iyy	372.747E-09
+		Iyz	0.00
+		Izx	0.00
+		Izy	0.00
+		Izz	156.11E-09
+#Name	motor_00
+Mass	18E-03 Kg
+Center of Mass	131.662E-03 m, -76.015E-03 m, 59.50E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	1641.717E-09
+		Ixy	447.913E-09
+		Ixz	4.641E-18
+		Iyx	447.913E-09
+		Iyy	2158.923E-09
+		Iyz	8.038E-18
+		Izx	4.641E-18
+		Izy	8.038E-18
+		Izz	2127.902E-09
+#Name	coxa_0
+Mass	17.291E-03 Kg
+Center of Mass	158.23E-03 m, -91.354E-03 m, 59.50E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	4373.911E-09
+		Ixy	706.325E-09
+		Ixz	0.00
+		Iyx	706.325E-09
+		Iyy	5189.505E-09
+		Iyz	0.00
+		Izx	0.00
+		Izy	0.00
+		Izz	5597.302E-09
+#Name	motor_10
+Mass	18E-03 Kg
+Center of Mass	180.21E-03 m, -104.044E-03 m, 67.041E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	2207.562E-09
+		Ixy	-77.932E-09
+		Ixz	-199.125E-09
+		Iyx	-77.932E-09
+		Iyy	2117.574E-09
+		Iyz	114.965E-09
+		Izx	-199.125E-09
+		Izy	114.965E-09
+		Izz	1387.687E-09
+#Name	femur_1
+Mass	10.626E-03 Kg
+Center of Mass	188.67E-03 m, -108.928E-03 m, 90.254E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	2588.147E-09
+		Ixy	-601.527E-09
+		Ixz	-329.138E-09
+		Iyx	-601.527E-09
+		Iyy	1893.563E-09
+		Iyz	190.028E-09
+		Izx	-329.138E-09
+		Izy	190.028E-09
+		Izz	3281.676E-09
+#Name	motor_20
+Mass	18E-03 Kg
+Center of Mass	205.634E-03 m, -118.685E-03 m, 93.594E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	2042.541E-09
+		Ixy	309.278E-09
+		Ixz	540.641E-09
+		Iyx	309.278E-09
+		Iyy	2389.684E-09
+		Iyz	-315.306E-09
+		Izx	540.641E-09
+		Izy	-315.306E-09
+		Izz	2450.501E-09
+#Name	tibia_
+Mass	16.569E-03 Kg
+Center of Mass	219.88E-03 m, -126.948E-03 m, 54.01E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	16582.375E-09
+		Ixy	-1299.124E-09
+		Ixz	-959.024E-09
+		Iyx	-1299.124E-09
+		Iyy	15082.276E-09
+		Iyz	553.693E-09
+		Izx	-959.024E-09
+		Izy	553.693E-09
+		Izz	3705.524E-09
+#Name	endeff
+Mass	0.001E-03 Kg
+Center of Mass	216.517E-03 m, -125.006E-03 m, 0.527E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	5.550E-14
+		Ixy	0.00
+		Ixz	0.00
+		Iyx	0.00
+		Iyy	5.550E-14
+		Iyz	0.00
+		Izx	0.00
+		Izy	0.00
+		Izz	5.550E-14
+'''_____03___________________________________________________________________________________________________________________________________________'''
+#Name	bracket_00
+Mass	3.492E-03 Kg
+Center of Mass	115.915E-03 m, 66.924E-03 m, 59.50E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	441.365E-09
+		Ixy	59.425E-09
+		Ixz	0.00
+		Iyx	59.425E-09
+		Iyy	372.747E-09
+		Iyz	0.00
+		Izx	0.00
+		Izy	0.00
+		Izz	156.11E-09
+#Name	motor_00
+Mass	18E-03 Kg
+Center of Mass	131.662E-03 m, 76.015E-03 m, 59.50E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	1641.717E-09
+		Ixy	-447.913E-09
+		Ixz	-4.641E-18
+		Iyx	-447.913E-09
+		Iyy	2158.923E-09
+		Iyz	8.027E-18
+		Izx	-4.641E-18
+		Izy	8.027E-18
+		Izz	2127.902E-09
+#Name	coxa_0
+Mass	17.291E-03 Kg
+Center of Mass	158.23E-03 m, 91.354E-03 m, 59.50E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	4373.911E-09
+		Ixy	-706.325E-09
+		Ixz	0.00
+		Iyx	-706.325E-09
+		Iyy	5189.505E-09
+		Iyz	0.00
+		Izx	0.00
+		Izy	0.00
+		Izz	5597.302E-09
+#Name	motor_10
+Mass	18E-03 Kg
+Center of Mass	180.21E-03 m, 104.044E-03 m, 67.041E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	2207.562E-09
+		Ixy	77.932E-09
+		Ixz	-199.125E-09
+		Iyx	77.932E-09
+		Iyy	2117.574E-09
+		Iyz	-114.965E-09
+		Izx	-199.125E-09
+		Izy	-114.965E-09
+		Izz	1387.687E-09
+#Name	femur_1
+Mass	10.626E-03 Kg
+Center of Mass	188.67E-03 m, 108.928E-03 m, 90.254E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	2588.147E-09
+		Ixy	601.527E-09
+		Ixz	-329.138E-09
+		Iyx	601.527E-09
+		Iyy	1893.563E-09
+		Iyz	-190.028E-09
+		Izx	-329.138E-09
+		Izy	-190.028E-09
+		Izz	3281.676E-09
+#Name	motor_20
+Mass	18E-03 Kg
+Center of Mass	205.601E-03 m, 118.741E-03 m, 93.594E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	2035.055E-09
+		Ixy	-304.957E-09
+		Ixz	543.384E-09
+		Iyx	-304.957E-09
+		Iyy	2397.169E-09
+		Iyz	310.556E-09
+		Izx	543.384E-09
+		Izy	310.556E-09
+		Izz	2450.501E-09
+#Name	tibia_
+Mass	16.569E-03 Kg
+Center of Mass	219.88E-03 m, 126.948E-03 m, 54.01E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	16582.375E-09
+		Ixy	1299.124E-09
+		Ixz	-959.024E-09
+		Iyx	1299.124E-09
+		Iyy	15082.276E-09
+		Iyz	-553.693E-09
+		Izx	-959.024E-09
+		Izy	-553.693E-09
+		Izz	3705.524E-09
+#Name	endeff
+Mass	0.001E-03 Kg
+Center of Mass	216.517E-03 m, 125.006E-03 m, 0.527E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	5.550E-14
+		Ixy	0.00
+		Ixz	0.00
+		Iyx	0.00
+		Iyy	5.550E-14
+		Iyz	0.00
+		Izx	0.00
+		Izy	0.00
+		Izz	5.550E-14
+
+'''________04________________________________________________________________________________________________________________________________________'''
+
+#Name	bracket_00
+Mass	3.492E-03 Kg
+Center of Mass	0.00E-03 m, 133.847E-03 m, 59.50E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	338.438E-09
+		Ixy	0.00
+		Ixz	0.00
+		Iyx	0.00
+		Iyy	475.675E-09
+		Iyz	0.00
+		Izx	0.00
+		Izy	0.00
+		Izz	156.11E-09
+#Name	motor_00
+Mass	18E-03 Kg
+Center of Mass	0.00E-03 m, 152.03E-03 m, 59.50E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	2417.525E-09
+		Ixy	0.00
+		Ixz	-9.271E-18
+		Iyx	0.00
+		Iyy	1383.114E-09
+		Iyz	0.00
+		Izx	-9.271E-18
+		Izy	0.00
+		Izz	2127.902E-09
+#Name	coxa_0
+Mass	17.291E-03 Kg
+Center of Mass	-1.338E-11 m, 182.708E-03 m, 59.50E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	5597.302E-09
+		Ixy	-8.917E-16
+		Ixz	0.00
+		Iyx	-8.917E-16
+		Iyy	3966.114E-09
+		Iyz	0.00
+		Izx	0.00
+		Izy	0.00
+		Izz	5597.302E-09
+#Name	motor_10
+Mass	18E-03 Kg
+Center of Mass	0.00E-03 m, 208.088E-03 m, 67.041E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	2072.58E-09
+		Ixy	6.647E-18
+		Ixz	0.00
+		Iyx	6.647E-18
+		Iyy	2252.556E-09
+		Iyz	-229.93E-09
+		Izx	0.00
+		Izy	-229.93E-09
+		Izz	1387.687E-09
+#Name	femur_1
+Mass	10.626E-03 Kg
+Center of Mass	1.161E-09E-03 m, 217.857E-03 m, 90.254E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	1546.272E-09
+		Ixy	2.061E-16
+		Ixz	1.241E-16
+		Iyx	2.061E-16
+		Iyy	2935.439E-09
+		Iyz	-380.056E-09
+		Izx	1.241E-16
+		Izy	-380.056E-09
+		Izz	3281.676E-09
+#Name	motor_20
+Mass	18E-03 Kg
+Center of Mass	-0.032E-03 m, 237.427E-03 m, 93.594E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	2570.741E-09
+		Ixy	-4.322E-09
+		Ixz	2.743E-09
+		Iyx	-4.322E-09
+		Iyy	1861.484E-09
+		Iyz	625.862E-09
+		Izx	2.743E-09
+		Izy	625.862E-09
+		Izz	2450.501E-09
+#Name	tibia_
+Mass	16.569E-03 Kg
+Center of Mass	0.00E-03 m, 253.895E-03 m, 54.01E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	14332.226E-09
+		Ixy	5.155E-19
+		Ixz	0.00
+		Iyx	5.155E-19
+		Iyy	17332.424E-09
+		Iyz	-1107.386E-09
+		Izx	0.00
+		Izy	-1107.386E-09
+		Izz	3705.524E-09
+#Name	endeff
+Mass	0.001E-03 Kg
+Center of Mass	0.00E-03 m, 250.013E-03 m, 0.527E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	5.550E-14
+		Ixy	0.00
+		Ixz	0.00
+		Iyx	0.00
+		Iyy	5.550E-14
+		Iyz	0.00
+		Izx	0.00
+		Izy	0.00
+		Izz	5.550E-14
+
+
+'''_______05_________________________________________________________________________________________________________________________________________'''
+#Name	bracket_00
+Mass	3.492E-03 Kg
+Center of Mass	-115.915E-03 m, 66.924E-03 m, 59.50E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	441.365E-09
+		Ixy	-59.425E-09
+		Ixz	0.00
+		Iyx	-59.425E-09
+		Iyy	372.747E-09
+		Iyz	0.00
+		Izx	0.00
+		Izy	0.00
+		Izz	156.11E-09
+#Name	motor_00
+Mass	18E-03 Kg
+Center of Mass	-131.662E-03 m, 76.015E-03 m, 59.50E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	1641.717E-09
+		Ixy	447.913E-09
+		Ixz	-4.596E-18
+		Iyx	447.913E-09
+		Iyy	2158.923E-09
+		Iyz	-8.038E-18
+		Izx	-4.596E-18
+		Izy	-8.038E-18
+		Izz	2127.902E-09
+#Name	coxa_0
+Mass	17.291E-03 Kg
+Center of Mass	-158.23E-03 m, 91.354E-03 m, 59.50E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	4373.911E-09
+		Ixy	706.325E-09
+		Ixz	0.00
+		Iyx	706.325E-09
+		Iyy	5189.505E-09
+		Iyz	0.00
+		Izx	0.00
+		Izy	0.00
+		Izz	5597.302E-09
+#Name	motor_10
+Mass	18E-03 Kg
+Center of Mass	-180.21E-03 m, 104.044E-03 m, 67.041E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	2207.562E-09
+		Ixy	-77.932E-09
+		Ixz	199.125E-09
+		Iyx	-77.932E-09
+		Iyy	2117.574E-09
+		Iyz	-114.965E-09
+		Izx	199.125E-09
+		Izy	-114.965E-09
+		Izz	1387.687E-09
+#Name	femur_1
+Mass	10.626E-03 Kg
+Center of Mass	-188.67E-03 m, 108.928E-03 m, 90.254E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	2588.147E-09
+		Ixy	-601.527E-09
+		Ixz	329.138E-09
+		Iyx	-601.527E-09
+		Iyy	1893.563E-09
+		Iyz	-190.028E-09
+		Izx	329.138E-09
+		Izy	-190.028E-09
+		Izz	3281.676E-09
+#Name	motor_20
+Mass	18E-03 Kg
+Center of Mass	-205.634E-03 m, 118.685E-03 m, 93.594E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	2042.541E-09
+		Ixy	309.278E-09
+		Ixz	-540.641E-09
+		Iyx	309.278E-09
+		Iyy	2389.684E-09
+		Iyz	315.306E-09
+		Izx	-540.641E-09
+		Izy	315.306E-09
+		Izz	2450.501E-09
+#Name	tibia_
+Mass	16.569E-03 Kg
+Center of Mass	-219.88E-03 m, 126.948E-03 m, 54.01E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	16582.375E-09
+		Ixy	-1299.124E-09
+		Ixz	959.024E-09
+		Iyx	-1299.124E-09
+		Iyy	15082.276E-09
+		Iyz	-553.693E-09
+		Izx	959.024E-09
+		Izy	-553.693E-09
+		Izz	3705.524E-09
+#Name	endeff
+Mass	0.001E-03 Kg
+Center of Mass	-216.517E-03 m, 125.006E-03 m, 0.527E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	5.550E-14
+		Ixy	0.00
+		Ixz	0.00
+		Iyx	0.00
+		Iyy	5.550E-14
+		Iyz	0.00
+		Izx	0.00
+		Izy	0.00
+		Izz	5.550E-14
+'''___________06_____________________________________________________________________________________________________________________________________'''
+
+#Name	bracket_00
+Mass	3.492E-03 Kg
+Center of Mass	-115.915E-03 m, -66.924E-03 m, 59.50E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	441.365E-09
+		Ixy	59.425E-09
+		Ixz	0.00
+		Iyx	59.425E-09
+		Iyy	372.747E-09
+		Iyz	0.00
+		Izx	0.00
+		Izy	0.00
+		Izz	156.11E-09
+#Name	motor_00
+Mass	18E-03 Kg
+Center of Mass	-131.662E-03 m, -76.015E-03 m, 59.50E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	1641.717E-09
+		Ixy	-447.913E-09
+		Ixz	4.663E-18
+		Iyx	-447.913E-09
+		Iyy	2158.923E-09
+		Iyz	-8.027E-18
+		Izx	4.663E-18
+		Izy	-8.027E-18
+		Izz	2127.902E-09
+#Name	coxa_0
+Mass	17.291E-03 Kg
+Center of Mass	-158.23E-03 m, -91.354E-03 m, 59.50E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	4373.911E-09
+		Ixy	-706.325E-09
+		Ixz	0.00
+		Iyx	-706.325E-09
+		Iyy	5189.505E-09
+		Iyz	0.00
+		Izx	0.00
+		Izy	0.00
+		Izz	5597.302E-09
+#Name	motor_20
+Mass	18E-03 Kg
+Center of Mass	-205.601E-03 m, -118.741E-03 m, 93.594E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	2035.055E-09
+		Ixy	-304.957E-09
+		Ixz	-543.384E-09
+		Iyx	-304.957E-09
+		Iyy	2397.169E-09
+		Iyz	-310.556E-09
+		Izx	-543.384E-09
+		Izy	-310.556E-09
+		Izz	2450.501E-09
+#Name	tibia_
+Mass	16.569E-03 Kg
+Center of Mass	-219.88E-03 m, -126.948E-03 m, 54.01E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	16582.375E-09
+		Ixy	1299.124E-09
+		Ixz	959.024E-09
+		Iyx	1299.124E-09
+		Iyy	15082.276E-09
+		Iyz	553.693E-09
+		Izx	959.024E-09
+		Izy	553.693E-09
+		Izz	3705.524E-09
+#Name	endeff
+Mass	0.001E-03 Kg
+Center of Mass	-216.517E-03 m, -125.006E-03 m, 0.527E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	5.550E-14
+		Ixy	0.00
+		Ixz	0.00
+		Iyx	0.00
+		Iyy	5.550E-14
+		Iyz	0.00
+		Izx	0.00
+		Izy	0.00
+		Izz	5.550E-14
+		
+
+'''___________TOP_____________________________________________________________________________________________________________________________________'''
+		
+Name	top
+Mass	729.883E-03 Kg
+Center of Mass	0.00 mm, 0.00 mm, 76.25E-03 m
+Moment of Inertia at Center of Mass   (Kg.m^2)
+		Ixx	3380081.839E-09
+		Ixy	-2.247E-15
+		Ixz	-1.064E-18
+		Iyx	-2.247E-15
+		Iyy	3380081.839E-09
+		Iyz	-1.166E-18
+		Izx	-1.064E-09
+		Izy	-1.166E-09
+		Izz	6758673.499E-09
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
